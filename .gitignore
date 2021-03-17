@@ -2,14 +2,18 @@
 *.class
 
 .idea/
-*/.idea/
+userService/.idea/
+webService/.idea/
 
 # Ignore Gradle project-specific cache directory
 .gradle
-*/.gradle
+userService/.gradle
+webService/.gradle
 
 # Ignore Gradle build output directory
 build
+userService/build
+webService/build
 
 *.txt
 
