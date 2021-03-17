@@ -1,4 +1,4 @@
-package com.github.mwarc.realtimeauctions;
+package auctions;
 
 public class AuctionValidator {
 

@@ -1,4 +1,4 @@
-package com.github.mwarc.realtimeauctions;
+package auctions;
 
 
 import com.rabbitmq.client.Channel;
@@ -7,18 +7,17 @@ import com.rabbitmq.client.ConnectionFactory;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
+import io.vertx.ext.bridge.BridgeEventType;
+import io.vertx.ext.bridge.PermittedOptions;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.ErrorHandler;
 import io.vertx.ext.web.handler.StaticHandler;
-import io.vertx.ext.web.handler.sockjs.BridgeEventType;
-import io.vertx.ext.web.handler.sockjs.BridgeOptions;
-import io.vertx.ext.web.handler.sockjs.PermittedOptions;
+import io.vertx.ext.web.handler.sockjs.BridgeEvent;
+import io.vertx.ext.web.handler.sockjs.SockJSBridgeOptions;
 import io.vertx.ext.web.handler.sockjs.SockJSHandler;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.TimeoutException;
 
 
 public class AuctionServiceVerticle extends AbstractVerticle {
@@ -30,16 +29,16 @@ public class AuctionServiceVerticle extends AbstractVerticle {
     public void start() {
         Router router = Router.router(vertx);
 
-        router.route("/eventbus/*").handler(eventBusHandler());
+        router.mountSubRouter("/eventbus", eventBusHandler());
         router.mountSubRouter("/api", auctionApiRouter());
         router.route().failureHandler(errorHandler());
         router.route().handler(staticHandler());
 
-        vertx.createHttpServer().requestHandler(router::accept).listen(8080);
+        vertx.createHttpServer().requestHandler(router).listen(8080);
     }
 
-    private SockJSHandler eventBusHandler() {
-        BridgeOptions options = new BridgeOptions()
+    private Router eventBusHandler() {
+        SockJSBridgeOptions options = new SockJSBridgeOptions()
             .addOutboundPermitted(new PermittedOptions().setAddressRegex("auction\\.[0-9]+"));
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
@@ -48,8 +47,8 @@ public class AuctionServiceVerticle extends AbstractVerticle {
                  Channel channel = connection.createChannel()) {
                 channel.queueDeclare(QUEUE_PLAYER_NAME, false, false, false, null);
                 String message = "Hello World!";
-                if (event.type() == BridgeEventType.SOCKET_CREATED) {
-                    logger.info("A socket was created");
+                if (event.type() ==  BridgeEventType.SOCKET_CREATED) {
+                    System.out.println("A new Socket was created");
                     message = "new";
                 }else if (event.type() == BridgeEventType.SOCKET_CLOSED) {
                     logger.info("A socket was closed");
@@ -83,7 +82,7 @@ public class AuctionServiceVerticle extends AbstractVerticle {
     }
 
     private ErrorHandler errorHandler() {
-        return ErrorHandler.create(true);
+        return ErrorHandler.create(vertx);
     }
 
     private StaticHandler staticHandler() {

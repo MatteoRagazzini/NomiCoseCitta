@@ -1,4 +1,4 @@
-package com.github.mwarc.realtimeauctions;
+package auctions;
 
 import io.vertx.core.shareddata.LocalMap;
 import io.vertx.core.shareddata.SharedData;

@@ -1,4 +1,4 @@
-package com.github.mwarc.realtimeauctions;
+package auctions;
 
 import java.math.BigDecimal;
 

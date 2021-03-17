@@ -1,4 +1,4 @@
-package com.github.mwarc.realtimeauctions;
+package auctions;
 
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
