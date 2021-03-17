@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'application'
 }
 
 group 'org.example'
@@ -9,6 +10,13 @@ repositories {
     mavenCentral()
 }
 
+ext {
+    javaMainClass = "UsersService"
+}
+
+application {
+    mainClassName = javaMainClass
+}
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
