@@ -1,2 +1,5 @@
-package model;public enum RoundState {
+package model;
+
+public enum RoundState {
+    PLAY, CHECK, FINISH;
 }

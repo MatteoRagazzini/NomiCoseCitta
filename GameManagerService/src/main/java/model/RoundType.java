@@ -1,2 +1,5 @@
-package model;public enum RoundTypes {
+package model;
+
+public enum RoundType {
+    STOP, TIMER;
 }
