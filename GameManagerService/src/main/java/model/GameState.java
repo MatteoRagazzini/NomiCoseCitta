@@ -1,2 +1,5 @@
-package model;public enum GameState {
+package model;
+
+public enum GameState {
+    WAITING, STARTED, FINISHED;
 }
