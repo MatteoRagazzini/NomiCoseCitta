@@ -6,11 +6,15 @@ import io.vertx.ext.web.handler.sockjs.SockJSBridgeOptions;
 import io.vertx.ext.web.handler.sockjs.SockJSHandler;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.ext.web.handler.StaticHandler;
+import rabbitMQ.Emitter;
+import rabbitMQ.MessageType;
 
 public class WebService extends AbstractVerticle {
 
-    public void start() {
+    private Emitter emitter;
 
+    public void start() {
+        emitter = new Emitter();
         Router router = Router.router(vertx);
         router.mountSubRouter("/eventbus", eventBusHandler());
         router.mountSubRouter("/api", gameApiRouter());
@@ -26,10 +30,6 @@ public class WebService extends AbstractVerticle {
 
     private Router gameApiRouter() {
 
-
-
-
-
         Router router = Router.router(vertx);
         router.route().handler(BodyHandler.create());
 
@@ -41,7 +41,9 @@ public class WebService extends AbstractVerticle {
         router.post("/game/:id").handler(context -> {
             // una volta creata la partita(settings e player)la mando come json al GameManager)
             System.out.println("POST");
-        }).respond(ctx -> ctx.response().sendFile("webroot/settings.html"));
+            System.out.println(context.getBodyAsJson().encodePrettily());
+            emitter.emit(MessageType.CREATE, context.getBodyAsJson().encode());
+        });
 
         router.get("/game/:id").handler(context -> {
             System.out.println("in PATCH");

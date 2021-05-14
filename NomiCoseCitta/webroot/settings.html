@@ -10,23 +10,22 @@
 
 <h2>Game settings</h2>
 
-<form action="/action_page.php">
+<form>
+    <label for="userID">Your Name:</label><br>
+    <input type="text" id="userID" name="userID"><br>
 
-        <label for="playerName">Your Name:</label><br>
-        <input type="text" id="playerName" name="playerName"><br>
+    <label for="numRounds">Num Rounds:</label>
+    <input type="number" id="numRounds" name="numRounds"><br>
 
-        <label for="numRounds">Num Rounds:</label>
-        <input type="number" id="numRounds" name="numRounds"><br>
+    <label for="numUsers">Num Players:</label>
+    <input type="number" id="numUsers" name="numUsers"><br>
 
-        <label for="numPlayers">Num Players:</label>
-        <input type="number" id="numPlayers" name="numPlayers"><br>
-
-        <p>Please select the tipe of rounds:</p>
-        <input type="radio" id="time" name="typeOfRounds" value="time">
-        <label for="time">Time</label><br>
-        <input type="radio" id="first_finish" name="typeOfRounds" value="first_finish">
-        <label for="first_finish">First finish</label><br>
-    <input type="button" onclick="create();" value="Create">
+    <p>Please select the tipe of rounds:</p>
+    <input type="radio" id="time" name="typeOfRounds" value="time">
+    <label for="time">Time</label><br>
+    <input type="radio" id="first_finish" name="typeOfRounds" value="first_finish">
+    <label for="first_finish">First finish</label><br>
+    <button type="submit">Create</button>
 </form>
 
 <p>If you click the "Submit" button, the form-data will be sent to a page called "/action_page.php".</p>
