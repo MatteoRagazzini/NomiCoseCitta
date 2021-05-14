@@ -54,4 +54,15 @@ public class Game {
     public void addRoundScores(Map<User, Integer> scores){
         this.scores.updateScore(scores);
     }
+
+    @Override
+    public String toString() {
+        return "Game{" +
+                "id='" + id + '\'' +
+                ", users=" + users +
+                ", settings=" + settings +
+                ", state=" + state +
+                ", scores=" + scores +
+                '}';
+    }
 }

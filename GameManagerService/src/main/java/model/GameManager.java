@@ -1,6 +1,7 @@
 package model;
 
 import com.rabbitmq.client.DeliverCallback;
+import presentation.Presentation;
 import rabbit.Consumer;
 import rabbit.MessageType;
 
@@ -19,9 +20,16 @@ public class GameManager {
 
     private DeliverCallback createGame(){
         return (consumerTag, message) -> {
+            System.out.println("IN CALLBACK");
             String msg = new String(message.getBody(), "UTF-8");
-            System.out.println(" [x] Received '" +
-                    message.getEnvelope().getRoutingKey() + "':'" + msg + "'");
+            try {
+                games.add(Presentation.deserializeAs(msg, Game.class));
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Impossibile deserializzare il gioco");
+            }
+
+            System.out.println("Aggiunto un gioco " + games.get(games.size()-1).toString());
         };
     }
 

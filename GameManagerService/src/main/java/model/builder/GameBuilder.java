@@ -26,7 +26,7 @@ public class GameBuilder {
     }
 
     public Game build(){
-        if (!gameID.isEmpty() && creator != null && settings != null){
+        if (gameID != null && !gameID.isEmpty() && creator != null && settings != null){
             return new Game(gameID, creator, settings);
         }
         throw new IllegalArgumentException("Not enough element to build a game");

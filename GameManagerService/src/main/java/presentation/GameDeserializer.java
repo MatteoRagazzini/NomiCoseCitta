@@ -21,16 +21,12 @@ public class GameDeserializer extends AbstractJsonDeserializer<Game> {
             if(jobj.has("userID") && jobj.get("userID").isJsonPrimitive()){
                 builder.setCreator(new User(jobj.get("userID").getAsString()));
             }
-
-            if(jobj.has("settings") && jobj.get("settings").isJsonObject()){
-                try {
+            try {
                     builder.setSettings(Presentation.deserializeAs(
-                            jobj.getAsJsonObject("settings").toString(), GameSettings.class));
+                            jobj.toString(), GameSettings.class));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
-
         }
         return builder.build();
     }
