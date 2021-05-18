@@ -1,4 +1,5 @@
 var createdGames = 0;
+var name = "";
 function  registerHandlerForUpdateGame(game_id) {
     var eventBus = new EventBus('http://localhost:8080/eventbus');
     eventBus.onopen = function () {
@@ -9,7 +10,7 @@ function  registerHandlerForUpdateGame(game_id) {
 
 function init() {
    var url = new URL(document.URL);
-   var name = url.searchParams.get("name");
+   name = url.searchParams.get("name");
    document.getElementById("userID").value = name;
    createdGames=createdGames+1;
    registerHandlerForUpdateGame(createdGames);
@@ -31,6 +32,8 @@ function handleSubmit(event) {
    xmlhttp.open("POST", "http://localhost:8080/api/game/" + createdGames);
    xmlhttp.setRequestHeader("Content-Type", "application/json");
    console.log("in create");
+   window.location.href = "waitingRoom.html?name="+ name + "&gameID=" + createdGames;
    xmlhttp.send(JSON.stringify(value));
+
 }
 
