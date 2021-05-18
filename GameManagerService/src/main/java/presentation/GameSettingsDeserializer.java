@@ -18,8 +18,8 @@ public class GameSettingsDeserializer extends AbstractJsonDeserializer<GameSetti
             if(jobj.has("numRounds") && jobj.get("numRounds").isJsonPrimitive()){
                 builder.setNumberOfRounds(jobj.get("numRounds").getAsInt());
             }
-            if(jobj.has("roundType") && jobj.get("roundType").isJsonPrimitive()){
-                builder.setRoundType(jobj.get("roundType").getAsInt() == RoundType.STOP.ordinal() ?
+            if(jobj.has("typeOfRounds") && jobj.get("typeOfRounds").isJsonPrimitive()){
+                builder.setRoundType(jobj.get("typeOfRounds").getAsString().equals("first_finish") ?
                         RoundType.STOP : RoundType.TIMER);
             }
             if(jobj.has("categories") && jobj.get("categories").isJsonArray()){
