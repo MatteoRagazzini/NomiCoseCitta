@@ -49,6 +49,7 @@ public class WebService extends AbstractVerticle {
 
         router.get("/game/create").handler(context -> {
             createdGame++;
+            System.out.println("Request update game id");
            context.response()
                    .putHeader("content-type", "text/plain")
                    .setStatusCode(200)
