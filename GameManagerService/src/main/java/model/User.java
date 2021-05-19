@@ -11,4 +11,11 @@ public class User {
     public String getNickname() {
         return nickname;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "nickname='" + nickname + '\'' +
+                '}';
+    }
 }
