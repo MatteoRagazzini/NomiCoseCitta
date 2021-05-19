@@ -1,7 +1,7 @@
 package rabbitMQ;
 
 public enum MessageType {
-    CREATE("create"), ACCESS("access"), START("start");
+    CREATE("create"), JOIN("join"), START("start");
 
     private final String type;
 

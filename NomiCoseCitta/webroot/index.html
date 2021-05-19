@@ -6,16 +6,18 @@
     <script src="js/vertx-eventbus.js"></script>
     <script src="js/functions.js"></script>
 </head>
-<body>
+<body onload="init()">
 
 <h2>Welcome to Nomi Cose e Citta'</h2>
 
 <form>
     <label for="playerName">Player name:</label><br>
     <input type="text" id="playerName" name="playerName"><br>
+    <label for="gameID">Game id:</label><br>
+    <input type="text" id="gameID" name="gameID"><br>
 
     <input type="button" onclick="newGame();" value="Create game">
-    <input type="button" onclick="join();" value="Join">
+    <button id="submit" type="submit" >Join</button>
 </form>
 </body>
 </html>

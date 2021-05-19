@@ -2,13 +2,6 @@ var createdGames = 0;
 var name = "";
 var host = "http://localhost:8080";
 
-function  registerHandlerForUpdateGame(game_id) {
-    var eventBus = new EventBus( host + '/eventbus');
-    eventBus.onopen = function () {
-        eventBus.registerHandler('game.' + game_id);
-        console.log("game id created")
-    }
-}
 
 function init() {
    var url = new URL(document.URL);
@@ -18,7 +11,6 @@ function init() {
     xmlhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
            createdGames = xmlhttp.responseText;
-           registerHandlerForUpdateGame(createdGames);
            document.getElementById("gameID").value = createdGames;
         }
     };
@@ -64,7 +56,7 @@ function handleSubmit(event) {
        value.categories = data.getAll("categories");
        console.log({value});
        var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-       xmlhttp.open("POST", host + "/api/game/" + createdGames);
+       xmlhttp.open("POST", host + "/api/game/create");
        xmlhttp.setRequestHeader("Content-Type", "application/json");
        console.log("in create");
        window.location.href = "waitingRoom.html?name=" + name + "&gameID=" + createdGames;

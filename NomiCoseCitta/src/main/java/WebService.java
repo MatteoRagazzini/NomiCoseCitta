@@ -38,10 +38,14 @@ public class WebService extends AbstractVerticle {
         router.route().consumes("application/json");
         router.route().produces("application/json");
 
-//        router.route("/game/:id").handler(handler::initAuctionInSharedData);
-//        router.get("/game/:id").handler(handler::handleGetAuction);
-        router.post("/game/:id").handler(context -> {
-            // una volta creata la partita(settings e player)la mando come json al GameManager)
+
+        router.post("/game/join/:id").handler(context -> {
+            System.out.println("POST in order to join a game");
+            emitter.emit(MessageType.JOIN, context.getBodyAsJson().encode());
+            context.vertx().eventBus().publish("game." + context.request().getParam("id"), context.getBodyAsJson().encode());
+        });
+
+        router.post("/game/create").handler(context -> {
             System.out.println("POST");
             System.out.println(context.getBodyAsJson().encodePrettily());
             emitter.emit(MessageType.CREATE, context.getBodyAsJson().encode());
@@ -56,7 +60,7 @@ public class WebService extends AbstractVerticle {
                    .end(createdGame.toString());
         });
 
-        return router;
+       return router;
     }
 
     private Router eventBusHandler() {
