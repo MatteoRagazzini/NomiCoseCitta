@@ -24,14 +24,22 @@
     <input type="number" id="numUsers" name="numUsers"><br>
 
     <p>Please select the tipe of rounds:</p>
-    <input type="radio" id="timer" name="typeOfRounds" value="timer">
-    <label for="timer">Timer</label><br>
-    <input type="radio" id="stop" name="typeOfRounds" value="stop">
-    <label for="stop">Stop</label><br>
+    <input type="radio" id="timer" name="roundsType" value="timer">
+    <label for="timer">timer</label><br>
+    <input type="radio" id="stop" name="roundsType" value="stop">
+    <label for="stop">stop</label><br>
 
     <p>Choose a set of categories:</p>
-    <ul id="dynamic-list"></ul>
-    <span></span>
+    <span id="categoriesSpan">
+    <input type="checkbox" name="categories" id="nomi" value="nomi" checked="true"/>
+    <label for="nomi">nomi</label>
+
+    <input type="checkbox" name="categories" id="cose" value="cose" checked="true"/>
+    <label for="cose">cose</label>
+
+    <input type="checkbox" name="categories" id="città" value="città" checked="true"/>
+    <label for="città">città</label>
+    </span>
 
     <button id="submit" type="submit">Create</button>
 </form>

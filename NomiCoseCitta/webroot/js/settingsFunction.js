@@ -20,13 +20,21 @@ function init() {
 }
 
 function addItem(){
-    var ul = document.getElementById("dynamic-list");
+    var span = document.getElementById("categoriesSpan");
     var candidate = document.getElementById("candidate");
-    var li = document.createElement("li");
-    li.setAttribute('id',candidate.value);
-    li.setAttribute("name", "categories");
-    li.appendChild(document.createTextNode(candidate.value));
-    ul.appendChild(li);
+    var checkbox = document.createElement("input");
+    checkbox.setAttribute("type","checkbox");
+    checkbox.setAttribute("name","categories");
+    checkbox.setAttribute("id",candidate.value);
+    checkbox.setAttribute("value",candidate.value);
+    checkbox.checked = true;
+
+    var label = document.createElement("label");
+    label.setAttribute("for",candidate.value);
+    label.innerText = candidate.value;
+    span.appendChild(checkbox);
+    span.appendChild(label);
+
     document.getElementById("candidate").value = "";
 
 }
@@ -41,7 +49,7 @@ function removeItem(){
 function handleSubmit(event) {
     // il problema è che quando io vorrei aggiungere le categorie, per qualche motivo scatta questo handler.
     //Bisognerebbe riuscire a differenziare gli eventi.
-   event.preventDefault();
+       event.preventDefault();
        const data = new FormData(event.target);
        const value = Object.fromEntries(data.entries());
        value.categories = data.getAll("categories");
