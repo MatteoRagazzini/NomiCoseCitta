@@ -24,12 +24,23 @@
     <input type="number" id="numUsers" name="numUsers"><br>
 
     <p>Please select the tipe of rounds:</p>
-    <input type="radio" id="time" name="typeOfRounds" value="time">
-    <label for="time">Time</label><br>
-    <input type="radio" id="first_finish" name="typeOfRounds" value="first_finish">
-    <label for="first_finish">First finish</label><br>
-    <button type="submit">Create</button>
+    <input type="radio" id="timer" name="typeOfRounds" value="timer">
+    <label for="timer">Time</label><br>
+    <input type="radio" id="stop" name="typeOfRounds" value="stop">
+    <label for="stop">First finish</label><br>
+
+    <p>Choose a set of categories:</p>
+    <ul id="dynamic-list"></ul>
+    <span></span>
+
+    <button id="submit" type="submit">Create</button>
 </form>
+
+<input type="text" id="candidate"/>
+<button onclick="addItem()">add item</button>
+<button onclick="removeItem()">remove item</button>
+
+
 
 </body>
 </html>
