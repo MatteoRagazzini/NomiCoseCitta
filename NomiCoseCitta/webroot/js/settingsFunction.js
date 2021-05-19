@@ -12,9 +12,16 @@ function init() {
    var url = new URL(document.URL);
    name = url.searchParams.get("name");
    document.getElementById("userID").value = name;
-   createdGames=createdGames+1;
-   registerHandlerForUpdateGame(createdGames);
-    document.getElementById("gameID").value = createdGames;
+    var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+    xmlhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+           createdGames = xmlhttp.responseText;
+           registerHandlerForUpdateGame(createdGames);
+           document.getElementById("gameID").value = createdGames;
+        }
+    };
+    xmlhttp.open("GET", "http://localhost:8080/api/game/create");
+    xmlhttp.send();
    var form = document.querySelector('form');
    form.addEventListener('submit', handleSubmit);
 }

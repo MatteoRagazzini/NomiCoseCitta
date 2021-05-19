@@ -12,9 +12,11 @@ import rabbitMQ.MessageType;
 public class WebService extends AbstractVerticle {
 
     private Emitter emitter;
+    private Integer createdGame;
 
     public void start() {
         emitter = new Emitter();
+        createdGame = 0;
         Router router = Router.router(vertx);
         router.mountSubRouter("/eventbus", eventBusHandler());
         router.mountSubRouter("/api", gameApiRouter());
@@ -45,9 +47,12 @@ public class WebService extends AbstractVerticle {
             emitter.emit(MessageType.CREATE, context.getBodyAsJson().encode());
         });
 
-        router.get("/game/:id").handler(context -> {
-            System.out.println("in PATCH");
-            System.out.println(context.request().getParam("id"));
+        router.get("/game/create").handler(context -> {
+            createdGame++;
+           context.response()
+                   .putHeader("content-type", "text/plain")
+                   .setStatusCode(200)
+                   .end(createdGame.toString());
         });
 
         return router;
