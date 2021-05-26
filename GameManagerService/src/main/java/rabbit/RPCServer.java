@@ -3,18 +3,19 @@ package rabbit;
 import com.rabbitmq.client.*;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 
 public class RPCServer {
 
     private static final String EXCHANGE_NAME = "Web";
-    private final Function<String, String> callback;
-    private final MessageType msgType;
+    private final Map<MessageType, Function<String, String>> map;
 
-    public RPCServer(Function<String, String> callback, MessageType msgType) {
-        this.callback = callback;
-        this.msgType = msgType;
+
+    public RPCServer(Map<MessageType, Function<String,String>> map) {
+        this.map = map;
         try {
             start();
         } catch (IOException e) {
@@ -22,6 +23,47 @@ public class RPCServer {
         } catch (TimeoutException e) {
             e.printStackTrace();
         }
+    }
+
+    private Map<String, Function<String,String>> createCallbackMap(Channel channel) throws IOException {
+        Map<String, Function<String,String>> callbackMap = new HashMap<>();
+        map.forEach((t,c)-> {
+            try {
+                String queueName = channel.queueDeclare().getQueue();
+                channel.queueBind(queueName, EXCHANGE_NAME, t.getType());
+                callbackMap.put(queueName, c);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        });
+        return callbackMap;
+    }
+
+    private DeliverCallback getDeliverCallback(String queue, Function<String,String> callback, Channel channel, Object monitor){
+       return  (consumerTag, delivery) -> {
+            AMQP.BasicProperties replyProps = new AMQP.BasicProperties
+                    .Builder()
+                    .correlationId(delivery.getProperties().getCorrelationId())
+                    .build();
+
+            String response = "";
+
+            try {
+                String message = new String(delivery.getBody(), "UTF-8");
+                response = callback.apply(message);
+            } catch (RuntimeException e) {
+                System.out.println(" [.] " + e.toString());
+            } finally {
+                System.out.println("RPC server responding " + response + " in queue " + delivery.getProperties().getReplyTo());
+                channel.basicPublish("", delivery.getProperties().getReplyTo(), replyProps, response.getBytes("UTF-8"));
+                channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+                // RabbitMq consumer worker thread notifies the RPC server owner thread
+                synchronized (monitor) {
+                    monitor.notify();
+                }
+            }
+        };
     }
 
 
@@ -33,37 +75,20 @@ public class RPCServer {
              Channel channel = connection.createChannel()) {
 
             channel.exchangeDeclare(EXCHANGE_NAME, "direct");
-            String queueName = channel.queueDeclare().getQueue();
-            channel.queueBind(queueName, EXCHANGE_NAME, msgType.getType());
+            var callback = createCallbackMap(channel);
+//            String queueName = channel.queueDeclare().getQueue();
+//            channel.queueBind(queueName, EXCHANGE_NAME, msgType.getType());
 
             System.out.println(" [x] Awaiting RPC requests");
 
             Object monitor = new Object();
-            DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-                AMQP.BasicProperties replyProps = new AMQP.BasicProperties
-                        .Builder()
-                        .correlationId(delivery.getProperties().getCorrelationId())
-                        .build();
-
-                String response = "";
-
+            callback.forEach((q,c) -> {
                 try {
-                    String message = new String(delivery.getBody(), "UTF-8");
-                    response = callback.apply(message);
-                } catch (RuntimeException e) {
-                    System.out.println(" [.] " + e.toString());
-                } finally {
-                    System.out.println("RPC server responding " + response);
-                    channel.basicPublish("", delivery.getProperties().getReplyTo(), replyProps, response.getBytes("UTF-8"));
-                    channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
-                    // RabbitMq consumer worker thread notifies the RPC server owner thread
-                    synchronized (monitor) {
-                        monitor.notify();
-                    }
+                    channel.basicConsume(q, false, getDeliverCallback(q,c,channel,monitor), (consumerTag -> { }));
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            };
-
-            channel.basicConsume(queueName, false, deliverCallback, (consumerTag -> { }));
+            });
             // Wait and be prepared to consume the message from RPC client.
             while (true) {
                 synchronized (monitor) {
