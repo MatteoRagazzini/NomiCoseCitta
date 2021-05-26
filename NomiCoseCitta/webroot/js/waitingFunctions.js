@@ -20,7 +20,7 @@ function init(){
     var name = url.searchParams.get("name");
     console.log(name);
     var gameID = url.searchParams.get("gameID");
-    document.getElementById(gameID).value = gameID;
+    document.getElementById("gameID").value = gameID;
     registerHandlerForUpdateGame(gameID);
     addItem(name);
 }
