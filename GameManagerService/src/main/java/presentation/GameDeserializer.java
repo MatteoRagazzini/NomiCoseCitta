@@ -5,19 +5,18 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import model.Game;
+import model.GameIDSupplier;
 import model.GameSettings;
 import model.User;
 import model.builder.GameBuilder;
 
 public class GameDeserializer extends AbstractJsonDeserializer<Game> {
+
     @Override
     protected Game deserializeJson(JsonElement jsonElement) {
         GameBuilder builder = new GameBuilder();
         if(jsonElement instanceof JsonObject){
             var jobj = (JsonObject) jsonElement;
-            if(jobj.has("gameID") && jobj.get("gameID").isJsonPrimitive()){
-                builder.setGameID(jobj.get("gameID").getAsString());
-            }
             if(jobj.has("userID") && jobj.get("userID").isJsonPrimitive()){
                 builder.setCreator(new User(jobj.get("userID").getAsString()));
             }
@@ -28,6 +27,7 @@ public class GameDeserializer extends AbstractJsonDeserializer<Game> {
                     e.printStackTrace();
                 }
         }
+        builder.setGameID(GameIDSupplier.getInstance().getNewGameID());
         return builder.build();
     }
 }
