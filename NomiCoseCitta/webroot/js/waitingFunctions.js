@@ -5,12 +5,21 @@ function  registerHandlerForUpdateGame(game_id) {
     var eventBus = new EventBus( host + '/eventbus');
 
     eventBus.onopen = function () {
-        eventBus.registerHandler('game.' + game_id, function(error, message){
-            var ul = document.getElementById("dynamic-list");
-            var li = document.createElement("li");
-            li.setAttribute('id',message);
-            li.appendChild(document.createTextNode(message));
-            ul.appendChild(li);
+        eventBus.registerHandler('game.' + game_id, function(error, jsonResponse){
+            if(jsonResponse!= null){
+                console.log(jsonResponse.body);
+                var js = JSON.parse(jsonResponse.body);
+                var ul = document.getElementById("dynamic-list");
+                ul.innerHTML= '';
+                js.users.forEach(user =>{
+                    console.log("adding users");
+                    var li = document.createElement("li");
+                    li.setAttribute('id',user);
+                    li.appendChild(document.createTextNode(user));
+                    ul.appendChild(li);
+                });
+            }
+
         });
     }
 }
@@ -20,7 +29,8 @@ function init(){
     var name = url.searchParams.get("name");
     console.log(name);
     var gameID = url.searchParams.get("gameID");
-    document.getElementById("gameID").value = gameID;
+    var gameIdParagraph = document.getElementById("gameID").textContent;
+    document.getElementById("gameID").innerHTML = gameIdParagraph + gameID;
     registerHandlerForUpdateGame(gameID);
     addItem(name);
 }

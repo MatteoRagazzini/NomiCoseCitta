@@ -49,24 +49,31 @@ public class WebService extends AbstractVerticle {
         router.route().consumes("application/json");
         router.route().produces("application/json");
 
-
-        router.post("/game/join/:id").handler(context -> {
-            System.out.println("POST in order to join a game");
-            emitter.call(MessageType.JOIN, context.getBodyAsJson().encode(), System.out::println);
-            context.vertx().eventBus().publish("game." + context.request().getParam("id"), context.getBodyAsJson().encode());
-        });
-
         router.post("/game/create").handler(context -> {
             System.out.println("POST");
             System.out.println(context.getBodyAsJson().encodePrettily());
             emitter.call(MessageType.CREATE, context.getBodyAsJson().encode(), response -> {
                 System.out.println("inside game create callback " + response);
                 context.response()
-                   .putHeader("content-type", "text/plain")
-                   .setStatusCode(200)
-                   .end(response);
+                        .putHeader("content-type", "text/plain")
+                        .setStatusCode(200)
+                        .end(response);
             });
         });
+
+        router.post("/game/join/:id").handler(context -> {
+            System.out.println("POST in order to join a game");
+            emitter.call(MessageType.JOIN, context.getBodyAsJson().encode(), response -> {
+                System.out.println("inside join callback " + response);
+                context.response()
+                        .putHeader("content-type", "text/plain")
+                        .setStatusCode(200)
+                        .end(response);
+                context.vertx().eventBus().publish("game." + context.request().getParam("id"), response);
+
+            });
+        });
+
 
 //        router.get("/game/create").handler(context -> {
 //            createdGame++;

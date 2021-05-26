@@ -43,18 +43,15 @@ public class RPCClient implements AutoCloseable {
             System.out.println(" [x] Sent '" + messageType.getType() + "':'" + message + "'");
 
             String ctag = null;
-            System.out.println("Waiting for Response in queue " + replyQueueName);
             channel.queuePurge(replyQueueName);
             channel.basicQos(1);
             ctag = channel.basicConsume(replyQueueName, true, (consumerTag, delivery) -> {
-                System.out.println("before if");
                 if (delivery.getProperties().getCorrelationId().equals(corrId)) {
                     System.out.println("in response callback");
                     responseConsumer.accept(new String(delivery.getBody(), "UTF-8"));
                 }
             }, consumerTag -> {});
             //channel.basicCancel(ctag);
-            System.out.println("TOLTO");
 
         } catch (IOException e) {
             e.printStackTrace();
