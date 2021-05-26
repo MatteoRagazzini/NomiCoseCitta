@@ -33,14 +33,26 @@ public class GameManager {
 
     private Function<String, String> joinGame() {
         return message -> {
-            System.out.println(message);
-            return "yes";
+            try {
+                var joinReq = Presentation.deserializeAs(message, JoinRequest.class);
+                var game = games.stream()
+                        .filter(g -> g.getId().equals(joinReq.getGameID()))
+                        .filter(g -> g.getState() != GameState.STARTED)
+                        .findFirst();
+                if(game.isPresent()){
+                    game.get().addNewUser(joinReq.getUser());
+                    return Presentation.serializerOf(Game.class).serialize(game.get());
+                }
+                return "null";
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return "null";
         };
     }
 
     private Function<String, String> createGame() {
         return (message) -> {
-            System.out.println("IN CALLBACK");
             try {
                 games.add(Presentation.deserializeAs(message, Game.class));
             } catch (Exception e) {

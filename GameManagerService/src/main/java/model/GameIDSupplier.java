@@ -15,6 +15,6 @@ public class GameIDSupplier {
 
     public String getNewGameID(){
         gameCreated++;
-        return "Game" + gameCreated;
+        return String.valueOf(gameCreated);
     }
 }
