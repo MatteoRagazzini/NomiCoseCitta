@@ -1,4 +1,4 @@
-var createdGames = 0;
+var gameID = 0;
 var name = "";
 var host = "http://localhost:8080";
 
@@ -10,8 +10,8 @@ function init() {
     var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
     xmlhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-           createdGames = xmlhttp.responseText;
-           document.getElementById("gameID").value = createdGames;
+           gameID = xmlhttp.responseText;
+           document.getElementById("gameID").value = gameID;
         }
     };
     xmlhttp.open("GET", host + "/api/game/create");
@@ -48,18 +48,21 @@ function removeItem(){
 }
 
 function handleSubmit(event) {
-    // il problema è che quando io vorrei aggiungere le categorie, per qualche motivo scatta questo handler.
-    //Bisognerebbe riuscire a differenziare gli eventi.
        event.preventDefault();
        const data = new FormData(event.target);
        const value = Object.fromEntries(data.entries());
        value.categories = data.getAll("categories");
        console.log({value});
        var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+        xmlhttp.onreadystatechange = function() {
+            if (this.readyState === 4 && this.status === 200) {
+                gameID = xmlhttp.responseText;
+            }
+        };
        xmlhttp.open("POST", host + "/api/game/create");
        xmlhttp.setRequestHeader("Content-Type", "application/json");
        console.log("in create");
-       window.location.href = "waitingRoom.html?name=" + name + "&gameID=" + createdGames;
+       window.location.href = "waitingRoom.html?name=" + name + "&gameID=" + gameID;
        xmlhttp.send(JSON.stringify(value));
 }
 
