@@ -7,15 +7,6 @@ function init() {
    var url = new URL(document.URL);
    name = url.searchParams.get("name");
    document.getElementById("userID").value = name;
-    var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-    xmlhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-           gameID = xmlhttp.responseText;
-           document.getElementById("gameID").value = gameID;
-        }
-    };
-    xmlhttp.open("GET", host + "/api/game/create");
-    xmlhttp.send();
    var form = document.querySelector('form');
    form.addEventListener('submit', handleSubmit);
 }
@@ -57,12 +48,13 @@ function handleSubmit(event) {
         xmlhttp.onreadystatechange = function() {
             if (this.readyState === 4 && this.status === 200) {
                 gameID = xmlhttp.responseText;
+                console.log("inside creation callback");
+                window.location.href = "waitingRoom.html?name=" + name + "&gameID=" + gameID;
             }
         };
        xmlhttp.open("POST", host + "/api/game/create");
        xmlhttp.setRequestHeader("Content-Type", "application/json");
        console.log("in create");
-       window.location.href = "waitingRoom.html?name=" + name + "&gameID=" + gameID;
        xmlhttp.send(JSON.stringify(value));
 }
 

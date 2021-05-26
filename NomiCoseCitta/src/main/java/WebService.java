@@ -60,6 +60,7 @@ public class WebService extends AbstractVerticle {
             System.out.println("POST");
             System.out.println(context.getBodyAsJson().encodePrettily());
             emitter.call(MessageType.CREATE, context.getBodyAsJson().encode(), response -> {
+                System.out.println("inside game create callback " + response);
                 context.response()
                    .putHeader("content-type", "text/plain")
                    .setStatusCode(200)
