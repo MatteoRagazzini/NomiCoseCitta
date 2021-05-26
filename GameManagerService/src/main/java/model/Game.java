@@ -14,7 +14,6 @@ public class Game {
     public Game(String id, User creator, GameSettings settings) {
         this.id = id;
         this.users = new ArrayList<>();
-        this.users.add(creator);
         this.settings = settings;
         this.scores = new GameScores();
         this.state = GameState.WAITING;
