@@ -28,7 +28,6 @@ public class WebService extends AbstractVerticle {
         } catch (TimeoutException e) {
             e.printStackTrace();
         }
-        createdGame = 0;
         Router router = Router.router(vertx);
         router.mountSubRouter("/eventbus", eventBusHandler());
         router.mountSubRouter("/api", gameApiRouter());
@@ -60,17 +59,22 @@ public class WebService extends AbstractVerticle {
         router.post("/game/create").handler(context -> {
             System.out.println("POST");
             System.out.println(context.getBodyAsJson().encodePrettily());
-            emitter.call(MessageType.CREATE, context.getBodyAsJson().encode(), System.out::println);
-        });
-
-        router.get("/game/create").handler(context -> {
-            createdGame++;
-            System.out.println("Request update game id");
-           context.response()
+            emitter.call(MessageType.CREATE, context.getBodyAsJson().encode(), response -> {
+                context.response()
                    .putHeader("content-type", "text/plain")
                    .setStatusCode(200)
-                   .end(createdGame.toString());
+                   .end(response);
+            });
         });
+
+//        router.get("/game/create").handler(context -> {
+//            createdGame++;
+//            System.out.println("Request update game id");
+//           context.response()
+//                   .putHeader("content-type", "text/plain")
+//                   .setStatusCode(200)
+//                   .end(createdGame.toString());
+//        });
 
        return router;
     }
