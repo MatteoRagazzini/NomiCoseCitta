@@ -8,14 +8,26 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.ext.web.handler.StaticHandler;
 import rabbitMQ.Emitter;
 import rabbitMQ.MessageType;
+import rabbitMQ.RPCClient;
+
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 public class WebService extends AbstractVerticle {
 
-    private Emitter emitter;
+    //private Emitter emitter;
     private Integer createdGame;
+    private RPCClient emitter;
 
     public void start() {
-        emitter = new Emitter();
+        //emitter = new Emitter();
+        try {
+            emitter = new RPCClient();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
         createdGame = 0;
         Router router = Router.router(vertx);
         router.mountSubRouter("/eventbus", eventBusHandler());
@@ -41,14 +53,14 @@ public class WebService extends AbstractVerticle {
 
         router.post("/game/join/:id").handler(context -> {
             System.out.println("POST in order to join a game");
-            emitter.emit(MessageType.JOIN, context.getBodyAsJson().encode());
+            emitter.call(MessageType.JOIN, context.getBodyAsJson().encode(), System.out::println);
             context.vertx().eventBus().publish("game." + context.request().getParam("id"), context.getBodyAsJson().encode());
         });
 
         router.post("/game/create").handler(context -> {
             System.out.println("POST");
             System.out.println(context.getBodyAsJson().encodePrettily());
-            emitter.emit(MessageType.CREATE, context.getBodyAsJson().encode());
+            emitter.call(MessageType.CREATE, context.getBodyAsJson().encode(), System.out::println);
         });
 
         router.get("/game/create").handler(context -> {
