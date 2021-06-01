@@ -39,7 +39,7 @@ public class GameManager {
                         .filter(g -> g.getId().equals(joinReq.getGameID()))
                         .filter(g -> g.getState() != GameState.STARTED)
                         .findFirst();
-                if(game.isPresent()){
+                if(game.isPresent() && !game.get().gameCouldStart()){
                     game.get().addNewUser(joinReq.getUser());
                     return Presentation.serializerOf(Game.class).serialize(game.get());
                 }

@@ -1,28 +1,42 @@
 
 var host = "http://localhost:8080";
 
-function  registerHandlerForUpdateGame(name, game_id) {
+function  registerHandlerForUpdateGame(name, gameID) {
     var eventBus = new EventBus( host + '/eventbus');
     eventBus.onopen = function () {
-        eventBus.registerHandler('game.' + game_id, function(error, jsonResponse){
-            if(jsonResponse!= null){
+        eventBus.registerHandler('game.' + gameID, function (error, jsonResponse) {
+            if (jsonResponse != null) {
                 console.log(jsonResponse.body);
                 var js = JSON.parse(jsonResponse.body);
                 var ul = document.getElementById("dynamic-list");
-                ul.innerHTML= '';
-                js.users.forEach(user =>{
+                ul.innerHTML = '';
+                js.users.forEach(user => {
                     console.log("adding users");
                     var li = document.createElement("li");
-                    li.setAttribute('id',user);
+                    li.setAttribute('id', user);
                     li.appendChild(document.createTextNode(user));
                     ul.appendChild(li);
                 });
+                if (js.couldStart === true){
+                    document.getElementById("startButton").disabled = false;
+                }
             }
 
         });
 
-        joinRequest(name, game_id);
+        joinRequest(name, gameID);
+        eventBus.registerHandler("game." + gameID + "c", function (error, msg){
+            console.log("disconnected " + msg);
+        });
     }
+
+    eventBus.onclose = function (){
+        console.log(name + "si è disconnesso");
+        eventBus.send("game." + gameID, name);
+
+    }
+
+
 }
 
 function init(){
@@ -43,8 +57,9 @@ function joinRequest(name, gameID){
     var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
     xmlhttp.onreadystatechange = function() {
     if (this.readyState === 4 && this.status === 200) {
-    if(xmlhttp.responseText === "null"){
-    alert("You cannot join this game!");
+    if(xmlhttp.responseText === "null") {
+        alert("You cannot join this game!");
+        window.location.href = "index.html";
     }
     }
     };
