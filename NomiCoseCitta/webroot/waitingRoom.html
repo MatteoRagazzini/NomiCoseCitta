@@ -8,6 +8,7 @@
     <script src="js/waitingFunctions.js"></script>
 </head>
 <body onload="init()">
+<div id="waiting" style = "visibility: visible">
 <h2>Waiting for other players to join!</h2>
 
 <p id="gameID">Game id: </p><br>
@@ -15,6 +16,11 @@
 <ul id="dynamic-list"></ul>
 
 <input type="button" id="startButton" disabled="disabled" value="start" onclick="startGame()">
+
+</div>
+<div id = "game"  style = "visibility: hidden">
+    <h2>In Game</h2>
+</div>
 
 </body>
 </html>

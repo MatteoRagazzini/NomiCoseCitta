@@ -105,7 +105,7 @@ public class WebService extends AbstractVerticle {
 
     private Router eventBusHandler() {
         SockJSBridgeOptions options = new SockJSBridgeOptions ()
-                .addOutboundPermitted(new PermittedOptions().setAddressRegex("game\\.[0-9]+"));
+                .addOutboundPermitted(new PermittedOptions().setAddressRegex("game\\.[0-9]+[\\s\\S]*"));
         return SockJSHandler.create(vertx).bridge(options, event -> {
             if (event.type() == BridgeEventType.SOCKET_CREATED) {
                 System.out.println("A socket was created");

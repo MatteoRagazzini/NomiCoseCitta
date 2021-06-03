@@ -24,10 +24,13 @@ function  registerHandlerForUpdateGame(name, gameID) {
 
         });
 
-        eventBus.registerHandler('game.' + gameID + "/start", function (error, jsonResponse) {
+        eventBus.registerHandler('game.' + gameID + '/start', function (error, jsonResponse) {
+            console.log("inside start eventbus handler");
             if (jsonResponse != null) {
                 console.log(jsonResponse.body);
                 var js = JSON.parse(jsonResponse.body);
+                document.getElementById("waiting").style.visibility = "hidden" ;
+                document.getElementById("game").style.visibility = "visible" ;
             }
         });
 
@@ -94,11 +97,6 @@ function startGame() {
     var req = {};
     req.gameID = gameID;
     var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-    xmlhttp.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) {
-                window.location.href = "game.html?name=" + name + "&gameID=" + gameID;
-        }
-    };
     xmlhttp.open("POST", host + "/api/game/start/" + gameID);
     xmlhttp.setRequestHeader("Content-Type", "application/json");
     console.log("in start");
