@@ -49,7 +49,7 @@ function handleSubmit(event) {
             if (this.readyState === 4 && this.status === 200) {
                 gameID = xmlhttp.responseText;
                 console.log("inside creation callback");
-                window.location.href = "waitingRoom.html?name=" + name + "&gameID=" + gameID;
+                window.location.href = "game.html?name=" + name + "&gameID=" + gameID;
             }
         };
        xmlhttp.open("POST", host + "/api/game/create");

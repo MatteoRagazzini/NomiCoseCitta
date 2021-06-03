@@ -18,6 +18,6 @@ function join(event){
  const data = new FormData(event.target);
  const value = Object.fromEntries(data.entries());
  console.log({value});
- window.location.href = "waitingRoom.html?name=" + name + "&gameID=" + gameID;
+ window.location.href = "game.html?name=" + name + "&gameID=" + gameID;
 
 }
