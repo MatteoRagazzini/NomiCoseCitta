@@ -1,5 +1,6 @@
 
 var host = "http://localhost:8080";
+var gameID = "";
 
 function  registerHandlerForUpdateGame(name, gameID) {
     var eventBus = new EventBus( host + '/eventbus');
@@ -24,19 +25,34 @@ function  registerHandlerForUpdateGame(name, gameID) {
 
         });
 
-        joinRequest(name, gameID);
-        eventBus.registerHandler("game." + gameID + "c", function (error, msg){
-            console.log("disconnected " + msg);
+        eventBus.registerHandler('game.' + gameID + "/start", function (error, jsonResponse) {
+            if (jsonResponse != null) {
+                console.log(jsonResponse.body);
+                var js = JSON.parse(jsonResponse.body);
+            }
         });
+
+        joinRequest(name, gameID);
+
+
+
     }
 
-    eventBus.onclose = function (){
-        console.log(name + "si è disconnesso");
-        eventBus.send("game." + gameID, name);
-
-    }
-
-
+    // eventBus.onclose = function (){
+    //     var text = '{ "gameID": gameID , "playerName": name }';
+    //     var req = JSON.parse(text);
+    //     console.log(name + "si è disconnesso");
+    //     var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+    //     xmlhttp.onreadystatechange = function() {
+    //         if (this.readyState === 4 && this.status === 200) {
+    //            console.log("disconnected successfully")
+    //         }
+    //     };
+    //     xmlhttp.open("POST", host + "/api/game/leave/" + gameID);
+    //     xmlhttp.setRequestHeader("Content-Type", "application/json");
+    //     console.log("in leave");
+    //     xmlhttp.send(JSON.stringify(req));
+    // }
 }
 
 function init(){
@@ -44,7 +60,7 @@ function init(){
     var name = url.searchParams.get("name");
     console.log(name);
     addItem(name);
-    var gameID = url.searchParams.get("gameID");
+    gameID = url.searchParams.get("gameID");
     var gameIdParagraph = document.getElementById("gameID").textContent;
     document.getElementById("gameID").innerHTML = gameIdParagraph + gameID;
     registerHandlerForUpdateGame(name, gameID);
@@ -77,3 +93,20 @@ function addItem(name){
     li.appendChild(document.createTextNode(name));
     ul.appendChild(li);
 }
+
+function startGame() {
+    var req = {};
+    req.gameID = gameID;
+    var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+    xmlhttp.onreadystatechange = function() {
+        if (this.readyState === 4 && this.status === 200) {
+                window.location.href = "game.html?name=" + name + "&gameID=" + gameID;
+        }
+    };
+    xmlhttp.open("POST", host + "/api/game/start/" + gameID);
+    xmlhttp.setRequestHeader("Content-Type", "application/json");
+    console.log("in start");
+    xmlhttp.send(JSON.stringify(req));
+}
+
+

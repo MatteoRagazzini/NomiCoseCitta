@@ -50,7 +50,7 @@ public class WebService extends AbstractVerticle {
         router.route().produces("application/json");
 
         router.post("/game/create").handler(context -> {
-            System.out.println("POST");
+            System.out.println("POST for create");
             System.out.println(context.getBodyAsJson().encodePrettily());
             emitter.call(MessageType.CREATE, context.getBodyAsJson().encode(), response -> {
                 System.out.println("inside game create callback " + response);
@@ -58,6 +58,32 @@ public class WebService extends AbstractVerticle {
                         .putHeader("content-type", "text/plain")
                         .setStatusCode(200)
                         .end(response);
+            });
+        });
+
+//        router.post("/game/leave:id").handler(context -> {
+//            System.out.println("POST for leaving");
+//            System.out.println(context.getBodyAsJson().encodePrettily());
+//            emitter.call(MessageType.LEAVE, context.getBodyAsJson().encode(), response -> {
+//                System.out.println("inside game leave callback " + response);
+//                context.response()
+//                        .putHeader("content-type", "text/plain")
+//                        .setStatusCode(200)
+//                        .end(response);
+//                context.vertx().eventBus().publish("game." + context.request().getParam("id"), response);
+//            });
+//        });
+
+        router.post("/game/start/:id").handler(context -> {
+            System.out.println("POST for starting the game");
+            System.out.println(context.getBodyAsJson().encodePrettily());
+            emitter.call(MessageType.START, context.getBodyAsJson().encode(), response -> {
+                System.out.println("inside game start callback " + response);
+                context.response()
+                        .putHeader("content-type", "text/plain")
+                        .setStatusCode(200)
+                        .end(response);
+                context.vertx().eventBus().publish("game." + context.request().getParam("id")+ "/start", response);
             });
         });
 
