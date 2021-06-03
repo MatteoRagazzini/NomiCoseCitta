@@ -74,16 +74,6 @@ public class WebService extends AbstractVerticle {
             });
         });
 
-
-//        router.get("/game/create").handler(context -> {
-//            createdGame++;
-//            System.out.println("Request update game id");
-//           context.response()
-//                   .putHeader("content-type", "text/plain")
-//                   .setStatusCode(200)
-//                   .end(createdGame.toString());
-//        });
-
        return router;
     }
 
@@ -93,6 +83,13 @@ public class WebService extends AbstractVerticle {
         return SockJSHandler.create(vertx).bridge(options, event -> {
             if (event.type() == BridgeEventType.SOCKET_CREATED) {
                 System.out.println("A socket was created");
+            }
+            if (event.type() == BridgeEventType.SOCKET_CLOSED) {
+                System.out.println("A socket was closed");
+                System.out.println(event.getRawMessage());
+            }
+            if(event.type() == BridgeEventType.SEND){
+                System.out.println(event.getRawMessage());
             }
             event.complete(true);
         });

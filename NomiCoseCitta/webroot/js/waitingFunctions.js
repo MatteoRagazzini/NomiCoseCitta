@@ -11,7 +11,6 @@ function  registerHandlerForUpdateGame(name, game_id) {
                 var ul = document.getElementById("dynamic-list");
                 ul.innerHTML= '';
                 js.users.forEach(user =>{
-                    console.log("adding users");
                     var li = document.createElement("li");
                     li.setAttribute('id',user);
                     li.appendChild(document.createTextNode(user));
@@ -22,7 +21,13 @@ function  registerHandlerForUpdateGame(name, game_id) {
         });
 
         joinRequest(name, game_id);
+
+        eventBus.onclose = function(){
+        eventBus.send(name + "disconnected")
+        }
     }
+
+
 }
 
 function init(){
@@ -42,11 +47,11 @@ function joinRequest(name, gameID){
     req.gameID = gameID;
     var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
     xmlhttp.onreadystatechange = function() {
-    if (this.readyState === 4 && this.status === 200) {
-    if(xmlhttp.responseText === "null"){
-    alert("You cannot join this game!");
-    }
-    }
+        if (this.readyState === 4 &&
+               this.status === 200 &&
+               xmlhttp.responseText === "null") {
+            alert("You cannot join this game!");
+        }
     };
     xmlhttp.open("POST", host + "/api/game/join/" + gameID);
     xmlhttp.setRequestHeader("Content-Type", "application/json");
