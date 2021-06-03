@@ -3,8 +3,12 @@ package presentation;
 
 import model.Game;
 import model.GameSettings;
-import model.request.JoinRequest;
+import model.request.UserInLobbyRequest;
 import model.request.StartRequest;
+import presentation.deserializer.*;
+import presentation.serializer.GameSettingsSerializer;
+import presentation.serializer.GameStatusSerializer;
+import presentation.serializer.Serializer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +25,7 @@ public class Presentation {
     private static void registerAllSerializersAndDeserializers() {
         deserializers.put(Game.class, new GameDeserializer());
         deserializers.put(GameSettings.class, new GameSettingsDeserializer());
-        deserializers.put(JoinRequest.class, new JoinRequestDeserializer());
+        deserializers.put(UserInLobbyRequest.class, new UserInLobbyRequestDeserializer());
         deserializers.put(StartRequest.class, new StartRequestDeserializer());
         serializers.put(Game.class, new GameStatusSerializer());
         serializers.put(GameSettings.class, new GameSettingsSerializer());

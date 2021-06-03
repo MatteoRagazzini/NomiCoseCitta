@@ -3,7 +3,8 @@ package rabbit;
 public enum MessageType {
     CREATE("create", "create_response"),
     JOIN("join", "join_response"),
-    START("start", "start_response");
+    START("start", "start_response"),
+    DISCONNECT("disconnect", "disconnect_response");
 
     private final String type;
     private final String responseType;

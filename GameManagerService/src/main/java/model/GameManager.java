@@ -1,13 +1,17 @@
 package model;
 
-import model.request.JoinRequest;
+import model.request.UserInLobbyRequest;
 import model.request.StartRequest;
 import presentation.Presentation;
+
 import rabbit.MessageType;
 import rabbit.RPCServer;
 
 import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class GameManager {
 
@@ -23,9 +27,23 @@ public class GameManager {
     private Map<MessageType, Function<String,String>> getCallbackMap(){
         Map<MessageType, Function<String,String>> map = new HashMap<>();
         map.put(MessageType.JOIN, joinGame());
+        map.put(MessageType.DISCONNECT, disconnectGame());
         map.put(MessageType.CREATE, createGame());
         map.put(MessageType.START, startGame());
         return map;
+    }
+
+    private Function<String, String> createGame() {
+        return (message) -> {
+            try {
+                games.add(Presentation.deserializeAs(message, Game.class));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            System.out.println("Aggiunto un gioco " + getLastGame());
+            return getLastGame().getId();
+        };
     }
 
     private Function<String, String> startGame() {
@@ -44,13 +62,13 @@ public class GameManager {
         };
     }
 
-    private Function<String, String> joinGame() {
+    private Function<String, String> lobbyRequest(BiFunction<User, Game, Boolean> requestHandler){
         return message -> {
             try {
-                var joinReq = Presentation.deserializeAs(message, JoinRequest.class);
-                var game = getGameById(joinReq.getGameID());
-                if(game.isPresent() && !game.get().isFull()){
-                    game.get().addNewUser(joinReq.getUser());
+                var request = Presentation.deserializeAs(message, UserInLobbyRequest.class);
+                var game = getGameById(request.getGameID());
+                if(game.isPresent() && !game.get().isFull()
+                        && requestHandler.apply(request.getUser(), game.get())){
                     return Presentation.serializerOf(Game.class).serialize(game.get());
                 }
             } catch (Exception e) {
@@ -60,18 +78,14 @@ public class GameManager {
         };
     }
 
-    private Function<String, String> createGame() {
-        return (message) -> {
-            try {
-                games.add(Presentation.deserializeAs(message, Game.class));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            System.out.println("Aggiunto un gioco " + getLastGame());
-            return getLastGame().getId();
-        };
+    private Function<String, String> joinGame() {
+        return lobbyRequest((user, game) -> game.addNewUser(user));
     }
+
+    private Function<String, String> disconnectGame() {
+        return lobbyRequest((user, game) -> game.removeUser(user));
+    }
+
 
     private Game getLastGame(){
         return games.get(games.size() - 1);

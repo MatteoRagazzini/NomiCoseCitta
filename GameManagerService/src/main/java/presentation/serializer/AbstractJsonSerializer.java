@@ -1,4 +1,4 @@
-package presentation;
+package presentation.serializer;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
