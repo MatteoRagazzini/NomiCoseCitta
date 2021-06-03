@@ -41,8 +41,7 @@ function  registerHandlerForUpdateGame(name, gameID) {
     eventbus_mio.onclose = function (){
         var obj = new Object();
         obj.gameID = gameID;
-        obj.user  = name;
-        var req= JSON.stringify(obj);
+        obj.userID  = name;
         console.log(name + "si è disconnesso");
         var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
         xmlhttp.onreadystatechange = function() {
@@ -53,7 +52,7 @@ function  registerHandlerForUpdateGame(name, gameID) {
         xmlhttp.open("POST", host + "/api/game/disconnect/" + gameID);
         xmlhttp.setRequestHeader("Content-Type", "application/json");
         console.log("in leave");
-        xmlhttp.send(JSON.stringify(req));
+        xmlhttp.send(JSON.stringify(obj));
     }
 }
 
@@ -66,6 +65,10 @@ function init(){
     var gameIdParagraph = document.getElementById("gameID").textContent;
     document.getElementById("gameID").innerHTML = gameIdParagraph + gameID;
     registerHandlerForUpdateGame(name, gameID);
+    window.addEventListener('beforeunload', function (e) {
+        e.preventDefault();
+        close1();
+    });
 }
 
 function joinRequest(name, gameID){
@@ -106,8 +109,10 @@ function startGame() {
     xmlhttp.send(JSON.stringify(req));
 }
 
-function  close1() {
+
+function close1(){
     eventbus_mio.close();
 }
+
 
 
