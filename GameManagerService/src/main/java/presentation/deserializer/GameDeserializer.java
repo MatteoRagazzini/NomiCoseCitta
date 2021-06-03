@@ -1,14 +1,13 @@
-package presentation;
+package presentation.deserializer;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonPrimitive;
 import model.Game;
 import model.GameIDSupplier;
 import model.GameSettings;
 import model.User;
 import model.builder.GameBuilder;
+import presentation.Presentation;
 
 public class GameDeserializer extends AbstractJsonDeserializer<Game> {
 

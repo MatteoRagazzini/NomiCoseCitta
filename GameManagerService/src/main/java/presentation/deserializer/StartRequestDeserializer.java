@@ -1,8 +1,7 @@
-package presentation;
+package presentation.deserializer;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import model.User;
 import model.request.StartRequest;
 
 public class StartRequestDeserializer extends AbstractJsonDeserializer{

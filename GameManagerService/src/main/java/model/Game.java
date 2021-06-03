@@ -34,6 +34,11 @@ public class Game {
         return false;
     }
 
+    public boolean removeUser(User user){
+        return users.remove(user);
+    }
+
+
     public GameSettings getSettings() {
         return settings;
     }

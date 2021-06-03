@@ -1,14 +1,14 @@
-package presentation;
+package presentation.deserializer;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import model.request.JoinRequest;
+import model.request.UserInLobbyRequest;
 import model.User;
 
-public class JoinRequestDeserializer extends AbstractJsonDeserializer{
+public class UserInLobbyRequestDeserializer extends AbstractJsonDeserializer{
     @Override
     protected Object deserializeJson(JsonElement jsonElement) {
-        var req = new JoinRequest();
+        var req = new UserInLobbyRequest();
         if(jsonElement.isJsonObject()){
             var jobj = (JsonObject) jsonElement;
             if(jobj.has("userID") && jobj.get("userID").isJsonPrimitive()){

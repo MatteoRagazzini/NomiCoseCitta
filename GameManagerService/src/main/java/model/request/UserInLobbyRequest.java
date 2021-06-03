@@ -2,15 +2,15 @@ package model.request;
 
 import model.User;
 
-public class JoinRequest {
+public class UserInLobbyRequest {
 
     private User user;
     private String gameID;
 
-    public JoinRequest() {
+    public UserInLobbyRequest() {
     }
 
-    public JoinRequest(User user, String gameID) {
+    public UserInLobbyRequest(User user, String gameID) {
         this.user = user;
         this.gameID = gameID;
     }
