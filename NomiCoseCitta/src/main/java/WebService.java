@@ -113,8 +113,17 @@ public class WebService extends AbstractVerticle {
                 System.out.println("A socket was created");
             }
             if (event.type() == BridgeEventType.SOCKET_CLOSED) {
-                System.out.println("A socket was closed");
+                event.socket().close();
+                System.out.println("A socket was closed" + event.socket().uri());
             }
+            if(event.type() == BridgeEventType.SOCKET_PING){
+                System.out.println("Ping socket");
+            }
+            if (event.type() == BridgeEventType.SOCKET_IDLE) {
+                event.socket().close();
+                System.out.println("A socket is idle");
+            }
+
             event.complete(true);
         });
     }
