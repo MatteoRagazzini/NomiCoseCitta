@@ -42,8 +42,20 @@ public class Game {
         return users.size() == settings.getNumberOfUsers();
     }
 
+    public boolean isFull(){
+        return gameCouldStart();
+    }
+
     public GameState getState() {
         return state;
+    }
+
+    public void setState(GameState state) {
+        this.state = state;
+    }
+
+    public boolean isStarted(){
+        return state == GameState.STARTED;
     }
 
     public GameScores getScores() {

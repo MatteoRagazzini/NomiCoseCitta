@@ -2,15 +2,14 @@ package presentation;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import model.GameSettings;
-import model.JoinRequest;
+import model.request.JoinRequest;
 import model.User;
 
 public class JoinRequestDeserializer extends AbstractJsonDeserializer{
     @Override
     protected Object deserializeJson(JsonElement jsonElement) {
         var req = new JoinRequest();
-        if(jsonElement instanceof JsonObject){
+        if(jsonElement.isJsonObject()){
             var jobj = (JsonObject) jsonElement;
             if(jobj.has("userID") && jobj.get("userID").isJsonPrimitive()){
                 req.setUser(new User(jobj.get("userID").getAsString()));

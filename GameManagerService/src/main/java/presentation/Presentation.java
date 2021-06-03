@@ -3,7 +3,8 @@ package presentation;
 
 import model.Game;
 import model.GameSettings;
-import model.JoinRequest;
+import model.request.JoinRequest;
+import model.request.StartRequest;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +22,9 @@ public class Presentation {
         deserializers.put(Game.class, new GameDeserializer());
         deserializers.put(GameSettings.class, new GameSettingsDeserializer());
         deserializers.put(JoinRequest.class, new JoinRequestDeserializer());
+        deserializers.put(StartRequest.class, new StartRequestDeserializer());
         serializers.put(Game.class, new GameStatusSerializer());
+        serializers.put(GameSettings.class, new GameSettingsSerializer());
     }
 
     public static <T> Serializer<T> serializerOf(Class<T> klass) {

@@ -1,4 +1,6 @@
-package model;
+package model.request;
+
+import model.User;
 
 public class JoinRequest {
 
