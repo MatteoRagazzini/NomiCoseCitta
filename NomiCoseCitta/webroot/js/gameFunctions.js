@@ -29,8 +29,28 @@ function  registerHandlerForUpdateGame(name, gameID) {
             if (jsonResponse != null) {
                 console.log(jsonResponse.body);
                 var js = JSON.parse(jsonResponse.body);
-                document.getElementById("waiting").style.visibility = "hidden" ;
-                document.getElementById("game").style.visibility = "visible" ;
+                var span = document.getElementById("categories");
+                js.categories.forEach(category => {
+                    var label = document.createElement("label");
+                    label.setAttribute("for", category);
+                    label.appendChild(document.createTextNode(category));
+
+                    var br = document.createElement("br");
+                    var br1 = document.createElement("br");
+
+                    var inputElement = document.createElement("input");
+                    inputElement.setAttribute("id", category);
+                    inputElement.setAttribute("type", "text");
+                    inputElement.setAttribute("name", category);
+
+                    span.appendChild(label);
+                    span.appendChild(br);
+                    span.appendChild(inputElement);
+                    span.appendChild(br1);
+
+                });
+                document.getElementById("waiting").style.display = "none" ;
+                document.getElementById("game").style.display = "inline" ;
             }
         });
 
@@ -69,6 +89,8 @@ function init(){
     var gameIdParagraph = document.getElementById("gameID").textContent;
     document.getElementById("gameID").innerHTML = gameIdParagraph + gameID;
     registerHandlerForUpdateGame(name, gameID);
+    var form = document.querySelector('form');
+    form.addEventListener('submit', handleSubmit);
 }
 
 function joinRequest(name, gameID){
@@ -109,11 +131,26 @@ function startGame() {
     xmlhttp.send(JSON.stringify(req));
 }
 
-
 function close1(){
     alert("stai per chiudere la pagina");
     eventbus_mio.close();
 }
 
+function handleSubmit(event) {
+    event.preventDefault();
+    const data = new FormData(event.target);
+    const value = Object.fromEntries(data.entries());
+    console.log({value});
+    // var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+    // xmlhttp.onreadystatechange = function() {
+    //     if (this.readyState === 4 && this.status === 200) {
+    //     }
+    // };
+    // xmlhttp.open("POST", host + "/api/game/round");
+    // xmlhttp.setRequestHeader("Content-Type", "application/json");
+    // console.log("in create");
+    // xmlhttp.send(JSON.stringify(value));
+}
+ew
 
 
