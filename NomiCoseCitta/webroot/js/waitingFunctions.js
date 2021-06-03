@@ -1,5 +1,5 @@
 
-var host = "http://192.168.28.100:8080";
+var host = "http://localhost:8080";
 var gameID = "";
 var eventbus_mio;
 
