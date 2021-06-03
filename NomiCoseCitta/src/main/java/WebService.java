@@ -86,10 +86,6 @@ public class WebService extends AbstractVerticle {
             }
             if (event.type() == BridgeEventType.SOCKET_CLOSED) {
                 System.out.println("A socket was closed");
-                System.out.println(event.getRawMessage());
-            }
-            if(event.type() == BridgeEventType.SEND){
-                System.out.println(event.getRawMessage());
             }
             event.complete(true);
         });
