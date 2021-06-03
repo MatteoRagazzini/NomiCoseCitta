@@ -67,8 +67,7 @@ public class GameManager {
             try {
                 var request = Presentation.deserializeAs(message, UserInLobbyRequest.class);
                 var game = getGameById(request.getGameID());
-                if(game.isPresent() && !game.get().isFull()
-                        && requestHandler.apply(request.getUser(), game.get())){
+                if(game.isPresent() && requestHandler.apply(request.getUser(), game.get())){
                     return Presentation.serializerOf(Game.class).serialize(game.get());
                 }
             } catch (Exception e) {
@@ -79,7 +78,7 @@ public class GameManager {
     }
 
     private Function<String, String> joinGame() {
-        return lobbyRequest((user, game) -> game.addNewUser(user));
+        return lobbyRequest((user, game) -> !game.isFull() &&  game.addNewUser(user));
     }
 
     private Function<String, String> disconnectGame() {
