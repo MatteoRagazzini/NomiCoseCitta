@@ -3,7 +3,7 @@ var host = "http://localhost:8080";
 var gameID = "";
 
 function  registerHandlerForUpdateGame(name, gameID) {
-    var eventBus = new EventBus( host + '/eventbus');
+    var eventBus = new EventBus(host + '/eventbus');
     eventBus.onopen = function () {
         eventBus.registerHandler('game.' + gameID, function (error, jsonResponse) {
             if (jsonResponse != null) {
@@ -12,13 +12,12 @@ function  registerHandlerForUpdateGame(name, gameID) {
                 var ul = document.getElementById("dynamic-list");
                 ul.innerHTML = '';
                 js.users.forEach(user => {
-                    console.log("adding users");
                     var li = document.createElement("li");
                     li.setAttribute('id', user);
                     li.appendChild(document.createTextNode(user));
                     ul.appendChild(li);
                 });
-                if (js.couldStart === true){
+                if (js.couldStart === true) {
                     document.getElementById("startButton").disabled = false;
                 }
             }
@@ -33,9 +32,6 @@ function  registerHandlerForUpdateGame(name, gameID) {
         });
 
         joinRequest(name, gameID);
-
-
-
     }
 
     // eventBus.onclose = function (){
@@ -73,10 +69,10 @@ function joinRequest(name, gameID){
     var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
     xmlhttp.onreadystatechange = function() {
     if (this.readyState === 4 && this.status === 200) {
-    if(xmlhttp.responseText === "null") {
-        alert("You cannot join this game!");
-        window.location.href = "index.html";
-    }
+        if(xmlhttp.responseText === "null") {
+            alert("You cannot join this game!");
+            window.location.href = "index.html";
+        }
     }
     };
     xmlhttp.open("POST", host + "/api/game/join/" + gameID);
