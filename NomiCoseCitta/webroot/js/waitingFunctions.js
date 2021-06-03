@@ -1,5 +1,5 @@
 
-var host = "http://localhost:8080";
+var host = "http://192.168.28.100:8080";
 var gameID = "";
 var eventbus_mio;
 
@@ -7,7 +7,7 @@ function  registerHandlerForUpdateGame(name, gameID) {
     eventbus_mio = new EventBus(host + '/eventbus');
     eventbus_mio.onopen = function () {
         eventbus_mio.registerHandler('game.' + gameID, function (error, jsonResponse) {
-            if (jsonResponse != null) {
+            if (jsonResponse !== "null") {
                 console.log(jsonResponse.body);
                 var js = JSON.parse(jsonResponse.body);
                 var ul = document.getElementById("dynamic-list");
@@ -22,7 +22,6 @@ function  registerHandlerForUpdateGame(name, gameID) {
                     document.getElementById("startButton").disabled = false;
                 }
             }
-
         });
 
         eventbus_mio.registerHandler('game.' + gameID + '/start', function (error, jsonResponse) {
@@ -57,6 +56,11 @@ function  registerHandlerForUpdateGame(name, gameID) {
 }
 
 function init(){
+    window.addEventListener('beforeunload', function (e) {
+        e.preventDefault();
+        e.returnValue = '';
+        close1();
+    });
     var url = new URL(document.URL);
     var name = url.searchParams.get("name");
     console.log(name);
@@ -65,10 +69,6 @@ function init(){
     var gameIdParagraph = document.getElementById("gameID").textContent;
     document.getElementById("gameID").innerHTML = gameIdParagraph + gameID;
     registerHandlerForUpdateGame(name, gameID);
-    window.addEventListener('beforeunload', function (e) {
-        e.preventDefault();
-        close1();
-    });
 }
 
 function joinRequest(name, gameID){
@@ -111,6 +111,7 @@ function startGame() {
 
 
 function close1(){
+    alert("stai per chiudere la pagina");
     eventbus_mio.close();
 }
 

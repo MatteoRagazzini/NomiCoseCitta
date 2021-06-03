@@ -1,5 +1,4 @@
 var name = "";
-var host = "http://localhost:8080";
 
 function init(){
  var form = document.querySelector('form');
