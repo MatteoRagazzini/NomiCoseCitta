@@ -61,18 +61,18 @@ public class WebService extends AbstractVerticle {
             });
         });
 
-//        router.post("/game/leave:id").handler(context -> {
-//            System.out.println("POST for leaving");
-//            System.out.println(context.getBodyAsJson().encodePrettily());
-//            emitter.call(MessageType.LEAVE, context.getBodyAsJson().encode(), response -> {
-//                System.out.println("inside game leave callback " + response);
-//                context.response()
-//                        .putHeader("content-type", "text/plain")
-//                        .setStatusCode(200)
-//                        .end(response);
-//                context.vertx().eventBus().publish("game." + context.request().getParam("id"), response);
-//            });
-//        });
+       router.post("/game/disconnect:id").handler(context -> {
+           System.out.println("POST for disconnecting");
+           System.out.println(context.getBodyAsJson().encodePrettily());
+           emitter.call(MessageType.DISCONNECT, context.getBodyAsJson().encode(), response -> {
+               System.out.println("inside game disconnect callback " + response);
+               context.response()
+                       .putHeader("content-type", "text/plain")
+                       .setStatusCode(200)
+                       .end(response);
+               context.vertx().eventBus().publish("game." + context.request().getParam("id"), response);
+           });
+       });
 
         router.post("/game/start/:id").handler(context -> {
             System.out.println("POST for starting the game");

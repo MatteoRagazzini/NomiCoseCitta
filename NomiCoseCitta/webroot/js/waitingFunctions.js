@@ -1,11 +1,12 @@
 
 var host = "http://localhost:8080";
 var gameID = "";
+var eventbus_mio;
 
 function  registerHandlerForUpdateGame(name, gameID) {
-    var eventBus = new EventBus(host + '/eventbus');
-    eventBus.onopen = function () {
-        eventBus.registerHandler('game.' + gameID, function (error, jsonResponse) {
+    eventbus_mio = new EventBus(host + '/eventbus');
+    eventbus_mio.onopen = function () {
+        eventbus_mio.registerHandler('game.' + gameID, function (error, jsonResponse) {
             if (jsonResponse != null) {
                 console.log(jsonResponse.body);
                 var js = JSON.parse(jsonResponse.body);
@@ -24,7 +25,7 @@ function  registerHandlerForUpdateGame(name, gameID) {
 
         });
 
-        eventBus.registerHandler('game.' + gameID + '/start', function (error, jsonResponse) {
+        eventbus_mio.registerHandler('game.' + gameID + '/start', function (error, jsonResponse) {
             console.log("inside start eventbus handler");
             if (jsonResponse != null) {
                 console.log(jsonResponse.body);
@@ -37,21 +38,23 @@ function  registerHandlerForUpdateGame(name, gameID) {
         joinRequest(name, gameID);
     }
 
-    // eventBus.onclose = function (){
-    //     var text = '{ "gameID": gameID , "playerName": name }';
-    //     var req = JSON.parse(text);
-    //     console.log(name + "si è disconnesso");
-    //     var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-    //     xmlhttp.onreadystatechange = function() {
-    //         if (this.readyState === 4 && this.status === 200) {
-    //            console.log("disconnected successfully")
-    //         }
-    //     };
-    //     xmlhttp.open("POST", host + "/api/game/leave/" + gameID);
-    //     xmlhttp.setRequestHeader("Content-Type", "application/json");
-    //     console.log("in leave");
-    //     xmlhttp.send(JSON.stringify(req));
-    // }
+    eventbus_mio.onclose = function (){
+        var obj = new Object();
+        obj.gameID = gameID;
+        obj.user  = name;
+        var req= JSON.stringify(obj);
+        console.log(name + "si è disconnesso");
+        var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+        xmlhttp.onreadystatechange = function() {
+            if (this.readyState === 4 && this.status === 200) {
+               console.log("disconnected successfully")
+            }
+        };
+        xmlhttp.open("POST", host + "/api/game/disconnect/" + gameID);
+        xmlhttp.setRequestHeader("Content-Type", "application/json");
+        console.log("in leave");
+        xmlhttp.send(JSON.stringify(req));
+    }
 }
 
 function init(){
@@ -101,6 +104,10 @@ function startGame() {
     xmlhttp.setRequestHeader("Content-Type", "application/json");
     console.log("in start");
     xmlhttp.send(JSON.stringify(req));
+}
+
+function  close1() {
+    eventbus_mio.close();
 }
 
 
