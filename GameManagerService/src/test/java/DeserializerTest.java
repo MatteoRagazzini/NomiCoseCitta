@@ -1,6 +1,4 @@
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import model.GameSettings;
+import model.game.GameSettings;
 import org.junit.jupiter.api.Test;
 import presentation.Presentation;
 

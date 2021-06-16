@@ -18,9 +18,7 @@ public class RPCServer {
         this.map = map;
         try {
             start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (TimeoutException e) {
+        } catch (IOException | TimeoutException e) {
             e.printStackTrace();
         }
     }
@@ -76,8 +74,6 @@ public class RPCServer {
 
             channel.exchangeDeclare(EXCHANGE_NAME, "direct");
             var callback = createCallbackMap(channel);
-//            String queueName = channel.queueDeclare().getQueue();
-//            channel.queueBind(queueName, EXCHANGE_NAME, msgType.getType());
 
             System.out.println(" [x] Awaiting RPC requests");
 

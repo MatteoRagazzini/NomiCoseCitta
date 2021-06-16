@@ -1,6 +1,8 @@
-package model;
+package model.game;
 
 
+
+import model.round.RoundType;
 
 import java.util.List;
 

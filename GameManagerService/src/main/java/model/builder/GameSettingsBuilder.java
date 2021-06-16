@@ -1,7 +1,7 @@
 package model.builder;
 
-import model.GameSettings;
-import model.RoundType;
+import model.game.GameSettings;
+import model.round.RoundType;
 
 import java.util.List;
 

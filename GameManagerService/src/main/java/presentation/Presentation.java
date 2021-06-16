@@ -1,14 +1,14 @@
 package presentation;
 
 
-import model.Game;
-import model.GameSettings;
+import model.game.Game;
+import model.game.GameSettings;
 import model.request.DisconnectRequest;
 import model.request.UserInLobbyRequest;
 import model.request.StartRequest;
 import presentation.deserializer.*;
 import presentation.serializer.GameSettingsSerializer;
-import presentation.serializer.GameStatusSerializer;
+import presentation.serializer.GameSerializer;
 import presentation.serializer.Serializer;
 
 import java.util.HashMap;
@@ -29,7 +29,7 @@ public class Presentation {
         deserializers.put(UserInLobbyRequest.class, new UserInLobbyRequestDeserializer());
         deserializers.put(DisconnectRequest.class, new UserDisconnectionDeserializer());
         deserializers.put(StartRequest.class, new StartRequestDeserializer());
-        serializers.put(Game.class, new GameStatusSerializer());
+        serializers.put(Game.class, new GameSerializer());
         serializers.put(GameSettings.class, new GameSettingsSerializer());
     }
 

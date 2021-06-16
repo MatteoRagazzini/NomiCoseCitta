@@ -3,8 +3,8 @@ package presentation.deserializer;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import model.GameSettings;
-import model.RoundType;
+import model.game.GameSettings;
+import model.round.RoundType;
 import model.builder.GameSettingsBuilder;
 
 import java.util.ArrayList;

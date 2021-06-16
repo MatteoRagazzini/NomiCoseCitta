@@ -1,27 +1,28 @@
-package model;
+package model.game;
 
+import model.User;
 import model.request.DisconnectRequest;
 import model.request.UserInLobbyRequest;
 import model.request.StartRequest;
 import presentation.Presentation;
 
+import rabbit.Emitter;
 import rabbit.MessageType;
 import rabbit.RPCServer;
 
 import java.util.*;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 public class GameManager {
 
     private final List<Game> games;
+    private final Emitter emitter;
     private final RPCServer joinGameServer;
 
     public GameManager() {
         games = new ArrayList<>();
-        //createGameServer = new RPCServer(createGame(), MessageType.CREATE);
+        emitter = new Emitter("game");
         joinGameServer = new RPCServer(getCallbackMap());
     }
 
@@ -54,6 +55,7 @@ public class GameManager {
                 var game = getGameById(startReq.getGameID());
                 if(game.isPresent() && game.get().gameCouldStart() && !game.get().isStarted()){
                     game.get().setState(GameState.STARTED);
+                    emitter.emit(MessageType.START, Presentation.serializerOf(Game.class).serialize(game.get()));
                     return Presentation.serializerOf(GameSettings.class).serialize(game.get().getSettings());
                 }
             } catch (Exception e) {

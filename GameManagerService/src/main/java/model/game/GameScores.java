@@ -1,4 +1,6 @@
-package model;
+package model.game;
+
+import model.User;
 
 import java.util.HashMap;
 import java.util.Map;

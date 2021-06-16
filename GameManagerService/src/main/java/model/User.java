@@ -7,6 +7,11 @@ public class User {
     private final String nickname;
     private final String address;
 
+    public User(String nickname){
+        this.nickname = nickname;
+        this.address = "";
+    }
+
     public User(String nickname, String address) {
         this.nickname = nickname;
         this.address = address;

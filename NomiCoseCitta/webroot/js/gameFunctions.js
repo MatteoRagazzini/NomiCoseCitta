@@ -61,31 +61,9 @@ function  registerHandlerForUpdateGame(name, gameID) {
         console.log(eventbus_mio);
         joinRequest(name,getSocketUri(eventbus_mio.sockJSConn._transport.url), gameID);
     }
-
-//    eventbus_mio.onclose = function (){
-//        var obj = new Object();
-//        obj.gameID = gameID;
-//        obj.userID  = name;
-//        console.log(name + "si è disconnesso");
-//        var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-//        xmlhttp.onreadystatechange = function() {
-//            if (this.readyState === 4 && this.status === 200) {
-//               console.log("disconnected successfully")
-//            }
-//        };
-//        xmlhttp.open("POST", host + "/api/game/disconnect/" + gameID);
-//        xmlhttp.setRequestHeader("Content-Type", "application/json");
-//        console.log("in leave");
-//        xmlhttp.send(JSON.stringify(obj));
-//    }
 }
 
 function init(){
-//    window.addEventListener('beforeunload', function (e) {
-//        e.preventDefault();
-//        e.returnValue = '';
-//        close1();
-//    });
     var url = new URL(document.URL);
     var name = url.searchParams.get("name");
     console.log(name);
@@ -137,11 +115,6 @@ function startGame() {
     console.log("in start");
     xmlhttp.send(JSON.stringify(req));
 }
-
-//function close1(){
-//    alert("stai per chiudere la pagina");
-//    eventbus_mio.close();
-//}
 
 function handleSubmit(event) {
     event.preventDefault();

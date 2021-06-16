@@ -10,11 +10,12 @@ import java.util.concurrent.TimeoutException;
 
 public class Consumer {
 
-    private static final String EXCHANGE_NAME = "Web";
+    private final String EXCHANGE_NAME;
     private final DeliverCallback callback;
     private final MessageType msgType;
 
-    public Consumer(DeliverCallback callback, MessageType type) {
+    public Consumer(String exchange_name, DeliverCallback callback, MessageType type) {
+        EXCHANGE_NAME = exchange_name;
         this.callback = callback;
         this.msgType = type;
         try {

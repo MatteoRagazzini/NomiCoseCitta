@@ -1,4 +1,4 @@
-package model;
+package model.round;
 
 public enum RoundType {
     STOP, TIMER;

@@ -3,9 +3,11 @@ package presentation.serializer;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import model.Game;
+import model.game.Game;
+import model.game.GameSettings;
+import presentation.Presentation;
 
-public class GameStatusSerializer extends AbstractJsonSerializer<Game>{
+public class GameSerializer extends AbstractJsonSerializer<Game>{
     @Override
     protected JsonElement toJsonElement(Game object) {
         var jsonObject = new JsonObject();
@@ -14,6 +16,7 @@ public class GameStatusSerializer extends AbstractJsonSerializer<Game>{
         jsonObject.add("users", usersArray);
         jsonObject.addProperty("couldStart", object.gameCouldStart());
         jsonObject.addProperty("gameID", object.getId());
+        jsonObject.add("settings", Presentation.serializerOf(GameSettings.class).getJsonElement(object.getSettings()));
         return jsonObject;
     }
 }
