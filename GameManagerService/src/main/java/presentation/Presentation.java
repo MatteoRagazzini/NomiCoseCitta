@@ -3,6 +3,7 @@ package presentation;
 
 import model.Game;
 import model.GameSettings;
+import model.request.DisconnectRequest;
 import model.request.UserInLobbyRequest;
 import model.request.StartRequest;
 import presentation.deserializer.*;
@@ -26,6 +27,7 @@ public class Presentation {
         deserializers.put(Game.class, new GameDeserializer());
         deserializers.put(GameSettings.class, new GameSettingsDeserializer());
         deserializers.put(UserInLobbyRequest.class, new UserInLobbyRequestDeserializer());
+        deserializers.put(DisconnectRequest.class, new UserDisconnectionDeserializer());
         deserializers.put(StartRequest.class, new StartRequestDeserializer());
         serializers.put(Game.class, new GameStatusSerializer());
         serializers.put(GameSettings.class, new GameSettingsSerializer());

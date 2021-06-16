@@ -16,9 +16,6 @@ public class GameDeserializer extends AbstractJsonDeserializer<Game> {
         GameBuilder builder = new GameBuilder();
         if(jsonElement instanceof JsonObject){
             var jobj = (JsonObject) jsonElement;
-            if(jobj.has("userID") && jobj.get("userID").isJsonPrimitive()){
-                builder.setCreator(new User(jobj.get("userID").getAsString()));
-            }
             try {
                     builder.setSettings(Presentation.deserializeAs(
                             jobj.toString(), GameSettings.class));

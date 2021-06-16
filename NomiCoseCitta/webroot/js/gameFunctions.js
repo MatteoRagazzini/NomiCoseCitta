@@ -1,7 +1,12 @@
 
-var host = "http://localhost:8080";
+var host = "http://192.168.1.6:8080";
 var gameID = "";
 var eventbus_mio;
+
+function getSocketUri(url){
+    var startIndex = url.indexOf("/eventbus");
+    return url.slice(startIndex);
+}
 
 function  registerHandlerForUpdateGame(name, gameID) {
     eventbus_mio = new EventBus(host + '/eventbus');
@@ -53,34 +58,34 @@ function  registerHandlerForUpdateGame(name, gameID) {
                 document.getElementById("game").style.display = "inline" ;
             }
         });
-
-        joinRequest(name, gameID);
+        console.log(eventbus_mio);
+        joinRequest(name,getSocketUri(eventbus_mio.sockJSConn._transport.url), gameID);
     }
 
-    eventbus_mio.onclose = function (){
-        var obj = new Object();
-        obj.gameID = gameID;
-        obj.userID  = name;
-        console.log(name + "si è disconnesso");
-        var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-        xmlhttp.onreadystatechange = function() {
-            if (this.readyState === 4 && this.status === 200) {
-               console.log("disconnected successfully")
-            }
-        };
-        xmlhttp.open("POST", host + "/api/game/disconnect/" + gameID);
-        xmlhttp.setRequestHeader("Content-Type", "application/json");
-        console.log("in leave");
-        xmlhttp.send(JSON.stringify(obj));
-    }
+//    eventbus_mio.onclose = function (){
+//        var obj = new Object();
+//        obj.gameID = gameID;
+//        obj.userID  = name;
+//        console.log(name + "si è disconnesso");
+//        var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+//        xmlhttp.onreadystatechange = function() {
+//            if (this.readyState === 4 && this.status === 200) {
+//               console.log("disconnected successfully")
+//            }
+//        };
+//        xmlhttp.open("POST", host + "/api/game/disconnect/" + gameID);
+//        xmlhttp.setRequestHeader("Content-Type", "application/json");
+//        console.log("in leave");
+//        xmlhttp.send(JSON.stringify(obj));
+//    }
 }
 
 function init(){
-    window.addEventListener('beforeunload', function (e) {
-        e.preventDefault();
-        e.returnValue = '';
-        close1();
-    });
+//    window.addEventListener('beforeunload', function (e) {
+//        e.preventDefault();
+//        e.returnValue = '';
+//        close1();
+//    });
     var url = new URL(document.URL);
     var name = url.searchParams.get("name");
     console.log(name);
@@ -93,10 +98,12 @@ function init(){
     form.addEventListener('submit', handleSubmit);
 }
 
-function joinRequest(name, gameID){
+function joinRequest(name, address, gameID){
     var req = {};
     req.userID = name;
     req.gameID = gameID;
+    req.userAddress = address;
+    console.log("In Join address: " + address);
     var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
     xmlhttp.onreadystatechange = function() {
     if (this.readyState === 4 && this.status === 200) {
@@ -108,7 +115,7 @@ function joinRequest(name, gameID){
     };
     xmlhttp.open("POST", host + "/api/game/join/" + gameID);
     xmlhttp.setRequestHeader("Content-Type", "application/json");
-    console.log("in join");
+    console.log("in join " + JSON.stringify(req));
     // la waiting room deve aggiornarsi nel momento in cui entrano altri utenti.
     xmlhttp.send(JSON.stringify(req));
 }
@@ -131,10 +138,10 @@ function startGame() {
     xmlhttp.send(JSON.stringify(req));
 }
 
-function close1(){
-    alert("stai per chiudere la pagina");
-    eventbus_mio.close();
-}
+//function close1(){
+//    alert("stai per chiudere la pagina");
+//    eventbus_mio.close();
+//}
 
 function handleSubmit(event) {
     event.preventDefault();
@@ -151,6 +158,5 @@ function handleSubmit(event) {
     // console.log("in create");
     // xmlhttp.send(JSON.stringify(value));
 }
-ew
 
 

@@ -1,3 +1,5 @@
+import io.vertx.core.json.JsonObject;
+import io.vertx.core.spi.JsonFactory;
 import io.vertx.ext.bridge.BridgeEventType;
 import io.vertx.ext.bridge.PermittedOptions;
 import io.vertx.ext.web.Router;
@@ -61,18 +63,18 @@ public class WebService extends AbstractVerticle {
             });
         });
 
-       router.post("/game/disconnect/:id").handler(context -> {
-           System.out.println("POST for disconnecting");
-           System.out.println(context.getBodyAsJson().encodePrettily());
-           emitter.call(MessageType.DISCONNECT, context.getBodyAsJson().encode(), response -> {
-               System.out.println("inside game disconnect callback " + response);
-               context.response()
-                       .putHeader("content-type", "text/plain")
-                       .setStatusCode(200)
-                       .end(response);
-               context.vertx().eventBus().publish("game." + context.request().getParam("id"), response);
-           });
-       });
+//       router.post("/game/disconnect/:id").handler(context -> {
+//           System.out.println("POST for disconnecting");
+//           System.out.println(context.getBodyAsJson().encodePrettily());
+//           emitter.call(MessageType.DISCONNECT, context.getBodyAsJson().encode(), response -> {
+//               System.out.println("inside game disconnect callback " + response);
+//               context.response()
+//                       .putHeader("content-type", "text/plain")
+//                       .setStatusCode(200)
+//                       .end(response);
+//               context.vertx().eventBus().publish("game." + context.request().getParam("id"), response);
+//           });
+//       });
 
         router.post("/game/start/:id").handler(context -> {
             System.out.println("POST for starting the game");
@@ -113,15 +115,14 @@ public class WebService extends AbstractVerticle {
                 System.out.println("A socket was created");
             }
             if (event.type() == BridgeEventType.SOCKET_CLOSED) {
-                event.socket().close();
                 System.out.println("A socket was closed" + event.socket().uri());
-            }
-            if(event.type() == BridgeEventType.SOCKET_PING){
-                System.out.println("Ping socket");
-            }
-            if (event.type() == BridgeEventType.SOCKET_IDLE) {
-                event.socket().close();
-                System.out.println("A socket is idle");
+                JsonObject msg = new JsonObject();
+                msg.put("userAddress", event.socket().uri());
+                emitter.call(MessageType.DISCONNECT, msg.encode(), response -> {
+                    JsonObject js = new JsonObject(response);
+                    System.out.println("IN DISCONNECT CALLBACK " + js);
+                    vertx.eventBus().publish("game." + js.getString("gameID"), response);
+                });
             }
 
             event.complete(true);

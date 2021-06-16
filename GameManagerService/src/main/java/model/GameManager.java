@@ -1,5 +1,6 @@
 package model;
 
+import model.request.DisconnectRequest;
 import model.request.UserInLobbyRequest;
 import model.request.StartRequest;
 import presentation.Presentation;
@@ -81,8 +82,23 @@ public class GameManager {
         return lobbyRequest((user, game) -> !game.isFull() &&  game.addNewUser(user));
     }
 
+//    private Function<String, String> disconnectGame() {
+//        return lobbyRequest((user, game) -> game.removeUser(user));
+//    }
+
     private Function<String, String> disconnectGame() {
-        return lobbyRequest((user, game) -> game.removeUser(user));
+        return message -> {
+            try {
+                var req = Presentation.deserializeAs(message, DisconnectRequest.class);
+                var game = games.stream().filter(g -> g.removeUser(req.getUserAddress())).findFirst();
+                if(game.isPresent()){
+                    return Presentation.serializerOf(Game.class).serialize(game.get());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return "null";
+        };
     }
 
 

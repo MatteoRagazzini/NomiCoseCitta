@@ -5,13 +5,19 @@ import java.util.Objects;
 public class User {
 
     private final String nickname;
+    private final String address;
 
-    public User(String nickname) {
+    public User(String nickname, String address) {
         this.nickname = nickname;
+        this.address = address;
     }
 
     public String getNickname() {
         return nickname;
+    }
+
+    public String getAddress() {
+        return address;
     }
 
     @Override

@@ -37,7 +37,7 @@ public class RPCClient implements AutoCloseable {
                     .replyTo(replyQueueName)
                     .build();
             channel.exchangeDeclare(EXCHANGE_NAME, "direct");
-
+            System.out.println("Prima dell'invio");
             channel.basicPublish(EXCHANGE_NAME,messageType.getType(),
                     props, message.getBytes("UTF-8"));
             System.out.println(" [x] Sent '" + messageType.getType() + "':'" + message + "'");

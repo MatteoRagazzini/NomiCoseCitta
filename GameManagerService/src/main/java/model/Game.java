@@ -11,7 +11,7 @@ public class Game {
     private GameState state;
     private final GameScores scores;
 
-    public Game(String id, User creator, GameSettings settings) {
+    public Game(String id, GameSettings settings) {
         this.id = id;
         this.users = new ArrayList<>();
         this.settings = settings;
@@ -36,6 +36,11 @@ public class Game {
 
     public boolean removeUser(User user){
         return users.remove(user);
+    }
+
+    public boolean removeUser(String userAddress){
+        var user =  users.stream().filter(u->u.getAddress().equals(userAddress)).findFirst();
+        return user.isPresent() && removeUser(user.get());
     }
 
 

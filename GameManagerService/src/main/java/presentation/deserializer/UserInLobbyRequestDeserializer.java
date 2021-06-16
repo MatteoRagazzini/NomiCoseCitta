@@ -12,7 +12,10 @@ public class UserInLobbyRequestDeserializer extends AbstractJsonDeserializer{
         if(jsonElement.isJsonObject()){
             var jobj = (JsonObject) jsonElement;
             if(jobj.has("userID") && jobj.get("userID").isJsonPrimitive()){
-                req.setUser(new User(jobj.get("userID").getAsString()));
+                req.setUserID(jobj.get("userID").getAsString());
+            }
+            if(jobj.has("userAddress") && jobj.get("userAddress").isJsonPrimitive()){
+                req.setUserAddress(jobj.get("userAddress").getAsString());
             }
             if(jobj.has("gameID") && jobj.get("gameID").isJsonPrimitive()){
                 req.setGameID(jobj.get("gameID").getAsString());

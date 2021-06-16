@@ -13,6 +13,7 @@ public class GameStatusSerializer extends AbstractJsonSerializer<Game>{
         object.getUsers().forEach(u -> usersArray.add(u.getNickname()));
         jsonObject.add("users", usersArray);
         jsonObject.addProperty("couldStart", object.gameCouldStart());
+        jsonObject.addProperty("gameID", object.getId());
         return jsonObject;
     }
 }

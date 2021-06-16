@@ -4,23 +4,32 @@ import model.User;
 
 public class UserInLobbyRequest {
 
-    private User user;
+    private String userAddress;
+    private String userID;
     private String gameID;
 
     public UserInLobbyRequest() {
     }
 
-    public UserInLobbyRequest(User user, String gameID) {
-        this.user = user;
+    public UserInLobbyRequest(String userID, String address, String gameID) {
+        this.userAddress = address;
         this.gameID = gameID;
     }
 
-    public User getUser() {
-        return user;
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public User getUser(){
+        return new User(userID, userAddress);
+    }
+
+    public String getUserAddress() {
+        return userAddress;
+    }
+
+    public void setUserAddress(String userAddress) {
+        this.userAddress = userAddress;
     }
 
     public String getGameID() {
@@ -34,7 +43,7 @@ public class UserInLobbyRequest {
     @Override
     public String toString() {
         return "JoinRequest{" +
-                "user='" + user + '\'' +
+                "user='" + getUser() + '\'' +
                 ", gameID=" + gameID +
                 '}';
     }
