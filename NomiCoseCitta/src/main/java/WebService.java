@@ -95,22 +95,23 @@ public class WebService extends AbstractVerticle {
             System.out.println("PAROLE: " + context.getBodyAsJson().encode());
         });
 
-        router.get("/game/:id/stop").handler(context -> {
-            context.vertx().eventBus().publish("game." + context.request().getParam("id") + "/stop", "STOP!");
-        });
-
        return router;
     }
 
     private Router eventBusHandler() {
         SockJSBridgeOptions options = new SockJSBridgeOptions ()
+                .addInboundPermitted(new PermittedOptions().setAddressRegex("game\\.[0-9]+[\\s\\S]*"))
                 .addOutboundPermitted(new PermittedOptions().setAddressRegex("game\\.[0-9]+[\\s\\S]*"));
         return SockJSHandler.create(vertx).bridge(options, event -> {
             if (event.type() == BridgeEventType.SOCKET_CREATED) {
                 System.out.println("A socket was created");
             }
+            if (event.type() == BridgeEventType.RECEIVE || event.type() == BridgeEventType.PUBLISH){
+                System.out.println("RECEIVE message: " + event.getRawMessage());
+            }
             if (event.type() == BridgeEventType.SOCKET_CLOSED) {
                 System.out.println("A socket was closed" + event.socket().uri());
+                System.out.println("MESSAGE: " + event.getRawMessage());
                 JsonObject msg = new JsonObject();
                 msg.put("userAddress", event.socket().uri());
                 emitter.call(MessageType.DISCONNECT, msg.encode(), response -> {
@@ -119,7 +120,6 @@ public class WebService extends AbstractVerticle {
                     vertx.eventBus().publish("game." + js.getString("gameID"), response);
                 });
             }
-
             event.complete(true);
         });
     }

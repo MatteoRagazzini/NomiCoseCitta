@@ -58,12 +58,12 @@ function  registerHandlerForUpdateGame(name, gameID) {
                 });
                 document.getElementById("waiting").style.display = "none" ;
                 document.getElementById("game").style.display = "inline" ;
+
             }
         });
 
         eventbus_mio.registerHandler('game.' + gameID +"/stop", function (error, jsonResponse) {
                     if (jsonResponse !== "null") {
-                        roundStopped = true;
                         sendWord(document.getElementById("gameForm"));
                     }
                 });
@@ -80,8 +80,6 @@ function init(){
     var gameIdParagraph = document.getElementById("gameID").textContent;
     document.getElementById("gameID").innerHTML = gameIdParagraph + gameID;
     registerHandlerForUpdateGame(userID, gameID);
-    var form = document.querySelector('form');
-    form.addEventListener('submit', handleSubmit);
 }
 
 function joinRequest(name, address, gameID){
@@ -142,17 +140,8 @@ function sendWord(form){
 
 }
 
-function handleSubmit(event) {
-    event.preventDefault();
-    console.log(event.target);
-    var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-    xmlhttp.onreadystatechange = function() {
-         if (this.readyState === 4 && this.status === 200) {
-         }
-    };
-    xmlhttp.open("GET", host + "/api/game/"+gameID+"/stop");
-    xmlhttp.setRequestHeader("Content-Type", "application/json");
-    xmlhttp.send();
+function stopRound() {
+   eventbus_mio.publish('game.' + gameID +"/stop", "STOP");
 }
 
 
