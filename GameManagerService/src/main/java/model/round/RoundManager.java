@@ -6,7 +6,6 @@ import presentation.Presentation;
 import rabbit.Consumer;
 import rabbit.MessageType;
 
-import javax.swing.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,10 +23,20 @@ public class RoundManager {
             try {
                 var game = Presentation.deserializeAs(new String(delivery.getBody(),
                         "UTF-8"), Game.class);
-                activeRounds.put(game.getId(), new RoundStop(game));
+                activeRounds.put(game.getId(), createRound(game));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         };
+    }
+
+    private Round createRound(Game game){
+        switch (game.getSettings().getRoundType()){
+            case STOP:
+                return new RoundStop(game);
+            case TIMER:
+                return new RoundTimer(game);
+        }
+        throw new RuntimeException("Impossible create a round because RoundType is not defined");
     }
 }

@@ -91,6 +91,14 @@ public class WebService extends AbstractVerticle {
             });
         });
 
+        router.post("/game/words").handler(context -> {
+            System.out.println("PAROLE: " + context.getBodyAsJson().encode());
+        });
+
+        router.get("/game/:id/stop").handler(context -> {
+            context.vertx().eventBus().publish("game." + context.request().getParam("id") + "/stop", "STOP!");
+        });
+
        return router;
     }
 

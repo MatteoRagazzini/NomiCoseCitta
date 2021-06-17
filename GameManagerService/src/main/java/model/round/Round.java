@@ -20,7 +20,20 @@ public abstract class Round {
         onStart();
     }
 
+    public Game getGame() {
+        return game;
+    }
+
+    public RoundState getState() {
+        return state;
+    }
+
+    public Map<User, UserWords> getUsersWords() {
+        return usersWords;
+    }
+
     abstract void onStart();
+    abstract void onStop();
 
     public void setState(RoundState state) {
         this.state = state;

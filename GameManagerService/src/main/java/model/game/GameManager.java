@@ -42,7 +42,6 @@ public class GameManager {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
             System.out.println("Aggiunto un gioco " + getLastGame());
             return getLastGame().getId();
         };

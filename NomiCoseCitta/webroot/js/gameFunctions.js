@@ -1,6 +1,8 @@
 
-var host = "http://192.168.1.6:8080";
+var host = "http://192.168.1.11:8080";
 var gameID = "";
+var userID = "";
+var roundStopped = false;
 var eventbus_mio;
 
 function getSocketUri(url){
@@ -58,20 +60,26 @@ function  registerHandlerForUpdateGame(name, gameID) {
                 document.getElementById("game").style.display = "inline" ;
             }
         });
-        console.log(eventbus_mio);
+
+        eventbus_mio.registerHandler('game.' + gameID +"/stop", function (error, jsonResponse) {
+                    if (jsonResponse !== "null") {
+                        roundStopped = true;
+                        sendWord(document.getElementById("gameForm"));
+                    }
+                });
+
         joinRequest(name,getSocketUri(eventbus_mio.sockJSConn._transport.url), gameID);
     }
 }
 
 function init(){
     var url = new URL(document.URL);
-    var name = url.searchParams.get("name");
-    console.log(name);
-    addItem(name);
+    userID = url.searchParams.get("name");
+    addItem(userID);
     gameID = url.searchParams.get("gameID");
     var gameIdParagraph = document.getElementById("gameID").textContent;
     document.getElementById("gameID").innerHTML = gameIdParagraph + gameID;
-    registerHandlerForUpdateGame(name, gameID);
+    registerHandlerForUpdateGame(userID, gameID);
     var form = document.querySelector('form');
     form.addEventListener('submit', handleSubmit);
 }
@@ -116,20 +124,35 @@ function startGame() {
     xmlhttp.send(JSON.stringify(req));
 }
 
-function handleSubmit(event) {
-    event.preventDefault();
-    const data = new FormData(event.target);
+function sendWord(form){
+    const data = new FormData(form);
     const value = Object.fromEntries(data.entries());
     console.log({value});
-    // var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-    // xmlhttp.onreadystatechange = function() {
-    //     if (this.readyState === 4 && this.status === 200) {
-    //     }
-    // };
-    // xmlhttp.open("POST", host + "/api/game/round");
-    // xmlhttp.setRequestHeader("Content-Type", "application/json");
-    // console.log("in create");
-    // xmlhttp.send(JSON.stringify(value));
+    value.gameID = gameID;
+    value.userID = userID;
+    var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+    xmlhttp.onreadystatechange = function() {
+         if (this.readyState === 4 && this.status === 200) {
+         }
+    };
+    xmlhttp.open("POST", host + "/api/game/words");
+    xmlhttp.setRequestHeader("Content-Type", "application/json");
+    xmlhttp.send(JSON.stringify(value));
+    document.getElementById("game").style.display = "none";
+
+}
+
+function handleSubmit(event) {
+    event.preventDefault();
+    console.log(event.target);
+    var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+    xmlhttp.onreadystatechange = function() {
+         if (this.readyState === 4 && this.status === 200) {
+         }
+    };
+    xmlhttp.open("GET", host + "/api/game/"+gameID+"/stop");
+    xmlhttp.setRequestHeader("Content-Type", "application/json");
+    xmlhttp.send();
 }
 
 
