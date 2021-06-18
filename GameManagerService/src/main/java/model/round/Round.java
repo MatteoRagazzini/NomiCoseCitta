@@ -10,13 +10,13 @@ public abstract class Round {
     private final Game game;
     private final char letter;
     private RoundState state;
-    private final Map<User, UserWords> usersWords;
+   private final RoundWords usersWords;
 
     public Round(Game game) {
         this.game = game;
         letter = (char) new Random().ints(65, 91).findAny().getAsInt();
         state = RoundState.PLAY;
-        usersWords = new HashMap<>();
+        usersWords = new RoundWords(game.getSettings().getNumberOfUsers());
         onStart();
     }
 
@@ -28,8 +28,12 @@ public abstract class Round {
         return state;
     }
 
-    public Map<User, UserWords> getUsersWords() {
+    public RoundWords getUsersWords() {
         return usersWords;
+    }
+
+    public void insertUserWord(UserWords userWords){
+        usersWords.insertUserWords(userWords);
     }
 
     abstract void onStart();

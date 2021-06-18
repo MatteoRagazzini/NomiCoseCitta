@@ -6,10 +6,15 @@ import model.game.GameSettings;
 import model.request.DisconnectRequest;
 import model.request.UserInLobbyRequest;
 import model.request.StartRequest;
+import model.round.RoundWords;
+import model.round.UserWords;
 import presentation.deserializer.*;
+import presentation.deserializer.roundDeserializer.UserWordsDeserializer;
 import presentation.serializer.GameSettingsSerializer;
 import presentation.serializer.GameSerializer;
 import presentation.serializer.Serializer;
+import presentation.serializer.roundSerializer.RoundWordsSerializer;
+import presentation.serializer.roundSerializer.UserWordsSerializer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +23,6 @@ public class Presentation {
     private static final Map<Class<?>, Serializer<?>> serializers = new HashMap<>();
     private static final Map<Class<?>, Deserializer<?>> deserializers = new HashMap<>();
 
-    // this is a "static initializer": it is called upon class loading
     static {
         registerAllSerializersAndDeserializers();
     }
@@ -29,8 +33,11 @@ public class Presentation {
         deserializers.put(UserInLobbyRequest.class, new UserInLobbyRequestDeserializer());
         deserializers.put(DisconnectRequest.class, new UserDisconnectionDeserializer());
         deserializers.put(StartRequest.class, new StartRequestDeserializer());
+        deserializers.put(UserWords.class, new UserWordsDeserializer());
         serializers.put(Game.class, new GameSerializer());
         serializers.put(GameSettings.class, new GameSettingsSerializer());
+        serializers.put(RoundWords.class, new RoundWordsSerializer());
+        serializers.put(UserWords.class, new UserWordsSerializer());
     }
 
     public static <T> Serializer<T> serializerOf(Class<T> klass) {

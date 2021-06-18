@@ -3,6 +3,6 @@ import model.round.RoundManager;
 
 public class ServicesLauncher {
     public static void main(String[] args) {
-        new GameManager();
+       new GameManager();
     }
 }

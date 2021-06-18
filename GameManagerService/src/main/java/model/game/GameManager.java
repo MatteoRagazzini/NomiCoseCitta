@@ -18,12 +18,11 @@ public class GameManager {
 
     private final List<Game> games;
     private final Emitter emitter;
-    private final RPCServer joinGameServer;
 
     public GameManager() {
         games = new ArrayList<>();
         emitter = new Emitter("game");
-        joinGameServer = new RPCServer(getCallbackMap());
+        new RPCServer(getCallbackMap());
     }
 
     private Map<MessageType, Function<String,String>> getCallbackMap(){

@@ -77,9 +77,7 @@ public class WebService extends AbstractVerticle {
         });
 
         router.post("/game/join/:id").handler(context -> {
-            System.out.println("POST in order to join a game");
             emitter.call(MessageType.JOIN, context.getBodyAsJson().encode(), response -> {
-                System.out.println("inside join callback " + response);
                 context.response()
                         .putHeader("content-type", "text/plain")
                         .setStatusCode(200)
@@ -87,12 +85,21 @@ public class WebService extends AbstractVerticle {
                 if(!response.equals("null")) {
                     context.vertx().eventBus().publish("game." + context.request().getParam("id"), response);
                 }
-
             });
         });
 
         router.post("/game/words").handler(context -> {
             System.out.println("PAROLE: " + context.getBodyAsJson().encode());
+            emitter.call(MessageType.WORDS, context.getBodyAsJson().encode(), response -> {
+                context.response()
+                        .putHeader("content-type", "text/plain")
+                        .setStatusCode(200)
+                        .end(response);
+                System.out.println(response);
+//                if(!response.equals("null")) {
+//                    context.vertx().eventBus().publish("game." + context.request().getParam("id"), response);
+//                }
+            });
         });
 
        return router;
@@ -106,9 +113,9 @@ public class WebService extends AbstractVerticle {
             if (event.type() == BridgeEventType.SOCKET_CREATED) {
                 System.out.println("A socket was created");
             }
-            if (event.type() == BridgeEventType.RECEIVE || event.type() == BridgeEventType.PUBLISH){
-                System.out.println("RECEIVE message: " + event.getRawMessage());
-            }
+//            if (event.type() == BridgeEventType.RECEIVE || event.type() == BridgeEventType.PUBLISH){
+//                System.out.println("RECEIVE message: " + event.getRawMessage());
+//            }
             if (event.type() == BridgeEventType.SOCKET_CLOSED) {
                 System.out.println("A socket was closed" + event.socket().uri());
                 System.out.println("MESSAGE: " + event.getRawMessage());

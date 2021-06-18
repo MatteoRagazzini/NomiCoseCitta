@@ -5,6 +5,7 @@ import model.User;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class Game {
     private final String id;
@@ -27,6 +28,10 @@ public class Game {
 
     public List<User> getUsers() {
         return users;
+    }
+
+    public Optional<User> getUserByID(String userID){
+        return users.stream().filter(u -> u.getNickname().equals(userID)).findFirst();
     }
 
     public boolean addNewUser(User user){
