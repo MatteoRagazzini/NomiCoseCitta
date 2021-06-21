@@ -38,7 +38,7 @@ public class RPCServer {
         return callbackMap;
     }
 
-    private DeliverCallback getDeliverCallback(String queue, Function<String,String> callback, Channel channel, Object monitor){
+    private DeliverCallback getDeliverCallback(Function<String,String> callback, Channel channel, Object monitor){
        return  (consumerTag, delivery) -> {
             AMQP.BasicProperties replyProps = new AMQP.BasicProperties
                     .Builder()
@@ -46,10 +46,8 @@ public class RPCServer {
                     .build();
 
             String response = "";
-
             try {
-                String message = new String(delivery.getBody(), "UTF-8");
-                response = callback.apply(message);
+                response = callback.apply(new String(delivery.getBody(), "UTF-8"));
             } catch (RuntimeException e) {
                 System.out.println(" [.] " + e.toString());
             } finally {
@@ -80,7 +78,7 @@ public class RPCServer {
             Object monitor = new Object();
             callback.forEach((q,c) -> {
                 try {
-                    channel.basicConsume(q, false, getDeliverCallback(q,c,channel,monitor), (consumerTag -> { }));
+                    channel.basicConsume(q, false, getDeliverCallback(c,channel,monitor), (consumerTag -> { }));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

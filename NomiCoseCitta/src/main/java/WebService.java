@@ -1,3 +1,4 @@
+import com.rabbitmq.client.DeliverCallback;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.spi.JsonFactory;
 import io.vertx.ext.bridge.BridgeEventType;
@@ -8,26 +9,26 @@ import io.vertx.ext.web.handler.sockjs.SockJSBridgeOptions;
 import io.vertx.ext.web.handler.sockjs.SockJSHandler;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.ext.web.handler.StaticHandler;
+import rabbitMQ.Consumer;
 import rabbitMQ.Emitter;
 import rabbitMQ.MessageType;
 import rabbitMQ.RPCClient;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.concurrent.TimeoutException;
 
 public class WebService extends AbstractVerticle {
 
-    //private Emitter emitter;
+    private Consumer stopConsumer;
     private Integer createdGame;
     private RPCClient emitter;
 
     public void start() {
-        //emitter = new Emitter();
         try {
             emitter = new RPCClient();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (TimeoutException e) {
+            stopConsumer = new Consumer("stopRound", stopRound(), MessageType.STOP);
+        } catch (IOException | TimeoutException e) {
             e.printStackTrace();
         }
         Router router = Router.router(vertx);
@@ -118,7 +119,6 @@ public class WebService extends AbstractVerticle {
 //            }
             if (event.type() == BridgeEventType.SOCKET_CLOSED) {
                 System.out.println("A socket was closed" + event.socket().uri());
-                System.out.println("MESSAGE: " + event.getRawMessage());
                 JsonObject msg = new JsonObject();
                 msg.put("userAddress", event.socket().uri());
                 emitter.call(MessageType.DISCONNECT, msg.encode(), response -> {
@@ -129,6 +129,15 @@ public class WebService extends AbstractVerticle {
             }
             event.complete(true);
         });
+    }
+
+    private DeliverCallback stopRound(){
+        return (ctag, delivery) -> {
+            JsonObject msg = new JsonObject(new String(delivery.getBody(), "UTF-8"));
+            System.out.println("Receive STOP round msg");
+            System.out.println("Broadcasting on  "+ "game." + msg.getString("gameID")+"/stop");
+            vertx.eventBus().publish("game." + msg.getString("gameID")+"/stop", msg.encode());
+        };
     }
 }
 

@@ -5,6 +5,7 @@ public enum MessageType {
     JOIN("join", "join_response"),
     START("start", "start_response"),
     WORDS("words", "words_response"),
+    STOP("stop", "stop_response"),
     VOTES("votes", "votes_response"),
     DISCONNECT("disconnect", "disconnect_response");
 
