@@ -16,6 +16,7 @@ public class GameSerializer extends AbstractJsonSerializer<Game>{
         jsonObject.add("users", usersArray);
         jsonObject.addProperty("couldStart", object.gameCouldStart());
         jsonObject.addProperty("gameID", object.getId());
+        jsonObject.addProperty("playedRounds", object.getPlayedRounds());
         jsonObject.add("settings", Presentation.serializerOf(GameSettings.class).getJsonElement(object.getSettings()));
         return jsonObject;
     }

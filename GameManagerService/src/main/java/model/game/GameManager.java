@@ -54,7 +54,7 @@ public class GameManager {
                 if(game.isPresent() && game.get().gameCouldStart() && !game.get().isStarted()){
                     game.get().setState(GameState.STARTED);
                     emitter.emit(MessageType.START, Presentation.serializerOf(Game.class).serialize(game.get()));
-                    return Presentation.serializerOf(GameSettings.class).serialize(game.get().getSettings());
+                    return Presentation.serializerOf(Game.class).serialize(game.get());
                 }
             } catch (Exception e) {
                 e.printStackTrace();

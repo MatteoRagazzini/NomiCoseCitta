@@ -36,8 +36,9 @@ function  registerHandlerForUpdateGame(name, gameID) {
             if (jsonResponse != null) {
                 console.log(jsonResponse.body);
                 var js = JSON.parse(jsonResponse.body);
+                document.getElementById("letter").innerText = "Play with letter " + js.settings.roundsLetters[js.playedRounds];
                 var span = document.getElementById("categories");
-                js.categories.forEach(category => {
+                js.settings.categories.forEach(category => {
                     var label = document.createElement("label");
                     label.setAttribute("for", category);
                     label.appendChild(document.createTextNode(category));

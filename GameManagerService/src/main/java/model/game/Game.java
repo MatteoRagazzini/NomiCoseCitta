@@ -11,6 +11,7 @@ public class Game {
     private final String id;
     private final List<User> users;
     private final GameSettings settings;
+    private Integer playedRounds;
     private GameState state;
     private final GameScores scores;
 
@@ -20,6 +21,7 @@ public class Game {
         this.settings = settings;
         this.scores = new GameScores();
         this.state = GameState.WAITING;
+        this.playedRounds = 0;
     }
 
     public String getId() {
@@ -59,6 +61,10 @@ public class Game {
         return users.size() == settings.getNumberOfUsers();
     }
 
+    public Integer getPlayedRounds() {
+        return playedRounds;
+    }
+
     public boolean isFull(){
         return gameCouldStart();
     }
@@ -80,6 +86,7 @@ public class Game {
     }
 
     public void addRoundScores(Map<User, Integer> scores){
+        this.playedRounds++;
         this.scores.updateScore(scores);
     }
 
