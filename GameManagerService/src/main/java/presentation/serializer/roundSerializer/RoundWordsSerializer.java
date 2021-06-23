@@ -16,7 +16,6 @@ public class RoundWordsSerializer extends AbstractJsonSerializer<RoundWords> {
         var usersArray = new JsonArray();
         object.getUsersWords().forEach(uw -> usersArray.add(Presentation.serializerOf(UserWords.class).getJsonElement(uw)));
         jsonObject.add("usersWords", usersArray);
-        jsonObject.addProperty("userNumber", object.getUserNumber());
         return jsonObject;
     }
 }

@@ -1,6 +1,7 @@
 package presentation;
 
 
+import model.User;
 import model.game.Game;
 import model.game.GameSettings;
 import model.request.DisconnectRequest;
@@ -13,6 +14,7 @@ import presentation.deserializer.roundDeserializer.UserWordsDeserializer;
 import presentation.serializer.GameSettingsSerializer;
 import presentation.serializer.GameSerializer;
 import presentation.serializer.Serializer;
+import presentation.serializer.UserSerializer;
 import presentation.serializer.roundSerializer.RoundWordsSerializer;
 import presentation.serializer.roundSerializer.UserWordsSerializer;
 
@@ -30,11 +32,14 @@ public class Presentation {
     private static void registerAllSerializersAndDeserializers() {
         deserializers.put(Game.class, new GameDeserializer());
         deserializers.put(GameSettings.class, new GameSettingsDeserializer());
+        deserializers.put(User.class, new UserDeserializer());
         deserializers.put(UserInLobbyRequest.class, new UserInLobbyRequestDeserializer());
         deserializers.put(DisconnectRequest.class, new UserDisconnectionDeserializer());
         deserializers.put(StartRequest.class, new StartRequestDeserializer());
         deserializers.put(UserWords.class, new UserWordsDeserializer());
+
         serializers.put(Game.class, new GameSerializer());
+        serializers.put(User.class, new UserSerializer());
         serializers.put(GameSettings.class, new GameSettingsSerializer());
         serializers.put(RoundWords.class, new RoundWordsSerializer());
         serializers.put(UserWords.class, new UserWordsSerializer());

@@ -10,6 +10,7 @@ import java.util.Optional;
 public class Game {
     private final String id;
     private final List<User> users;
+    private final List<User> fixedUsers;
     private final GameSettings settings;
     private Integer playedRounds;
     private GameState state;
@@ -18,6 +19,7 @@ public class Game {
     public Game(String id, GameSettings settings) {
         this.id = id;
         this.users = new ArrayList<>();
+        this.fixedUsers = new ArrayList<>();
         this.settings = settings;
         this.scores = new GameScores();
         this.state = GameState.WAITING;
@@ -28,8 +30,12 @@ public class Game {
         return id;
     }
 
-    public List<User> getUsers() {
+    public List<User> getOnlineUsers() {
         return users;
+    }
+
+    public List<User> getUsers() {
+        return fixedUsers;
     }
 
     public Optional<User> getUserByID(String userID){
@@ -38,6 +44,9 @@ public class Game {
 
     public boolean addNewUser(User user){
         if(users.size() < settings.getNumberOfUsers()){
+            if(state != GameState.WAITING ){
+                return fixedUsers.contains(user) && users.add(user);
+            }
             return users.add(user);
         }
         return false;
@@ -52,6 +61,10 @@ public class Game {
         return user.isPresent() && removeUser(user.get());
     }
 
+    public void setListFixedUsers(List<User> fu){
+        fixedUsers.clear();
+        fixedUsers.addAll(fu);
+    }
 
     public GameSettings getSettings() {
         return settings;
@@ -74,11 +87,15 @@ public class Game {
     }
 
     public void setState(GameState state) {
+        if(state==GameState.STARTED){
+            fixedUsers.addAll(users);
+        }
         this.state = state;
     }
 
+
     public boolean isStarted(){
-        return state == GameState.STARTED;
+        return state != GameState.WAITING;
     }
 
     public GameScores getScores() {

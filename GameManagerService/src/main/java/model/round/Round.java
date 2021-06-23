@@ -1,27 +1,26 @@
 package model.round;
 
-import model.User;
 import model.game.Game;
-
-import java.util.*;
 
 public abstract class Round {
 
-    private final Game game;
-    private final char letter;
+    private Game game;
     private RoundState state;
    private final RoundWords usersWords;
 
     public Round(Game game) {
         this.game = game;
-        letter = (char) new Random().ints(65, 91).findAny().getAsInt();
         state = RoundState.PLAY;
-        usersWords = new RoundWords(game.getSettings().getNumberOfUsers());
+        usersWords = new RoundWords(game.getOnlineUsers(), game.getUsers());
         onStart();
     }
 
     public Game getGame() {
         return game;
+    }
+
+    public void updateGame(Game newGame){
+        this.game= newGame;
     }
 
     public RoundState getState() {

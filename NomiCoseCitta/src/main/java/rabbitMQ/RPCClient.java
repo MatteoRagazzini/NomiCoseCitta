@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 public class RPCClient implements AutoCloseable {
 
     private final Connection connection;
-    private final Channel channel;
+    private Channel channel;
     private static final String EXCHANGE_NAME = "Web";
 
     public RPCClient() throws IOException, TimeoutException {
@@ -54,7 +54,9 @@ public class RPCClient implements AutoCloseable {
                 }, consumerTag -> {
                 });
             }else{
-                System.out.println("CHANNEL CLOSED");
+                System.out.println("CHANNEL CLOSED, lo ricreo");
+                channel = connection.createChannel();
+                call(messageType,message,responseConsumer);
             }
             //channel.basicCancel(ctag);
 

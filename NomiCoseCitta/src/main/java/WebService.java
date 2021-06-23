@@ -73,7 +73,7 @@ public class WebService extends AbstractVerticle {
                         .putHeader("content-type", "text/plain")
                         .setStatusCode(200)
                         .end(response);
-                context.vertx().eventBus().publish("game." + context.request().getParam("id")+ "/start", response);
+                context.vertx().eventBus().publish("game." + context.request().getParam("id") + "/start", response);
             });
         });
 
@@ -84,7 +84,14 @@ public class WebService extends AbstractVerticle {
                         .setStatusCode(200)
                         .end(response);
                 if(!response.equals("null")) {
-                    context.vertx().eventBus().publish("game." + context.request().getParam("id"), response);
+                    String gameState = new JsonObject(response).getString("gameState");
+                    if(gameState.equals("STARTED")) {
+                        context.vertx().eventBus().publish("game." + context.request().getParam("id") + "/start", response);
+                    } else if(gameState.equals("WAITING")) {
+                        context.vertx().eventBus().publish("game." + context.request().getParam("id"), response);
+                    } else if(gameState.equals("CHECK")){
+                        System.out.println("____________________________________________________________________________________");
+                    }
                 }
             });
         });

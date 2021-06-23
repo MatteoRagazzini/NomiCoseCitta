@@ -1,8 +1,8 @@
 
-var host = "http://192.168.1.11:8080";
+var host = "http://localhost:8080";
 var gameID = "";
 var userID = "";
-var roundStopped = false;
+var roundStarted = false;
 var eventbus_mio;
 
 function getSocketUri(url){
@@ -21,8 +21,8 @@ function  registerHandlerForUpdateGame(name, gameID) {
                 ul.innerHTML = '';
                 js.users.forEach(user => {
                     var li = document.createElement("li");
-                    li.setAttribute('id', user);
-                    li.appendChild(document.createTextNode(user));
+                    li.setAttribute('id', user.nickname);
+                    li.appendChild(document.createTextNode(user.nickname));
                     ul.appendChild(li);
                 });
                 if (js.couldStart === true) {
@@ -32,9 +32,7 @@ function  registerHandlerForUpdateGame(name, gameID) {
         });
 
         eventbus_mio.registerHandler('game.' + gameID + '/start', function (error, jsonResponse) {
-            console.log("inside start eventbus handler");
-            if (jsonResponse != null) {
-                console.log(jsonResponse.body);
+            if (jsonResponse != null && !roundStarted) {
                 var js = JSON.parse(jsonResponse.body);
                 document.getElementById("letter").innerText = "Play with letter " + js.settings.roundsLetters[js.playedRounds];
                 var span = document.getElementById("categories");
@@ -57,6 +55,7 @@ function  registerHandlerForUpdateGame(name, gameID) {
                     span.appendChild(br1);
 
                 });
+                roundStarted = true;
                 document.getElementById("waiting").style.display = "none" ;
                 document.getElementById("game").style.display = "inline" ;
 
@@ -65,6 +64,7 @@ function  registerHandlerForUpdateGame(name, gameID) {
 
         eventbus_mio.registerHandler('game.' + gameID +"/stop", function (error, jsonResponse) {
                     if (jsonResponse !== "null") {
+                        roundStarted = false;
                         sendWord(document.getElementById("gameForm"));
                     }
                 });

@@ -1,5 +1,5 @@
 package model.game;
 
 public enum GameState {
-    WAITING, STARTED, FINISHED;
+    WAITING, STARTED, CHECK, FINISHED;
 }

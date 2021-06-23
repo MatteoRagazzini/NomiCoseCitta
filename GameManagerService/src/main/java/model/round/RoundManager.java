@@ -2,8 +2,10 @@ package model.round;
 
 import com.rabbitmq.client.DeliverCallback;
 import model.game.Game;
+import model.game.GameState;
 import presentation.Presentation;
 import rabbit.Consumer;
+import rabbit.Emitter;
 import rabbit.MessageType;
 import rabbit.RPCServer;
 
@@ -14,12 +16,21 @@ import java.util.function.Function;
 public class RoundManager {
 
     private final Map<String, Round> activeRounds;
+    private final Emitter emitter;
 
     public RoundManager() {
         activeRounds = new HashMap<>();
-        new Consumer("game", startGame() , MessageType.START);
+        emitter = new Emitter("round");
+        new Consumer("game", getConsumerMap());
         new RPCServer(getCallbackMap());
 
+    }
+
+    private Map<MessageType, DeliverCallback> getConsumerMap(){
+        Map<MessageType, DeliverCallback> map = new HashMap<>();
+        map.put( MessageType.START, startGame());
+        map.put( MessageType.DISCONNECT, userDisconnection());
+        return map;
     }
 
     private Map<MessageType, Function<String, String>> getCallbackMap() {
@@ -35,6 +46,8 @@ public class RoundManager {
                 var round = activeRounds.get(userWords.getGameID());
                 round.insertUserWord(userWords);
                 if(round.getUsersWords().allDelivered()){
+                    round.getGame().setState(GameState.CHECK);
+                    emitter.emit(MessageType.WORDS, Presentation.serializerOf(Game.class).serialize(round.getGame()));
                     return Presentation.serializerOf(RoundWords.class).serialize(round.getUsersWords());
                 }
 
@@ -50,7 +63,21 @@ public class RoundManager {
             try {
                 var game = Presentation.deserializeAs(new String(delivery.getBody(),
                         "UTF-8"), Game.class);
+                System.out.println("GAME INIZIATO: "+ game);
                 activeRounds.put(game.getId(), createRound(game));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        };
+    }
+
+    private DeliverCallback userDisconnection() {
+        return (consumerTag, delivery) -> {
+            try {
+                var game = Presentation.deserializeAs(new String(delivery.getBody(),
+                        "UTF-8"), Game.class);
+                System.out.println("USER DISCONNESSO");
+                activeRounds.get(game.getId()).updateGame(game);
             } catch (Exception e) {
                 e.printStackTrace();
             }

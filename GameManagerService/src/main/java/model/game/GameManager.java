@@ -1,11 +1,13 @@
 package model.game;
 
+import com.rabbitmq.client.DeliverCallback;
 import model.User;
 import model.request.DisconnectRequest;
 import model.request.UserInLobbyRequest;
 import model.request.StartRequest;
 import presentation.Presentation;
 
+import rabbit.Consumer;
 import rabbit.Emitter;
 import rabbit.MessageType;
 import rabbit.RPCServer;
@@ -22,7 +24,28 @@ public class GameManager {
     public GameManager() {
         games = new ArrayList<>();
         emitter = new Emitter("game");
+        new Consumer("round",getGameUpdateCallback());
         new RPCServer(getCallbackMap());
+    }
+
+    private Map<MessageType, DeliverCallback> getGameUpdateCallback() {
+        Map<MessageType, DeliverCallback> map = new HashMap<>();
+        map.put(MessageType.WORDS, onWordsDelivery());
+        return map;
+    }
+
+    private DeliverCallback onWordsDelivery() {
+        return (consumerTag, message) -> {
+            try {
+                Game gameUpdated = Presentation.deserializeAs(new String(message.getBody(),
+                        "UTF-8"), Game.class);
+                games.removeIf(g -> g.getId().equals(gameUpdated.getId()));
+                games.add(gameUpdated);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        };
     }
 
     private Map<MessageType, Function<String,String>> getCallbackMap(){
@@ -63,12 +86,13 @@ public class GameManager {
         };
     }
 
-    private Function<String, String> lobbyRequest(BiFunction<User, Game, Boolean> requestHandler){
+    private Function<String, String> joinGame() {
         return message -> {
             try {
                 var request = Presentation.deserializeAs(message, UserInLobbyRequest.class);
                 var game = getGameById(request.getGameID());
-                if(game.isPresent() && requestHandler.apply(request.getUser(), game.get())){
+                if(game.isPresent() && game.get().addNewUser(request.getUser())){
+                    sendGameUpdateToRoundManager(game.get());
                     return Presentation.serializerOf(Game.class).serialize(game.get());
                 }
             } catch (Exception e) {
@@ -78,13 +102,6 @@ public class GameManager {
         };
     }
 
-    private Function<String, String> joinGame() {
-        return lobbyRequest((user, game) -> !game.isFull() &&  game.addNewUser(user));
-    }
-
-//    private Function<String, String> disconnectGame() {
-//        return lobbyRequest((user, game) -> game.removeUser(user));
-//    }
 
     private Function<String, String> disconnectGame() {
         return message -> {
@@ -92,6 +109,7 @@ public class GameManager {
                 var req = Presentation.deserializeAs(message, DisconnectRequest.class);
                 var game = games.stream().filter(g -> g.removeUser(req.getUserAddress())).findFirst();
                 if(game.isPresent()){
+                    sendGameUpdateToRoundManager(game.get());
                     return Presentation.serializerOf(Game.class).serialize(game.get());
                 }
             } catch (Exception e) {
@@ -99,6 +117,12 @@ public class GameManager {
             }
             return "null";
         };
+    }
+
+    private void sendGameUpdateToRoundManager(Game game){
+        if(game.isStarted()) {
+            emitter.emit(MessageType.DISCONNECT, Presentation.serializerOf(Game.class).serialize(game));
+        }
     }
 
 
