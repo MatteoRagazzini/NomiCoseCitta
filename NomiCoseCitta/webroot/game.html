@@ -18,12 +18,22 @@
     <input type="button" id="startButton" disabled="disabled" value="start" onclick="startGame()">
 </div>
 <div id = "game"  style = "display: none">
-    <h2> Round 1</h2>
-    <h3 id="letter"> Si gioca con la lettera:</h3>
+    <h2 id="roundNumber"></h2>
+    <h3 id="letter"></h3>
     <form id="gameForm">
         <div id="categories">
         </div>
-        <input type="button" id="stopButton" value="STOP" onclick="stopRound()">
+        <input type="button" id="stopButton"  style = "display: none" value="STOP" onclick="stopRound() ">
+    </form>
+
+</div>
+<div id = "evaluation"  style = "display: none">
+    <h2 id="roundNumber"></h2>
+    <h3> Esprimi il tuo voto circa le parole dei tuoi avversari: </h3>
+    <form id="evaluationForm">
+        <div id="usersWords">
+        </div>
+        <input type="button" id="evaluationButton" value="SEND YOU EVALUATION" onclick="sendEvaluation()">
     </form>
 
 </div>

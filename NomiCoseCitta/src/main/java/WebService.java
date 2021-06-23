@@ -53,10 +53,10 @@ public class WebService extends AbstractVerticle {
         router.route().produces("application/json");
 
         router.post("/game/create").handler(context -> {
-            System.out.println("POST for create");
-            System.out.println(context.getBodyAsJson().encodePrettily());
+           // System.out.println("POST for create");
+          //  System.out.println(context.getBodyAsJson().encodePrettily());
             emitter.call(MessageType.CREATE, context.getBodyAsJson().encode(), response -> {
-                System.out.println("inside game create callback " + response);
+                Logger.log(MessageType.CREATE, response);
                 context.response()
                         .putHeader("content-type", "text/plain")
                         .setStatusCode(200)
@@ -65,10 +65,10 @@ public class WebService extends AbstractVerticle {
         });
 
         router.post("/game/start/:id").handler(context -> {
-            System.out.println("POST for starting the game");
-            System.out.println(context.getBodyAsJson().encodePrettily());
+            //System.out.println("POST for starting the game");
+           // System.out.println(context.getBodyAsJson().encodePrettily());
             emitter.call(MessageType.START, context.getBodyAsJson().encode(), response -> {
-                System.out.println("inside game start callback " + response);
+                Logger.log(MessageType.START, response);
                 context.response()
                         .putHeader("content-type", "text/plain")
                         .setStatusCode(200)
@@ -79,6 +79,7 @@ public class WebService extends AbstractVerticle {
 
         router.post("/game/join/:id").handler(context -> {
             emitter.call(MessageType.JOIN, context.getBodyAsJson().encode(), response -> {
+            Logger.log(MessageType.JOIN, response);
                 context.response()
                         .putHeader("content-type", "text/plain")
                         .setStatusCode(200)
@@ -96,17 +97,17 @@ public class WebService extends AbstractVerticle {
             });
         });
 
-        router.post("/game/words").handler(context -> {
-            System.out.println("PAROLE: " + context.getBodyAsJson().encode());
+        router.post("/game/words/:id").handler(context -> {
+            //System.out.println("PAROLE: " + context.getBodyAsJson().encode());
             emitter.call(MessageType.WORDS, context.getBodyAsJson().encode(), response -> {
+                Logger.log(MessageType.WORDS, response);
                 context.response()
                         .putHeader("content-type", "text/plain")
                         .setStatusCode(200)
                         .end(response);
-                System.out.println(response);
-//                if(!response.equals("null")) {
-//                    context.vertx().eventBus().publish("game." + context.request().getParam("id"), response);
-//                }
+               if(!response.equals("null")) {
+                   context.vertx().eventBus().publish("game." + context.request().getParam("id") + "/evaluate", response);
+               }
             });
         });
 
@@ -119,18 +120,18 @@ public class WebService extends AbstractVerticle {
                 .addOutboundPermitted(new PermittedOptions().setAddressRegex("game\\.[0-9]+[\\s\\S]*"));
         return SockJSHandler.create(vertx).bridge(options, event -> {
             if (event.type() == BridgeEventType.SOCKET_CREATED) {
-                System.out.println("A socket was created");
+               // System.out.println("A socket was created");
             }
 //            if (event.type() == BridgeEventType.RECEIVE || event.type() == BridgeEventType.PUBLISH){
 //                System.out.println("RECEIVE message: " + event.getRawMessage());
 //            }
             if (event.type() == BridgeEventType.SOCKET_CLOSED) {
-                System.out.println("A socket was closed" + event.socket().uri());
+                //System.out.println("A socket was closed" + event.socket().uri());
                 JsonObject msg = new JsonObject();
                 msg.put("userAddress", event.socket().uri());
                 emitter.call(MessageType.DISCONNECT, msg.encode(), response -> {
                     JsonObject js = new JsonObject(response);
-                    System.out.println("IN DISCONNECT CALLBACK " + js);
+                  //  System.out.println("IN DISCONNECT CALLBACK " + js);
                     vertx.eventBus().publish("game." + js.getString("gameID"), response);
                 });
             }
@@ -142,7 +143,7 @@ public class WebService extends AbstractVerticle {
         return (ctag, delivery) -> {
             JsonObject msg = new JsonObject(new String(delivery.getBody(), "UTF-8"));
             System.out.println("Receive STOP round msg");
-            System.out.println("Broadcasting on  "+ "game." + msg.getString("gameID")+"/stop");
+            //System.out.println("Broadcasting on  "+ "game." + msg.getString("gameID")+"/stop");
             vertx.eventBus().publish("game." + msg.getString("gameID")+"/stop", msg.encode());
         };
     }
