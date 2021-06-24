@@ -91,7 +91,13 @@ public class WebService extends AbstractVerticle {
                     } else if(gameState.equals("WAITING")) {
                         context.vertx().eventBus().publish("game." + context.request().getParam("id"), response);
                     } else if(gameState.equals("CHECK")){
-                        System.out.println("____________________________________________________________________________________");
+                        JsonObject json = new JsonObject().put("gameID", context.request().getParam("id"));
+
+                        emitter.call(MessageType.CHECK, json.encode(), res -> {
+                            if(!res.equals("null")) {
+                               context.vertx().eventBus().publish("game." + context.request().getParam("id") + "/evaluate", res);
+                           }
+                        });
                     }
                 }
             });
@@ -111,8 +117,8 @@ public class WebService extends AbstractVerticle {
             });
         });
 
+
           router.post("/game/votes/:id").handler(context -> {
-                    //System.out.println("PAROLE: " + context.getBodyAsJson().encode());
                     emitter.call(MessageType.VOTES, context.getBodyAsJson().encode(), response -> {
                         Logger.log(MessageType.VOTES, response);
                         context.response()

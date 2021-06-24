@@ -49,6 +49,7 @@ public class RoundManager {
 
     private Function<String, String> sendRoundWords() {
         return msg -> {
+            System.out.println("RICEVUTA RICHIESTA PAROLE");
             var gameID = new Gson().fromJson(msg, JsonObject.class).get("gameID").getAsString();
             return Presentation.serializerOf(RoundWords.class).serialize(activeRounds.get(gameID).getRoundWords());
         };

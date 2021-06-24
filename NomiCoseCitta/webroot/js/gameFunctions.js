@@ -3,6 +3,7 @@ var host = "http://localhost:8080";
 var gameID = "";
 var userID = "";
 var roundStarted = false;
+var evaluationStarted = false;
 var eventbus_mio;
 
 function getSocketUri(url){
@@ -75,15 +76,17 @@ function  registerHandlerForUpdateGame(name, gameID) {
         });
 
         eventbus_mio.registerHandler('game.' + gameID +"/evaluate", function (error, jsonResponse) {
-            if (jsonResponse !== "null") {
+            if (jsonResponse !== "null" && !evaluationStarted) {
+                evaluationStarted = true;
                 document.getElementById("game").style.display = "none";
+                document.getElementById("waiting").style.display = "none";
                 document.getElementById("evaluation").style.display = "inline";
                 var js = JSON.parse(jsonResponse.body);
                 loadWords(js);
             }
         });
 
-        // eventbus_mio.registerHandler('game.' + gameID +"/evaluate", function (error, jsonResponse) {
+        // eventbus_mio.registerHandler('game.' + gameID +"/scores", function (error, jsonResponse) {
         //     if (jsonResponse !== "null") {
         //         document.getElementById("evaluation").style.display = "none";
         //         document.getElementById("scores").style.display = "inline";
@@ -265,80 +268,58 @@ function sendEvaluation() {
     xmlhttp.open("POST", host + "/api/game/votes/" + gameID);
     xmlhttp.setRequestHeader("Content-Type", "application/json");
     xmlhttp.send(JSON.stringify(finalJson));
-}
+    // document.getElementById("evaluation").style.display = "none";
+    // document.getElementById("scores").style.display = "inline";
+    // loadScores();
 
-// function  loadScores(js){
+}
+//
+// function  loadScores(){
 //     //document.getElementById("roundNumber").innerText = "Round " + (js.playedRounds + 1);
 //     //document.getElementById("letter").innerText = "Play with letter " + js.settings.roundsLetters[js.playedRounds];
-//     var span = document.getElementById("usersWords");
-//     js.usersWords.forEach(userWords => {
-//         var relatedUser = userWords["userID"];
-//         form = document.createElement("form");
-//         form.setAttribute("class", "votes");
-//         form.setAttribute("id", relatedUser)
-//         for(var key in userWords) {
-//             if (key === "userID") {
-//                 var br = document.createElement("br");
-//                 var br4 = document.createElement("br");
+//     let tableDiv = document.getElementById("tableDiv");
 //
-//                 var label = document.createElement("label");
-//                 label.setAttribute("for", userWords[key]);
-//                 label.innerHTML = "parole di: ";
+//     let table = document.createElement("table");
 //
-//                 var playerName = document.createElement("input");
-//                 playerName.setAttribute("id", userWords[key]);
-//                 playerName.setAttribute("type", "text");
-//                 playerName.setAttribute("name", "userID");
-//                 playerName.setAttribute("readonly", true);
-//                 playerName.value = userWords[key];
+//     let thead = document.createElement("thead");
 //
-//                 form.appendChild(br)
-//                 form.appendChild(label);
-//                 form.appendChild(playerName);
-//                 form.appendChild(br4);
-//             } else {
-//                 var br1 = document.createElement("br");
-//                 var br2 = document.createElement("br");
-//                 var br3 = document.createElement("br");
-//                 var label = document.createElement("label");
-//                 label.setAttribute("for", key + " - " + relatedUser);
-//                 label.innerHTML = key;
+//     let tr = document.createElement("tr");
 //
-//                 var inputElement = document.createElement("input");
-//                 inputElement.setAttribute("id", key + " - " + relatedUser);
-//                 inputElement.setAttribute("type", "text");
-//                 inputElement.setAttribute("name", key);
-//                 inputElement.value = userWords[key];
-//                 inputElement.setAttribute("readonly", "true");
+//     let categories = ["nomi", "cose", "città"];
 //
-//                 var radioOk = document.createElement("input");
-//                 radioOk.setAttribute("type", "radio");
-//                 radioOk.setAttribute("id", "ok" + relatedUser);
-//                 radioOk.setAttribute("name", key);
-//                 radioOk.setAttribute("value", "ok");
-//                 radioOk.setAttribute("checked", "true");
-//                 var labelOk = document.createElement("label");
-//                 labelOk.setAttribute("for", key);
-//                 labelOk.innerHTML = "OK";
-//                 var radioNo = document.createElement("input");
-//                 radioNo.setAttribute("type", "radio");
-//                 radioNo.setAttribute("id", "no" + relatedUser);
-//                 radioNo.setAttribute("name", key);
-//                 radioNo.setAttribute("value", "no");
-//                 var labelNo = document.createElement("label");
-//                 labelNo.setAttribute("for", key);
-//                 labelNo.innerHTML = "NO";
-//
-//                 form.appendChild(label);
-//                 form.appendChild(br2);
-//                 form.appendChild(inputElement);
-//                 form.appendChild(radioOk);
-//                 form.appendChild(labelOk);
-//                 form.append(radioNo);
-//                 form.append(labelNo);
-//                 form.appendChild(br3);
-//             }
-//         }
-//         span.appendChild(form);
+//     //creo l'header
+//     userIDHead = document.createElement("th");
+//     userIDHead.innerText = "userID"
+//     tr.append(userIDHead);
+//     categories.forEach(category => {
+//         categoryHead = document.createElement("th");
+//         categoryHead.innerText = category;
+//         tr.append(categoryHead);
 //     });
+//
+//     thead.append(tr);
+//     table.append(thead);
+//
+//
+//     let tbody = document.createElement("tbody");
+//
+//     usersScores.forEach(usersScores =>{
+//
+//        userScoreRow = document.createElement("tr");
+//
+//        userIDCell = document.createElement("td");
+//        userIDCell.innerText = usersScores.userID;
+//
+//        userScoreRow.append(userIDCell);
+//
+//        usersScores.ScoreForCategories.forEach(category => {
+//            wordCell = document.createElement("td");
+//            wordCell.innerText = ScoreForCategories.category.word + " " +  ScoreForCategories.category.score;
+//            userScoreRow.append(wordCell);
+//        });
+//
+//        tbody.append(userScoreRow);
+//     });
+//
+//     tableDiv.append(table);
 // }

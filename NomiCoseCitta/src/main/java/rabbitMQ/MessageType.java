@@ -7,7 +7,9 @@ public enum MessageType {
     STOP("stop", "stop_response"),
     WORDS("words", "words_response"),
     VOTES("votes", "votes_response"),
-    DISCONNECT("disconnect","disconnect_response");
+    DISCONNECT("disconnect","disconnect_response"),
+    CHECK("check","check_response");
+
 
     private final String type;
     private final String responseType;
