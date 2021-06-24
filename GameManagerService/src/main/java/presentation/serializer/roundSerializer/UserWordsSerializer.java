@@ -1,10 +1,9 @@
 package presentation.serializer.roundSerializer;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import model.round.UserWords;
+import model.round.words.UserWords;
 import presentation.serializer.AbstractJsonSerializer;
 
 public class UserWordsSerializer extends AbstractJsonSerializer<UserWords> {

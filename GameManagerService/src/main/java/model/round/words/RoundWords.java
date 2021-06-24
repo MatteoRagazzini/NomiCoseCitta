@@ -1,4 +1,4 @@
-package model.round;
+package model.round.words;
 
 import model.User;
 
@@ -22,6 +22,18 @@ public class RoundWords {
 
     public boolean allDelivered(){
         return usersWords.size()==onlineUsers.size();
+    }
+
+    public void insertEvaluation(Evaluation evaluation){
+        evaluation.getVotes()
+                .forEach(v -> usersWords.stream()
+                        .filter(uw -> uw.getUserID().equals(v.getUserID()))
+                        .findFirst()
+                        .ifPresent(uw -> uw.updateWordsVotes(v.getVotes())));
+    }
+
+    public void getScores(){
+        usersWords.forEach(uw -> System.out.println(uw.getVotes()));
     }
 
     public List<UserWords> getUsersWords(){

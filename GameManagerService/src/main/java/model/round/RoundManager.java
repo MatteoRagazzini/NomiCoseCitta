@@ -3,6 +3,9 @@ package model.round;
 import com.rabbitmq.client.DeliverCallback;
 import model.game.Game;
 import model.game.GameState;
+import model.round.words.Evaluation;
+import model.round.words.RoundWords;
+import model.round.words.UserWords;
 import presentation.Presentation;
 import rabbit.Consumer;
 import rabbit.Emitter;
@@ -36,7 +39,25 @@ public class RoundManager {
     private Map<MessageType, Function<String, String>> getCallbackMap() {
         Map<MessageType, Function<String,String>> map = new HashMap<>();
         map.put(MessageType.WORDS, sendWordsToRound());
+        map.put(MessageType.VOTES, onVotesDelivery());
         return map;
+    }
+
+    private Function<String, String> onVotesDelivery() {
+        return msg -> {
+            try {
+                System.out.println("RICEVUTA VALUTAZIONE");
+                var evaluation = Presentation.deserializeAs(msg, Evaluation.class);
+                var round = activeRounds.get(evaluation.getGameID());
+                round.insertEvaluation(evaluation);
+                round.getRoundWords().getScores();
+                return "Scores";
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return "null";
+        };
+
     }
 
     private Function<String, String> sendWordsToRound() {
@@ -45,10 +66,10 @@ public class RoundManager {
                 var userWords = Presentation.deserializeAs(msg, UserWords.class);
                 var round = activeRounds.get(userWords.getGameID());
                 round.insertUserWord(userWords);
-                if(round.getUsersWords().allDelivered()){
+                if(round.getRoundWords().allDelivered()){
                     round.getGame().setState(GameState.CHECK);
                     emitter.emit(MessageType.WORDS, Presentation.serializerOf(Game.class).serialize(round.getGame()));
-                    return Presentation.serializerOf(RoundWords.class).serialize(round.getUsersWords());
+                    return Presentation.serializerOf(RoundWords.class).serialize(round.getRoundWords());
                 }
 
             } catch (Exception e) {

@@ -1,4 +1,4 @@
-package model.round;
+package model.round.words;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,8 +19,14 @@ public class UserWords {
     public void insertWord(String category, String word){
         words.put(category,word);
     }
-    public void setWordsVotes(Map<String, Integer> v){
-        votes.putAll(v);
+    public void updateWordsVotes(Map<String, Integer> v){
+        v.forEach((cat, vote) -> {
+            votes.merge(cat, vote, (c, av) -> av + vote);
+        });
+    }
+
+    public Map<String, Integer> getVotes() {
+        return votes;
     }
 
     public String getUserID() {

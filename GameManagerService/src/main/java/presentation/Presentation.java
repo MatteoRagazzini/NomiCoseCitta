@@ -7,10 +7,14 @@ import model.game.GameSettings;
 import model.request.DisconnectRequest;
 import model.request.UserInLobbyRequest;
 import model.request.StartRequest;
-import model.round.RoundWords;
-import model.round.UserWords;
+import model.round.words.Evaluation;
+import model.round.words.RoundWords;
+import model.round.words.UserWords;
+import model.round.words.Vote;
 import presentation.deserializer.*;
+import presentation.deserializer.roundDeserializer.EvaluationDeserializer;
 import presentation.deserializer.roundDeserializer.UserWordsDeserializer;
+import presentation.deserializer.roundDeserializer.VoteDeserializer;
 import presentation.serializer.GameSettingsSerializer;
 import presentation.serializer.GameSerializer;
 import presentation.serializer.Serializer;
@@ -37,6 +41,8 @@ public class Presentation {
         deserializers.put(DisconnectRequest.class, new UserDisconnectionDeserializer());
         deserializers.put(StartRequest.class, new StartRequestDeserializer());
         deserializers.put(UserWords.class, new UserWordsDeserializer());
+        deserializers.put(Evaluation.class, new EvaluationDeserializer());
+        deserializers.put(Vote.class, new VoteDeserializer());
 
         serializers.put(Game.class, new GameSerializer());
         serializers.put(User.class, new UserSerializer());

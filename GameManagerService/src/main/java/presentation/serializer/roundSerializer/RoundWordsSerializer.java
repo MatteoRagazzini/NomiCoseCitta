@@ -3,9 +3,8 @@ package presentation.serializer.roundSerializer;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import model.game.GameSettings;
-import model.round.RoundWords;
-import model.round.UserWords;
+import model.round.words.RoundWords;
+import model.round.words.UserWords;
 import presentation.Presentation;
 import presentation.serializer.AbstractJsonSerializer;
 
