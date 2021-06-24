@@ -111,6 +111,21 @@ public class WebService extends AbstractVerticle {
             });
         });
 
+          router.post("/game/votes/:id").handler(context -> {
+                    //System.out.println("PAROLE: " + context.getBodyAsJson().encode());
+                    emitter.call(MessageType.VOTES, context.getBodyAsJson().encode(), response -> {
+                        Logger.log(MessageType.VOTES, response);
+                        context.response()
+                                .putHeader("content-type", "text/plain")
+                                .setStatusCode(200)
+                                .end(response);
+                       if(!response.equals("null")) {
+                           context.vertx().eventBus().publish("game." + context.request().getParam("id") + "/scores", response);
+                       }
+                    });
+                });
+
+
        return router;
     }
 
