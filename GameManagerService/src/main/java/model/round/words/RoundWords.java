@@ -33,7 +33,7 @@ public class RoundWords {
     }
 
     public void getScores(){
-        usersWords.forEach(uw -> System.out.println(uw.getVotes()));
+        usersWords.forEach(System.out::println);
     }
 
     public List<UserWords> getUsersWords(){

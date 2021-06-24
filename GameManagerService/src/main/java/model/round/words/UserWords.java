@@ -20,9 +20,7 @@ public class UserWords {
         words.put(category,word);
     }
     public void updateWordsVotes(Map<String, Integer> v){
-        v.forEach((cat, vote) -> {
-            votes.merge(cat, vote, (c, av) -> av + vote);
-        });
+        v.forEach((cat, vote) -> votes.merge(cat, vote, Integer::sum));
     }
 
     public Map<String, Integer> getVotes() {
@@ -39,5 +37,14 @@ public class UserWords {
 
     public Map<String, String> getWords() {
         return words;
+    }
+
+    @Override
+    public String toString() {
+        return "UserWords{" +
+                "userID='" + userID + '\'' +
+                ", words=" + words +
+                ", votes=" + votes +
+                '}';
     }
 }
