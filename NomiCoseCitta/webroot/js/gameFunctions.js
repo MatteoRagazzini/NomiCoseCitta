@@ -83,14 +83,14 @@ function  registerHandlerForUpdateGame(name, gameID) {
             }
         });
 
-        eventbus_mio.registerHandler('game.' + gameID +"/evaluate", function (error, jsonResponse) {
-            if (jsonResponse !== "null") {
-                document.getElementById("evaluation").style.display = "none";
-                document.getElementById("scores").style.display = "inline";
-                var js = JSON.parse(jsonResponse.body);
-                loadScores(js);
-            }
-        });
+        // eventbus_mio.registerHandler('game.' + gameID +"/evaluate", function (error, jsonResponse) {
+        //     if (jsonResponse !== "null") {
+        //         document.getElementById("evaluation").style.display = "none";
+        //         document.getElementById("scores").style.display = "inline";
+        //         var js = JSON.parse(jsonResponse.body);
+        //         loadScores(js);
+        //     }
+        // });
 
 
 
@@ -262,83 +262,83 @@ function sendEvaluation() {
         if (this.readyState === 4 && this.status === 200) {
         }
     };
-    xmlhttp.open("POST", host + "/api/game/vote/" + gameID);
+    xmlhttp.open("POST", host + "/api/game/votes/" + gameID);
     xmlhttp.setRequestHeader("Content-Type", "application/json");
     xmlhttp.send(JSON.stringify(finalJson));
 }
 
-function  loadScores(js){
-    //document.getElementById("roundNumber").innerText = "Round " + (js.playedRounds + 1);
-    //document.getElementById("letter").innerText = "Play with letter " + js.settings.roundsLetters[js.playedRounds];
-    var span = document.getElementById("usersWords");
-    js.usersWords.forEach(userWords => {
-        var relatedUser = userWords["userID"];
-        form = document.createElement("form");
-        form.setAttribute("class", "votes");
-        form.setAttribute("id", relatedUser)
-        for(var key in userWords) {
-            if (key === "userID") {
-                var br = document.createElement("br");
-                var br4 = document.createElement("br");
-
-                var label = document.createElement("label");
-                label.setAttribute("for", userWords[key]);
-                label.innerHTML = "parole di: ";
-
-                var playerName = document.createElement("input");
-                playerName.setAttribute("id", userWords[key]);
-                playerName.setAttribute("type", "text");
-                playerName.setAttribute("name", "userID");
-                playerName.setAttribute("readonly", true);
-                playerName.value = userWords[key];
-
-                form.appendChild(br)
-                form.appendChild(label);
-                form.appendChild(playerName);
-                form.appendChild(br4);
-            } else {
-                var br1 = document.createElement("br");
-                var br2 = document.createElement("br");
-                var br3 = document.createElement("br");
-                var label = document.createElement("label");
-                label.setAttribute("for", key + " - " + relatedUser);
-                label.innerHTML = key;
-
-                var inputElement = document.createElement("input");
-                inputElement.setAttribute("id", key + " - " + relatedUser);
-                inputElement.setAttribute("type", "text");
-                inputElement.setAttribute("name", key);
-                inputElement.value = userWords[key];
-                inputElement.setAttribute("readonly", "true");
-
-                var radioOk = document.createElement("input");
-                radioOk.setAttribute("type", "radio");
-                radioOk.setAttribute("id", "ok" + relatedUser);
-                radioOk.setAttribute("name", key);
-                radioOk.setAttribute("value", "ok");
-                radioOk.setAttribute("checked", "true");
-                var labelOk = document.createElement("label");
-                labelOk.setAttribute("for", key);
-                labelOk.innerHTML = "OK";
-                var radioNo = document.createElement("input");
-                radioNo.setAttribute("type", "radio");
-                radioNo.setAttribute("id", "no" + relatedUser);
-                radioNo.setAttribute("name", key);
-                radioNo.setAttribute("value", "no");
-                var labelNo = document.createElement("label");
-                labelNo.setAttribute("for", key);
-                labelNo.innerHTML = "NO";
-
-                form.appendChild(label);
-                form.appendChild(br2);
-                form.appendChild(inputElement);
-                form.appendChild(radioOk);
-                form.appendChild(labelOk);
-                form.append(radioNo);
-                form.append(labelNo);
-                form.appendChild(br3);
-            }
-        }
-        span.appendChild(form);
-    });
-}
+// function  loadScores(js){
+//     //document.getElementById("roundNumber").innerText = "Round " + (js.playedRounds + 1);
+//     //document.getElementById("letter").innerText = "Play with letter " + js.settings.roundsLetters[js.playedRounds];
+//     var span = document.getElementById("usersWords");
+//     js.usersWords.forEach(userWords => {
+//         var relatedUser = userWords["userID"];
+//         form = document.createElement("form");
+//         form.setAttribute("class", "votes");
+//         form.setAttribute("id", relatedUser)
+//         for(var key in userWords) {
+//             if (key === "userID") {
+//                 var br = document.createElement("br");
+//                 var br4 = document.createElement("br");
+//
+//                 var label = document.createElement("label");
+//                 label.setAttribute("for", userWords[key]);
+//                 label.innerHTML = "parole di: ";
+//
+//                 var playerName = document.createElement("input");
+//                 playerName.setAttribute("id", userWords[key]);
+//                 playerName.setAttribute("type", "text");
+//                 playerName.setAttribute("name", "userID");
+//                 playerName.setAttribute("readonly", true);
+//                 playerName.value = userWords[key];
+//
+//                 form.appendChild(br)
+//                 form.appendChild(label);
+//                 form.appendChild(playerName);
+//                 form.appendChild(br4);
+//             } else {
+//                 var br1 = document.createElement("br");
+//                 var br2 = document.createElement("br");
+//                 var br3 = document.createElement("br");
+//                 var label = document.createElement("label");
+//                 label.setAttribute("for", key + " - " + relatedUser);
+//                 label.innerHTML = key;
+//
+//                 var inputElement = document.createElement("input");
+//                 inputElement.setAttribute("id", key + " - " + relatedUser);
+//                 inputElement.setAttribute("type", "text");
+//                 inputElement.setAttribute("name", key);
+//                 inputElement.value = userWords[key];
+//                 inputElement.setAttribute("readonly", "true");
+//
+//                 var radioOk = document.createElement("input");
+//                 radioOk.setAttribute("type", "radio");
+//                 radioOk.setAttribute("id", "ok" + relatedUser);
+//                 radioOk.setAttribute("name", key);
+//                 radioOk.setAttribute("value", "ok");
+//                 radioOk.setAttribute("checked", "true");
+//                 var labelOk = document.createElement("label");
+//                 labelOk.setAttribute("for", key);
+//                 labelOk.innerHTML = "OK";
+//                 var radioNo = document.createElement("input");
+//                 radioNo.setAttribute("type", "radio");
+//                 radioNo.setAttribute("id", "no" + relatedUser);
+//                 radioNo.setAttribute("name", key);
+//                 radioNo.setAttribute("value", "no");
+//                 var labelNo = document.createElement("label");
+//                 labelNo.setAttribute("for", key);
+//                 labelNo.innerHTML = "NO";
+//
+//                 form.appendChild(label);
+//                 form.appendChild(br2);
+//                 form.appendChild(inputElement);
+//                 form.appendChild(radioOk);
+//                 form.appendChild(labelOk);
+//                 form.append(radioNo);
+//                 form.append(labelNo);
+//                 form.appendChild(br3);
+//             }
+//         }
+//         span.appendChild(form);
+//     });
+// }
