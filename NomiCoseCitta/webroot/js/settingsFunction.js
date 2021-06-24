@@ -6,41 +6,33 @@ var host = "http://localhost:8080";
 function init() {
    var url = new URL(document.URL);
    name = url.searchParams.get("name");
-   document.getElementById("userID").value = name;
-   var form = document.querySelector('form');
-   form.addEventListener('submit', handleSubmit);
+   document.getElementById("userID").placeholder = name;
 }
 
 function addItem(){
     var span = document.getElementById("categoriesSpan");
     var candidate = document.getElementById("candidate");
+    var p = document.createElement("p");
+    var checboxSpan = document.createElement("span");
+    checboxSpan.innerText = candidate.value;
+    var label = document.createElement("label");
     var checkbox = document.createElement("input");
     checkbox.setAttribute("type","checkbox");
     checkbox.setAttribute("name","categories");
     checkbox.setAttribute("id",candidate.value);
     checkbox.setAttribute("value",candidate.value);
-    checkbox.checked = true;
-
-    var label = document.createElement("label");
-    label.setAttribute("for",candidate.value);
-    label.innerText = candidate.value;
-    span.appendChild(checkbox);
-    span.appendChild(label);
+    checkbox.setAttribute("checked", "true");
+    label.append(checkbox);
+    label.append(checboxSpan);
+    p.append(label);
+    span.appendChild(p);
 
     document.getElementById("candidate").value = "";
 
 }
 
-function removeItem(){
-    var ul = document.getElementById("dynamic-list");
-    var candidate = document.getElementById("candidate");
-    var item = document.getElementById(candidate.value);
-    ul.removeChild(item);
-}
-
-function handleSubmit(event) {
-       event.preventDefault();
-       const data = new FormData(event.target);
+function create() {
+       const data = new FormData(document.getElementById("settingsForm"));
        const value = Object.fromEntries(data.entries());
        value.categories = data.getAll("categories");
        console.log({value});

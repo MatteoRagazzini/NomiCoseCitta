@@ -6,26 +6,33 @@
     <script src="https://unpkg.io/sockjs-client@1.5.0/dist/sockjs.min.js"></script>
     <script src='https://unpkg.io/@vertx/eventbus-bridge-client.js@1.0.0-1/vertx-eventbus.js'></script>
     <script src="js/gameFunctions.js"></script>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
 <body onload="init()">
 <div id="waiting" style="display: inline">
-    <h2>Waiting for other players to join!</h2>
+    <h4>Waiting for other players to join!</h4>
 
     <p id="gameID">Game id: </p><br>
 
     <ul id="dynamic-list"></ul>
 
-    <input type="button" id="startButton" disabled="disabled" value="start" onclick="startGame()">
+    <input class="waves-effect waves-light btn" type="button" id="startButton" disabled="disabled" value="start" onclick="startGame()">
 </div>
 <div id = "game"  style = "display: none">
-    <h2 id="roundNumber"></h2>
-    <h3 id="letter"></h3>
-    <form id="gameForm">
-        <div id="categories">
-        </div>
-        <input type="button" id="stopButton"  style = "display: none" value="STOP" onclick="stopRound() ">
-    </form>
-
+    <h4 id="roundNumber"></h4>
+    <h5 id="letter"></h5>
+    <div class="row">
+        <form class="col s12" id="gameForm">
+            <div id="categories">
+            </div>
+            <button type="button" class="waves-effect waves-light btn" id="stopButton"  style = "display: none" onclick="stopRound() ">Stop</button>
+        </form>
+    </div>
 </div>
 <div id = "evaluation"  style = "display: none">
     <h2 id="roundNumber"></h2>
@@ -45,6 +52,6 @@
     <input type="button" id="nextRoundButton" disabled="disabled" value="next round" onclick="startGame()">
 
 </div>
-
+<script type="text/javascript" src="js/materialize.min.js"></script>
 </body>
 </html>

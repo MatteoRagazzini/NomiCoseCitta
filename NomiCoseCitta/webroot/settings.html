@@ -5,47 +5,89 @@
     <script src="https://unpkg.io/sockjs-client@1.5.0/dist/sockjs.min.js"></script>
     <script src='https://unpkg.io/@vertx/eventbus-bridge-client.js@1.0.0-1/vertx-eventbus.js'></script>
     <script src="js/settingsFunction.js"></script>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
 <body onload="init()">
 
 <h2>Game settings</h2>
 
-<form>
-    <label for="userID">Your Name:</label><br>
-    <input type="text" id="userID" name="userID"><br>
+<div class="row">
+    <form class="col s12" id="settingsForm" action="#">
+        <div class="row">
+            <div class="input-field col s12">
+                <input placeholder="" type="text" id="userID" name="userID" class="validate">
+                <label for="userID">User ID</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12">
+                <input type="number" id="numRounds" name="numRounds" value="2"><br>
+                <label for="numRounds">Num Rounds</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12">
+                <label for="numUsers">Num Players</label>
+                <input type="number" id="numUsers" name="numUsers" value="2"><br>
+            </div>
+        </div>
 
-    <label for="numRounds">Num Rounds:</label>
-    <input type="number" id="numRounds" name="numRounds" value="2"><br>
+        <p>Please select the tipe of rounds:</p>
+        <p>
+            <label>
+                <input name="roundsType" type="radio" value="stop" checked />
+                <span>Stop</span>
+            </label>
+        </p>
+        <p>
+            <label>
+                <input name="roundsType" type="radio" value="timer" />
+                <span>Timer</span>
+            </label>
+        </p>
+        <p>Choose a set of categories:</p>
+        <span id="categoriesSpan">
+        <p>
+            <label>
+                <input type="checkbox" name="categories" id="nomi" value="nomi" checked="true" />
+                <span>Nomi</span>
+            </label>
+        </p>
+        <p>
+            <label>
+                <input type="checkbox" name="categories" id="cose" value="cose" checked="true" />
+                <span>Cose</span>
+            </label>
+        </p>
+        <p>
+            <label>
+                <input type="checkbox" name="categories" id="citta" value="citta" checked="true" />
+                <span>Citta</span>
+            </label>
+        </p>
+        </span>
+        <div class="row">
+            <div class="input-field col s6">
+                <label for="candidate">New Category</label>
+                <input type="text" id="candidate"/>
+            </div>
+            <button class="waves-effect waves-light btn" type="button" onclick="addItem()">add item</button>
+        </div>
 
-    <label for="numUsers">Num Players:</label>
-    <input type="number" id="numUsers" name="numUsers" value="2"><br>
-
-    <p>Please select the tipe of rounds:</p>
-    <input type="radio" id="timer" name="roundsType" value="timer">
-    <label for="timer">timer</label><br>
-    <input type="radio" id="stop" name="roundsType" value="stop" checked>
-    <label for="stop">stop</label><br>
-
-    <p>Choose a set of categories:</p>
-    <span id="categoriesSpan">
-    <input type="checkbox" name="categories" id="nomi" value="nomi" checked="true"/>
-    <label for="nomi">nomi</label>
-
-    <input type="checkbox" name="categories" id="cose" value="cose" checked="true"/>
-    <label for="cose">cose</label>
-
-    <input type="checkbox" name="categories" id="città" value="città" checked="true"/>
-    <label for="città">città</label>
-    </span>
-
-    <button id="submit" type="submit">Create</button>
-</form>
-
-<input type="text" id="candidate"/>
-<button onclick="addItem()">add item</button>
-<button onclick="removeItem()">remove item</button>
+        <p>
+            <button class="waves-effect waves-light btn" type="button" onclick="create()">Create</button>
+        </p>
 
 
+    </form>
+</div>
 
+
+<script type="text/javascript" src="js/materialize.min.js"></script>
 </body>
 </html>

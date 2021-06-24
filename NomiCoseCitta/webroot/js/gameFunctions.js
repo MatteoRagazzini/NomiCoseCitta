@@ -23,7 +23,11 @@ function  registerHandlerForUpdateGame(name, gameID) {
                 js.users.forEach(user => {
                     var li = document.createElement("li");
                     li.setAttribute('id', user.nickname);
-                    li.appendChild(document.createTextNode(user.nickname));
+                    var div = document.createElement("div");
+                    div.className = "chip";
+                    div.innerHTML = "<i class='material-icons'>face</i>" + user.nickname;
+
+                    li.appendChild(div);
                     ul.appendChild(li);
                 });
                 if (js.couldStart === true) {
@@ -43,6 +47,12 @@ function  registerHandlerForUpdateGame(name, gameID) {
                 }
                 var span = document.getElementById("categories");
                 js.settings.categories.forEach(category => {
+                    // <div className="row">
+                    //     <div className="input-field col s12">
+                    //         <input type="text" id="userID" name="userID" className="validate">
+                    //             <label htmlFor="userID">User ID</label>
+                    //     </div>
+                    // </div>
                     var label = document.createElement("label");
                     label.setAttribute("for", category);
                     label.appendChild(document.createTextNode(category));

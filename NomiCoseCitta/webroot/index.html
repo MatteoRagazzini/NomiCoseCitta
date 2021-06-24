@@ -5,19 +5,35 @@
     <script src="https://unpkg.io/sockjs-client@1.5.0/dist/sockjs.min.js"></script>
     <script src='https://unpkg.io/@vertx/eventbus-bridge-client.js@1.0.0-1/vertx-eventbus.js'></script>
     <script src="js/functions.js"></script>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
 <body onload="init()">
 
-<h2>Welcome to Nomi Cose e Citta'</h2>
+<h4>Welcome to Nomi Cose e Citta'</h4>
 
-<form>
-    <label for="userID">Player name:</label><br>
-    <input type="text" id="userID" name="userID"><br>
-    <label for="gameID">Game id:</label><br>
-    <input type="text" id="gameID" name="gameID"><br>
-
-    <input type="button" onclick="newGame();" value="Create game">
-    <button id="submit" type="submit" >Join</button>
+<div class="row">
+    <form class="col s12">
+        <div class="row">
+            <div class="input-field col s12">
+                <input type="text" id="userID" name="userID" class="validate">
+                <label for="userID">User ID</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12">
+                <label for="gameID">Game id</label><br>
+                <input type="text" id="gameID" name="gameID"><br>
+            </div>
+        </div>
+    <input class="waves-effect waves-light btn" type="button" onclick="newGame();" value="Create game">
+    <button class="waves-effect waves-light btn" id="submit" type="submit" >Join</button>
 </form>
+</div>
+<script type="text/javascript" src="js/materialize.min.js"></script>
 </body>
 </html>
