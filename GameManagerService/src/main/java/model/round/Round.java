@@ -24,6 +24,7 @@ public abstract class Round {
 
     public void updateGame(Game newGame){
         this.game= newGame;
+        this.roundWords.updateUserOnline(newGame.getOnlineUsers());
     }
 
     public RoundState getState() {
@@ -34,12 +35,20 @@ public abstract class Round {
         return roundWords;
     }
 
+    public RoundScores getRoundScores(){
+        return ScoreCalculator.calculateScores(roundWords);
+    }
+
     public void insertUserWord(UserWords userWords){
         roundWords.insertUserWords(userWords);
     }
 
     public void insertEvaluation(Evaluation evaluation){
         roundWords.insertEvaluation(evaluation);
+    }
+
+    public boolean scoresAvailable() {
+        return roundWords.allEvaluationAreDelivered();
     }
 
     abstract void onStart();

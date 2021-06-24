@@ -1,5 +1,8 @@
 package model.round;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.rabbitmq.client.DeliverCallback;
 import model.game.Game;
 import model.game.GameState;
@@ -38,9 +41,17 @@ public class RoundManager {
 
     private Map<MessageType, Function<String, String>> getCallbackMap() {
         Map<MessageType, Function<String,String>> map = new HashMap<>();
-        map.put(MessageType.WORDS, sendWordsToRound());
+        map.put(MessageType.WORDS, updateRoundWords());
         map.put(MessageType.VOTES, onVotesDelivery());
+        map.put(MessageType.CHECK, sendRoundWords());
         return map;
+    }
+
+    private Function<String, String> sendRoundWords() {
+        return msg -> {
+            var gameID = new Gson().fromJson(msg, JsonObject.class).get("gameID").getAsString();
+            return Presentation.serializerOf(RoundWords.class).serialize(activeRounds.get(gameID).getRoundWords());
+        };
     }
 
     private Function<String, String> onVotesDelivery() {
@@ -50,7 +61,9 @@ public class RoundManager {
                 var evaluation = Presentation.deserializeAs(msg, Evaluation.class);
                 var round = activeRounds.get(evaluation.getGameID());
                 round.insertEvaluation(evaluation);
-                round.getRoundWords().getScores();
+                if(round.scoresAvailable()){
+                    System.out.println(round.getRoundScores());
+                }
                 return "Scores";
             } catch (Exception e) {
                 e.printStackTrace();
@@ -60,7 +73,7 @@ public class RoundManager {
 
     }
 
-    private Function<String, String> sendWordsToRound() {
+    private Function<String, String> updateRoundWords() {
         return  msg -> {
             try {
                 var userWords = Presentation.deserializeAs(msg, UserWords.class);
