@@ -20,6 +20,14 @@ public class UserScore {
         return userID;
     }
 
+    public Map<String, WordScore> getScores() {
+        return scores;
+    }
+
+    public Integer getTotalScore() {
+        return scores.values().stream().map(WordScore::getScore).reduce(0, Integer::sum);
+    }
+
     @Override
     public String toString() {
         return "UserScore{" +

@@ -1,7 +1,6 @@
 package model.game;
 
 import com.rabbitmq.client.DeliverCallback;
-import model.User;
 import model.request.DisconnectRequest;
 import model.request.UserInLobbyRequest;
 import model.request.StartRequest;
@@ -13,7 +12,6 @@ import rabbit.MessageType;
 import rabbit.RPCServer;
 
 import java.util.*;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class GameManager {

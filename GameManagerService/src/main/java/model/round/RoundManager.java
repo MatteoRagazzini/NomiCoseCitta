@@ -49,7 +49,6 @@ public class RoundManager {
 
     private Function<String, String> sendRoundWords() {
         return msg -> {
-            System.out.println("RICEVUTA RICHIESTA PAROLE");
             var gameID = new Gson().fromJson(msg, JsonObject.class).get("gameID").getAsString();
             return Presentation.serializerOf(RoundWords.class).serialize(activeRounds.get(gameID).getRoundWords());
         };
@@ -58,14 +57,12 @@ public class RoundManager {
     private Function<String, String> onVotesDelivery() {
         return msg -> {
             try {
-                System.out.println("RICEVUTA VALUTAZIONE");
                 var evaluation = Presentation.deserializeAs(msg, Evaluation.class);
                 var round = activeRounds.get(evaluation.getGameID());
                 round.insertEvaluation(evaluation);
                 if(round.scoresAvailable()){
-                    System.out.println(round.getRoundScores());
+                    return Presentation.serializerOf(RoundScores.class).serialize(round.getRoundScores());
                 }
-                return "Scores";
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -86,16 +86,14 @@ function  registerHandlerForUpdateGame(name, gameID) {
             }
         });
 
-        // eventbus_mio.registerHandler('game.' + gameID +"/scores", function (error, jsonResponse) {
-        //     if (jsonResponse !== "null") {
-        //         document.getElementById("evaluation").style.display = "none";
-        //         document.getElementById("scores").style.display = "inline";
-        //         var js = JSON.parse(jsonResponse.body);
-        //         loadScores(js);
-        //     }
-        // });
-
-
+         eventbus_mio.registerHandler('game.' + gameID +"/scores", function (error, jsonResponse) {
+             if (jsonResponse !== "null") {
+                 document.getElementById("evaluation").style.display = "none";
+                 document.getElementById("scores").style.display = "inline";
+                 var js = JSON.parse(jsonResponse.body);
+                 loadScores(js);
+             }
+         });
 
         joinRequest(name,getSocketUri(eventbus_mio.sockJSConn._transport.url), gameID);
     }
@@ -273,53 +271,57 @@ function sendEvaluation() {
     // loadScores();
 
 }
-//
-// function  loadScores(){
-//     //document.getElementById("roundNumber").innerText = "Round " + (js.playedRounds + 1);
-//     //document.getElementById("letter").innerText = "Play with letter " + js.settings.roundsLetters[js.playedRounds];
-//     let tableDiv = document.getElementById("tableDiv");
-//
-//     let table = document.createElement("table");
-//
-//     let thead = document.createElement("thead");
-//
-//     let tr = document.createElement("tr");
-//
-//     let categories = ["nomi", "cose", "città"];
-//
-//     //creo l'header
-//     userIDHead = document.createElement("th");
-//     userIDHead.innerText = "userID"
-//     tr.append(userIDHead);
-//     categories.forEach(category => {
-//         categoryHead = document.createElement("th");
-//         categoryHead.innerText = category;
-//         tr.append(categoryHead);
-//     });
-//
-//     thead.append(tr);
-//     table.append(thead);
-//
-//
-//     let tbody = document.createElement("tbody");
-//
-//     usersScores.forEach(usersScores =>{
-//
-//        userScoreRow = document.createElement("tr");
-//
-//        userIDCell = document.createElement("td");
-//        userIDCell.innerText = usersScores.userID;
-//
-//        userScoreRow.append(userIDCell);
-//
-//        usersScores.ScoreForCategories.forEach(category => {
-//            wordCell = document.createElement("td");
-//            wordCell.innerText = ScoreForCategories.category.word + " " +  ScoreForCategories.category.score;
-//            userScoreRow.append(wordCell);
-//        });
-//
-//        tbody.append(userScoreRow);
-//     });
-//
-//     tableDiv.append(table);
-// }
+
+ function  loadScores(js){
+     //document.getElementById("roundNumber").innerText = "Round " + (js.playedRounds + 1);
+     //document.getElementById("letter").innerText = "Play with letter " + js.settings.roundsLetters[js.playedRounds];
+     let tableDiv = document.getElementById("tableDiv");
+     let table = document.createElement("table");
+     let thead = document.createElement("thead");
+     let tr = document.createElement("tr");
+
+
+     //creo l'header
+     let userIDHead = document.createElement("th");
+     userIDHead.innerText = "User"
+     tr.append(userIDHead);
+     js.categories.forEach(category => {
+         let categoryHead = document.createElement("th");
+         categoryHead.innerText = category;
+         tr.append(categoryHead);
+     });
+
+     let totalHeader = document.createElement("th");
+     totalHeader.innerText = "Total"
+     tr.append(totalHeader)
+
+     thead.append(tr);
+     table.append(thead);
+
+
+     let tbody = document.createElement("tbody");
+
+     js.usersScores.forEach(us =>{
+
+        let userScoreRow = document.createElement("tr");
+
+        let userIDCell = document.createElement("td");
+        userIDCell.innerText = us.userID;
+        userScoreRow.append(userIDCell);
+
+        us.wordsScores.forEach(ws => {
+            let wordCell = document.createElement("td");
+            wordCell.innerText = ws.word + " " +  ws.score;
+            userScoreRow.append(wordCell);
+        });
+
+         let totalCell = document.createElement("td");
+         totalCell.innerText = us.total;
+         userScoreRow.append(totalCell);
+
+        tbody.append(userScoreRow);
+     });
+
+     table.append(tbody);
+     tableDiv.append(table);
+ }

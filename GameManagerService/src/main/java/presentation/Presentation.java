@@ -7,6 +7,8 @@ import model.game.GameSettings;
 import model.request.DisconnectRequest;
 import model.request.UserInLobbyRequest;
 import model.request.StartRequest;
+import model.round.RoundScores;
+import model.round.UserScore;
 import model.round.words.Evaluation;
 import model.round.words.RoundWords;
 import model.round.words.UserWords;
@@ -19,7 +21,9 @@ import presentation.serializer.GameSettingsSerializer;
 import presentation.serializer.GameSerializer;
 import presentation.serializer.Serializer;
 import presentation.serializer.UserSerializer;
+import presentation.serializer.roundSerializer.RoundScoresSerializer;
 import presentation.serializer.roundSerializer.RoundWordsSerializer;
+import presentation.serializer.roundSerializer.UserScoreSerializer;
 import presentation.serializer.roundSerializer.UserWordsSerializer;
 
 import java.util.HashMap;
@@ -49,6 +53,8 @@ public class Presentation {
         serializers.put(GameSettings.class, new GameSettingsSerializer());
         serializers.put(RoundWords.class, new RoundWordsSerializer());
         serializers.put(UserWords.class, new UserWordsSerializer());
+        serializers.put(UserScore.class, new UserScoreSerializer());
+        serializers.put(RoundScores.class, new RoundScoresSerializer());
     }
 
     public static <T> Serializer<T> serializerOf(Class<T> klass) {
