@@ -45,31 +45,26 @@ function  registerHandlerForUpdateGame(name, gameID) {
                 if(js.settings.roundsType === "stop"){
                     document.getElementById("stopButton").style.display = "inline" ;
                 }
-                var span = document.getElementById("categories");
+                var categoryDiv = document.getElementById("categories");
                 js.settings.categories.forEach(category => {
-                    // <div className="row">
-                    //     <div className="input-field col s12">
-                    //         <input type="text" id="userID" name="userID" className="validate">
-                    //             <label htmlFor="userID">User ID</label>
-                    //     </div>
-                    // </div>
-                    var label = document.createElement("label");
-                    label.setAttribute("for", category);
-                    label.appendChild(document.createTextNode(category));
+                    var div = document.createElement("div");
+                    div.className = "row";
+                    var insideDiv = document.createElement("div");
+                    insideDiv.className = "input-field col s12";
 
-                    var br = document.createElement("br");
-                    var br1 = document.createElement("br");
+                    var label = document.createElement("label");
+                    label.htmlFor = category;
+                    label.innerText = category;
 
                     var inputElement = document.createElement("input");
-                    inputElement.setAttribute("id", category);
-                    inputElement.setAttribute("type", "text");
-                    inputElement.setAttribute("name", category);
+                    inputElement.type = "text";
+                    inputElement.id= category;
+                    inputElement.name = category;
 
-                    span.appendChild(label);
-                    span.appendChild(br);
-                    span.appendChild(inputElement);
-                    span.appendChild(br1);
-
+                    insideDiv.append(inputElement);
+                    insideDiv.append(label);
+                    div.append(insideDiv);
+                    categoryDiv.append(div);
                 });
                 roundStarted = true;
                 document.getElementById("waiting").style.display = "none" ;
@@ -283,53 +278,53 @@ function sendEvaluation() {
     // loadScores();
 
 }
-//
-// function  loadScores(){
-//     //document.getElementById("roundNumber").innerText = "Round " + (js.playedRounds + 1);
-//     //document.getElementById("letter").innerText = "Play with letter " + js.settings.roundsLetters[js.playedRounds];
-//     let tableDiv = document.getElementById("tableDiv");
-//
-//     let table = document.createElement("table");
-//
-//     let thead = document.createElement("thead");
-//
-//     let tr = document.createElement("tr");
-//
-//     let categories = ["nomi", "cose", "città"];
-//
-//     //creo l'header
-//     userIDHead = document.createElement("th");
-//     userIDHead.innerText = "userID"
-//     tr.append(userIDHead);
-//     categories.forEach(category => {
-//         categoryHead = document.createElement("th");
-//         categoryHead.innerText = category;
-//         tr.append(categoryHead);
-//     });
-//
-//     thead.append(tr);
-//     table.append(thead);
-//
-//
-//     let tbody = document.createElement("tbody");
-//
-//     usersScores.forEach(usersScores =>{
-//
-//        userScoreRow = document.createElement("tr");
-//
-//        userIDCell = document.createElement("td");
-//        userIDCell.innerText = usersScores.userID;
-//
-//        userScoreRow.append(userIDCell);
-//
-//        usersScores.ScoreForCategories.forEach(category => {
-//            wordCell = document.createElement("td");
-//            wordCell.innerText = ScoreForCategories.category.word + " " +  ScoreForCategories.category.score;
-//            userScoreRow.append(wordCell);
-//        });
-//
-//        tbody.append(userScoreRow);
-//     });
-//
-//     tableDiv.append(table);
-// }
+
+function  loadScores(){
+    //document.getElementById("roundNumber").innerText = "Round " + (js.playedRounds + 1);
+    //document.getElementById("letter").innerText = "Play with letter " + js.settings.roundsLetters[js.playedRounds];
+    let tableDiv = document.getElementById("tableDiv");
+
+    let table = document.createElement("table");
+
+    let thead = document.createElement("thead");
+
+    let tr = document.createElement("tr");
+
+    let categories = ["nomi", "cose", "città"];
+
+    //creo l'header
+    userIDHead = document.createElement("th");
+    userIDHead.innerText = "userID"
+    tr.append(userIDHead);
+    categories.forEach(category => {
+        categoryHead = document.createElement("th");
+        categoryHead.innerText = category;
+        tr.append(categoryHead);
+    });
+
+    thead.append(tr);
+    table.append(thead);
+
+
+    let tbody = document.createElement("tbody");
+
+    usersScores.forEach(usersScores =>{
+
+       userScoreRow = document.createElement("tr");
+
+       userIDCell = document.createElement("td");
+       userIDCell.innerText = usersScores.userID;
+
+       userScoreRow.append(userIDCell);
+
+       usersScores.ScoreForCategories.forEach(category => {
+           wordCell = document.createElement("td");
+           wordCell.innerText = category.word + " " +  category.score;
+           userScoreRow.append(wordCell);
+       });
+
+       tbody.append(userScoreRow);
+    });
+
+    tableDiv.append(table);
+}

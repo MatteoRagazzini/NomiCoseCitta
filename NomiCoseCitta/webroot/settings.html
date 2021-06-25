@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Nomi cose e Città!</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://unpkg.io/sockjs-client@1.5.0/dist/sockjs.min.js"></script>
     <script src='https://unpkg.io/@vertx/eventbus-bridge-client.js@1.0.0-1/vertx-eventbus.js'></script>
     <script src="js/settingsFunction.js"></script>
@@ -50,34 +51,9 @@
                 <span>Timer</span>
             </label>
         </p>
-        <p>Choose a set of categories:</p>
-        <span id="categoriesSpan">
-        <p>
-            <label>
-                <input type="checkbox" name="categories" id="nomi" value="nomi" checked="true" />
-                <span>Nomi</span>
-            </label>
-        </p>
-        <p>
-            <label>
-                <input type="checkbox" name="categories" id="cose" value="cose" checked="true" />
-                <span>Cose</span>
-            </label>
-        </p>
-        <p>
-            <label>
-                <input type="checkbox" name="categories" id="citta" value="citta" checked="true" />
-                <span>Citta</span>
-            </label>
-        </p>
-        </span>
-        <div class="row">
-            <div class="input-field col s6">
-                <label for="candidate">New Category</label>
-                <input type="text" id="candidate"/>
-            </div>
-            <button class="waves-effect waves-light btn" type="button" onclick="addItem()">add item</button>
-        </div>
+        <p>Insert or remove a category: </p>
+
+        <div class="chips chips-initial"></div>
 
         <p>
             <button class="waves-effect waves-light btn" type="button" onclick="create()">Create</button>
