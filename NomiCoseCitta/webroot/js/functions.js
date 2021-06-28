@@ -1,21 +1,19 @@
 var name = "";
 
 function init(){
- var form = document.querySelector('form');
- form.addEventListener('submit', join);
+ M.AutoInit();
 }
 
 
 function newGame(){
- var name = document.getElementById('userID').value;
- window.location.href = "settings.html?name="+name;
+ window.location.href = "settings.html?name="+$('#userID').val();
 }
 
-function join(event){
- var name = document.getElementById('userID').value;
- var gameID = document.getElementById('gameID').value;
- event.preventDefault();
- const data = new FormData(event.target);
+function join(){
+ var name = $('#userID').val();
+ var gameID = $('#gameID').val();
+ var form = $('#initialForm')[0];
+ const data = new FormData(form);
  const value = Object.fromEntries(data.entries());
  console.log({value});
  window.location.href = "game.html?name=" + name + "&gameID=" + gameID;

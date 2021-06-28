@@ -2,59 +2,43 @@ var gameID = 0;
 var name = "";
 var host = "http://localhost:8080";
 
-
 function init() {
+    M.AutoInit();
    var url = new URL(document.URL);
    name = url.searchParams.get("name");
-   document.getElementById("userID").value = name;
-   var form = document.querySelector('form');
-   form.addEventListener('submit', handleSubmit);
+   $('#userID').attr('placeholder', name);
 }
 
-function addItem(){
-    var span = document.getElementById("categoriesSpan");
-    var candidate = document.getElementById("candidate");
-    var checkbox = document.createElement("input");
-    checkbox.setAttribute("type","checkbox");
-    checkbox.setAttribute("name","categories");
-    checkbox.setAttribute("id",candidate.value);
-    checkbox.setAttribute("value",candidate.value);
-    checkbox.checked = true;
+function create() {
+   const data = new FormData($('#settingsForm')[0]);
+   const value = Object.fromEntries(data.entries());
+   value.categories = [];
+   var chipsTag = M.Chips.getInstance($('.chips')).chipsData;
+   chipsTag.forEach(chip =>{
+       value.categories.push(chip.tag);
+   })
 
-    var label = document.createElement("label");
-    label.setAttribute("for",candidate.value);
-    label.innerText = candidate.value;
-    span.appendChild(checkbox);
-    span.appendChild(label);
-
-    document.getElementById("candidate").value = "";
-
+   $.post(host + "/api/game/create", JSON.stringify(value), function (data,status) {
+       console.log(status);
+       if (status === 'success') {
+           gameID = data;
+           console.log("inside creation callback");
+           $(window).attr('location', "game.html?name=" + name + "&gameID=" + gameID);
+       }}
+   );
 }
 
-function removeItem(){
-    var ul = document.getElementById("dynamic-list");
-    var candidate = document.getElementById("candidate");
-    var item = document.getElementById(candidate.value);
-    ul.removeChild(item);
-}
+$(document).ready(function(){
+    $('.chips-initial').chips({
+        data: [{
+            tag: 'Nomi',
+        }, {
+            tag: 'Cose',
+        }, {
+            tag: 'Citta',
+        }],
+    });
+});
 
-function handleSubmit(event) {
-       event.preventDefault();
-       const data = new FormData(event.target);
-       const value = Object.fromEntries(data.entries());
-       value.categories = data.getAll("categories");
-       console.log({value});
-       var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-        xmlhttp.onreadystatechange = function() {
-            if (this.readyState === 4 && this.status === 200) {
-                gameID = xmlhttp.responseText;
-                console.log("inside creation callback");
-                window.location.href = "game.html?name=" + name + "&gameID=" + gameID;
-            }
-        };
-       xmlhttp.open("POST", host + "/api/game/create");
-       xmlhttp.setRequestHeader("Content-Type", "application/json");
-       console.log("in create");
-       xmlhttp.send(JSON.stringify(value));
-}
+
 

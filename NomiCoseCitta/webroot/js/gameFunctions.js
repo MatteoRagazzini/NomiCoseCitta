@@ -18,16 +18,20 @@ function  registerHandlerForUpdateGame(name, gameID) {
             if (jsonResponse !== "null") {
                 console.log(jsonResponse.body);
                 var js = JSON.parse(jsonResponse.body);
-                var ul = document.getElementById("dynamic-list");
-                ul.innerHTML = '';
+                var ul = $("#dynamic-list");
+                ul.html("");
                 js.users.forEach(user => {
                     var li = document.createElement("li");
                     li.setAttribute('id', user.nickname);
-                    li.appendChild(document.createTextNode(user.nickname));
-                    ul.appendChild(li);
+                    var div = document.createElement("div");
+                    div.className = "chip";
+                    div.innerHTML = "<i class='material-icons'>face</i>" + user.nickname;
+
+                    li.appendChild(div);
+                    ul.append(li);
                 });
                 if (js.couldStart === true) {
-                    document.getElementById("startButton").disabled = false;
+                    $('#startButton').removeAttr("disabled");
                 }
             }
         });
@@ -36,34 +40,36 @@ function  registerHandlerForUpdateGame(name, gameID) {
 
             if (jsonResponse != null && !roundStarted) {
                 var js = JSON.parse(jsonResponse.body);
-                document.getElementById("roundNumber").innerText = "Round " + (js.playedRounds + 1);
-                document.getElementById("letter").innerText = "Play with letter " + js.settings.roundsLetters[js.playedRounds];
+                $("#roundNumber").text("Round " + (js.playedRounds + 1));
+                $("#letter").text("Play with letter " + js.settings.roundsLetters[js.playedRounds]);
                 if(js.settings.roundsType === "stop"){
-                    document.getElementById("stopButton").style.display = "inline" ;
+                    $("#stopButton").css("display", "inline") ;
                 }
-                var span = document.getElementById("categories");
-                js.settings.categories.forEach(category => {
-                    var label = document.createElement("label");
-                    label.setAttribute("for", category);
-                    label.appendChild(document.createTextNode(category));
 
-                    var br = document.createElement("br");
-                    var br1 = document.createElement("br");
+                js.settings.categories.forEach(category => {
+                    var div = document.createElement("div");
+                    div.className = "row";
+                    var insideDiv = document.createElement("div");
+                    insideDiv.className = "input-field col s12";
+
+                    var label = document.createElement("label");
+                    label.htmlFor = category;
+                    label.innerText = category;
 
                     var inputElement = document.createElement("input");
-                    inputElement.setAttribute("id", category);
-                    inputElement.setAttribute("type", "text");
-                    inputElement.setAttribute("name", category);
+                    inputElement.type = "text";
+                    inputElement.id= category;
+                    inputElement.name = category;
 
-                    span.appendChild(label);
-                    span.appendChild(br);
-                    span.appendChild(inputElement);
-                    span.appendChild(br1);
-
+                    insideDiv.append(inputElement);
+                    insideDiv.append(label);
+                    div.append(insideDiv);
+                    $("#categories").append(div);
                 });
+
                 roundStarted = true;
-                document.getElementById("waiting").style.display = "none" ;
-                document.getElementById("game").style.display = "inline" ;
+                $("#waiting").hide();
+                $("#game").show();
 
             }
         });
@@ -71,27 +77,27 @@ function  registerHandlerForUpdateGame(name, gameID) {
         eventbus_mio.registerHandler('game.' + gameID +"/stop", function (error, jsonResponse) {
             if (jsonResponse !== "null") {
                 roundStarted = false;
-                sendWord(document.getElementById("gameForm"));
+                sendWord($("#gameForm")[0]);
             }
         });
 
         eventbus_mio.registerHandler('game.' + gameID +"/evaluate", function (error, jsonResponse) {
             if (jsonResponse !== "null" && !evaluationStarted) {
                 evaluationStarted = true;
-                document.getElementById("game").style.display = "none";
-                document.getElementById("waiting").style.display = "none";
-                document.getElementById("evaluation").style.display = "inline";
+                $("#game").hide();
+                $("#waiting").hide();
+                $("#evaluation").show();
                 var js = JSON.parse(jsonResponse.body);
-                loadWords(js);
+                showEvaluationForm(js);
             }
         });
 
+
          eventbus_mio.registerHandler('game.' + gameID +"/scores", function (error, jsonResponse) {
              if (jsonResponse !== "null") {
-                 document.getElementById("evaluation").style.display = "none";
-                 document.getElementById("scores").style.display = "inline";
-                 var js = JSON.parse(jsonResponse.body);
-                 loadScores(js);
+                 $("#evaluation").hide();
+                 $("#scores").show();
+                 loadScores(JSON.parse(jsonResponse.body));
              }
          });
 
@@ -100,12 +106,12 @@ function  registerHandlerForUpdateGame(name, gameID) {
 }
 
 function init(){
+    M.AutoInit();
     var url = new URL(document.URL);
     userID = url.searchParams.get("name");
     addItem(userID);
     gameID = url.searchParams.get("gameID");
-    var gameIdParagraph = document.getElementById("gameID").textContent;
-    document.getElementById("gameID").innerHTML = gameIdParagraph + gameID;
+    $("#gameID").html($("#gameID").text() + gameID);
     registerHandlerForUpdateGame(userID, gameID);
 }
 
@@ -114,39 +120,29 @@ function joinRequest(name, address, gameID){
     req.userID = name;
     req.gameID = gameID;
     req.userAddress = address;
-    console.log("In Join address: " + address);
-    var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-    xmlhttp.onreadystatechange = function() {
-    if (this.readyState === 4 && this.status === 200) {
-        if(xmlhttp.responseText === "null") {
+    $.post(host + "/api/game/join/" + gameID, JSON.stringify(req), (data, status) => {
+        console.log(status)
+        if (data === "null") {
             alert("You cannot join this game!");
-            window.location.href = "index.html";
+            $(window).attr('location', "index.html");
         }
-    }
-    };
-    xmlhttp.open("POST", host + "/api/game/join/" + gameID);
-    xmlhttp.setRequestHeader("Content-Type", "application/json");
-    console.log("in join " + JSON.stringify(req));
-    // la waiting room deve aggiornarsi nel momento in cui entrano altri utenti.
-    xmlhttp.send(JSON.stringify(req));
+    } )
 }
 
 function addItem(name){
-    var ul = document.getElementById("dynamic-list");
     var li = document.createElement("li");
     li.setAttribute('id',name);
     li.appendChild(document.createTextNode(name));
-    ul.appendChild(li);
+    var li = document.createElement("li");
+    li.setAttribute('id',name);
+    li.appendChild(document.createTextNode(name));
+    $("#dynamic-list").append(li);
 }
 
 function startGame() {
     var req = {};
     req.gameID = gameID;
-    var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-    xmlhttp.open("POST", host + "/api/game/start/" + gameID);
-    xmlhttp.setRequestHeader("Content-Type", "application/json");
-    console.log("in start");
-    xmlhttp.send(JSON.stringify(req));
+    $.post(host + "/api/game/start/" + gameID, JSON.stringify(req), () => {})
 }
 
 function sendWord(form){
@@ -155,122 +151,165 @@ function sendWord(form){
     console.log({value});
     value.gameID = gameID;
     value.userID = userID;
-    var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-    xmlhttp.onreadystatechange = function() {
-         if (this.readyState === 4 && this.status === 200) {
-         }
-    };
-    xmlhttp.open("POST", host + "/api/game/words/" + gameID);
-    xmlhttp.setRequestHeader("Content-Type", "application/json");
-    xmlhttp.send(JSON.stringify(value));
+    console.log("with jquery")
+    $.post(host + "/api/game/words/" + gameID, JSON.stringify(value),  () => {})
 }
 
 function stopRound() {
    eventbus_mio.publish('game.' + gameID +"/stop", "STOP");
 }
 
-function  loadWords(js){
+function  showEvaluationForm(js){
     //document.getElementById("roundNumber").innerText = "Round " + (js.playedRounds + 1);
     //document.getElementById("letter").innerText = "Play with letter " + js.settings.roundsLetters[js.playedRounds];
-    var span = document.getElementById("usersWords");
+    var span = $('#usersWords')[0];
+    var rowDiv = document.createElement("div");
+    rowDiv.className = "row"
     js.usersWords.forEach(userWords => {
         var relatedUser = userWords["userID"];
-        form = document.createElement("form");
-        form.setAttribute("class", "votes");
-        form.setAttribute("id", relatedUser)
+        var form = document.createElement("form");
+        form.className ="col s12 votes";
+        form.id = relatedUser;
         for(var key in userWords) {
+            var internalRowDiv = document.createElement("div");
+            internalRowDiv.className = "row"
             if (key === "userID") {
-                var br = document.createElement("br");
-                var br4 = document.createElement("br");
+                var userChip = document.createElement("div");
+                userChip.className = "chip";
+                userChip.innerHTML = "<i class='material-icons'>face</i> <p class='relatedUser'>"+ relatedUser +"</p>";
 
-                var label = document.createElement("label");
-                label.setAttribute("for", userWords[key]);
-                label.innerHTML = "parole di: ";
-
-                var playerName = document.createElement("input");
-                playerName.setAttribute("id", userWords[key]);
-                playerName.setAttribute("type", "text");
-                playerName.setAttribute("name", "userID");
-                playerName.setAttribute("readonly", true);
-                playerName.value = userWords[key];
-
-                form.appendChild(br)
-                form.appendChild(label);
-                form.appendChild(playerName);
-                form.appendChild(br4);
+                internalRowDiv.append(userChip);
             } else {
-                var br1 = document.createElement("br");
-                var br2 = document.createElement("br");
-                var br3 = document.createElement("br");
-                var label = document.createElement("label");
-                label.setAttribute("for", key + " - " + relatedUser);
-                label.innerHTML = key;
+                var inputFieldDiv = document.createElement("div");
+                inputFieldDiv.className = "input col s6";
 
                 var inputElement = document.createElement("input");
-                inputElement.setAttribute("id", key + " - " + relatedUser);
-                inputElement.setAttribute("type", "text");
-                inputElement.setAttribute("name", key);
+                inputElement.id =  key + " - " + relatedUser;
+                inputElement.type = "text";
+                inputElement.name = key;
                 inputElement.value = userWords[key];
-                inputElement.setAttribute("readonly", "true");
+                inputElement.readonly = "true";
+
+                var label = document.createElement("label");
+                label.for =  key + " - " + relatedUser;
+                label.innerText = key;
+
+                inputFieldDiv.append(label);
+                inputFieldDiv.append(inputElement);
+
+                var radioDiv = document.createElement("div");
+                radioDiv.className = "col s6";
+
+                var labelOk = document.createElement("label");
 
                 var radioOk = document.createElement("input");
-                radioOk.setAttribute("type", "radio");
-                radioOk.setAttribute("id", "ok" + relatedUser);
-                radioOk.setAttribute("name", key);
-                radioOk.setAttribute("value", "ok");
-                radioOk.setAttribute("checked", "true");
-                var labelOk = document.createElement("label");
-                labelOk.setAttribute("for", key);
-                labelOk.innerHTML = "OK";
-                var radioNo = document.createElement("input");
-                radioNo.setAttribute("type", "radio");
-                radioNo.setAttribute("id", "no" + relatedUser);
-                radioNo.setAttribute("name", key);
-                radioNo.setAttribute("value", "no");
-                var labelNo = document.createElement("label");
-                labelNo.setAttribute("for", key);
-                labelNo.innerHTML = "NO";
+                radioOk.type = "radio";
+                radioOk.id = "ok" + relatedUser;
+                radioOk.name =  key;
+                radioOk.value = "ok";
+                radioOk.checked ="true";
 
-                form.appendChild(label);
-                form.appendChild(br2);
-                form.appendChild(inputElement);
-                form.appendChild(radioOk);
-                form.appendChild(labelOk);
-                form.append(radioNo);
-                form.append(labelNo);
-                form.appendChild(br3);
+                var spanOk = document.createElement("span");
+                spanOk.innerText = "ok";
+                labelOk.append(radioOk);
+                labelOk.append(spanOk);
+
+
+                var labelNo = document.createElement("label");
+
+                var radioNo = document.createElement("input");
+                radioNo.type = "radio";
+                radioNo.id = "no" + relatedUser;
+                radioNo.name =  key;
+                radioNo.value = "no";
+
+                var spanNo = document.createElement("span");
+                spanNo.innerText = "no";
+
+                labelNo.append(radioNo);
+                labelNo.append(spanNo);
+
+                radioDiv.append(labelOk);
+                radioDiv.append(labelNo);
+
+                internalRowDiv.append(inputFieldDiv);
+                internalRowDiv.append(radioDiv);
             }
+            form.append(internalRowDiv);
         }
-        span.appendChild(form);
+        rowDiv.append(form);
+        span.appendChild(rowDiv);
     });
 }
 
 function sendEvaluation() {
     var json = [];
     var forms = document.getElementsByClassName("votes");
+    var relatedUsers = document.getElementsByClassName("relatedUser");
+    console.log(relatedUsers)
     for(var i=0;i<forms.length;i++){
         const data = new FormData(forms.item(i));
-        const value = Object.fromEntries(data.entries());
-        json[i] = value;
+        json[i] = Object.fromEntries(data.entries());
+        json[i].userID = relatedUsers.item(i).innerText;
     }
     var finalJson = {};
     finalJson.votes = json;
     finalJson.voterID = userID;
     finalJson.gameID = gameID;
     console.log({finalJson});
-    var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-    xmlhttp.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) {
-        }
-    };
-    xmlhttp.open("POST", host + "/api/game/votes/" + gameID);
-    xmlhttp.setRequestHeader("Content-Type", "application/json");
-    xmlhttp.send(JSON.stringify(finalJson));
-    // document.getElementById("evaluation").style.display = "none";
-    // document.getElementById("scores").style.display = "inline";
-    // loadScores();
+    $.post(host + "/api/game/votes/" + gameID, JSON.stringify(finalJson), ()=>{});
+    $("#evaluation").hide();
+    $("#scores").show();
+    loadScores();
 
 }
+
+function  loadScores(){
+    //document.getElementById("roundNumber").innerText = "Round " + (js.playedRounds + 1);
+    //document.getElementById("letter").innerText = "Play with letter " + js.settings.roundsLetters[js.playedRounds];
+
+    let table = document.createElement("table");
+    let thead = document.createElement("thead");
+    let tr = document.createElement("tr");
+    let categories = ["nomi", "cose", "città"];
+
+    //creo l'header
+    userIDHead = document.createElement("th");
+    userIDHead.innerText = "userID"
+    tr.append(userIDHead);
+    categories.forEach(category => {
+        categoryHead = document.createElement("th");
+        categoryHead.innerText = category;
+        tr.append(categoryHead);
+    });
+
+    thead.append(tr);
+    table.append(thead);
+
+
+    let tbody = document.createElement("tbody");
+
+    usersScores.forEach(usersScores =>{
+
+       userScoreRow = document.createElement("tr");
+
+       userIDCell = document.createElement("td");
+       userIDCell.innerText = usersScores.userID;
+
+       userScoreRow.append(userIDCell);
+
+       usersScores.ScoreForCategories.forEach(category => {
+           wordCell = document.createElement("td");
+           wordCell.innerText = category.word + " " +  category.score;
+           userScoreRow.append(wordCell);
+       });
+
+       tbody.append(userScoreRow);
+    });
+
+    $("#tableDiv").append(table);
+}
+
 
  function  loadScores(js){
      //document.getElementById("roundNumber").innerText = "Round " + (js.playedRounds + 1);
@@ -279,8 +318,7 @@ function sendEvaluation() {
      let table = document.createElement("table");
      let thead = document.createElement("thead");
      let tr = document.createElement("tr");
-
-
+     
      //creo l'header
      let userIDHead = document.createElement("th");
      userIDHead.innerText = "User"
