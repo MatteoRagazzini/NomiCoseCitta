@@ -168,6 +168,7 @@ function  showEvaluationForm(js){
 
         var headerDiv = document.createElement("div");
         headerDiv.className = "collapsible-header relatedUser";
+        //headerDiv.innerHTML = "<i class='material-icons'>face</i>" + relatedUser;
         headerDiv.innerText = relatedUser;
         li.append(headerDiv);
 
@@ -264,53 +265,6 @@ function sendEvaluation() {
     loadScores();
 
 }
-
-// function  loadScores(){
-//     //document.getElementById("roundNumber").innerText = "Round " + (js.playedRounds + 1);
-//     //document.getElementById("letter").innerText = "Play with letter " + js.settings.roundsLetters[js.playedRounds];
-//
-//     let table = document.createElement("table");
-//     let thead = document.createElement("thead");
-//     let tr = document.createElement("tr");
-//     let categories = ["nomi", "cose", "città"];
-//
-//     //creo l'header
-//     userIDHead = document.createElement("th");
-//     userIDHead.innerText = "userID"
-//     tr.append(userIDHead);
-//     categories.forEach(category => {
-//         categoryHead = document.createElement("th");
-//         categoryHead.innerText = category;
-//         tr.append(categoryHead);
-//     });
-//
-//     thead.append(tr);
-//     table.append(thead);
-//
-//
-//     let tbody = document.createElement("tbody");
-//
-//     usersScores.forEach(usersScores =>{
-//
-//        userScoreRow = document.createElement("tr");
-//
-//        userIDCell = document.createElement("td");
-//        userIDCell.innerText = usersScores.userID;
-//
-//        userScoreRow.append(userIDCell);
-//
-//        usersScores.ScoreForCategories.forEach(category => {
-//            wordCell = document.createElement("td");
-//            wordCell.innerText = category.word + " " +  category.score;
-//            userScoreRow.append(wordCell);
-//        });
-//
-//        tbody.append(userScoreRow);
-//     });
-//
-//     $("#tableDiv").append(table);
-// }
-//
 
  function  loadScores(js){
      //document.getElementById("roundNumber").innerText = "Round " + (js.playedRounds + 1);
