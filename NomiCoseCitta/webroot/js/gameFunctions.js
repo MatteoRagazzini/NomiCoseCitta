@@ -18,8 +18,8 @@ function  registerHandlerForUpdateGame(name, gameID) {
             if (jsonResponse !== "null") {
                 console.log(jsonResponse.body);
                 var js = JSON.parse(jsonResponse.body);
-                var ul = document.getElementById("dynamic-list");
-                ul.innerHTML = '';
+                var ul = $("#dynamic-list");
+                ul.html("");
                 js.users.forEach(user => {
                     var li = document.createElement("li");
                     li.setAttribute('id', user.nickname);
@@ -28,10 +28,10 @@ function  registerHandlerForUpdateGame(name, gameID) {
                     div.innerHTML = "<i class='material-icons'>face</i>" + user.nickname;
 
                     li.appendChild(div);
-                    ul.appendChild(li);
+                    ul.append(li);
                 });
                 if (js.couldStart === true) {
-                    document.getElementById("startButton").disabled = false;
+                    $('#startButton').removeAttr("disabled");
                 }
             }
         });
@@ -144,7 +144,12 @@ function addItem(name){
     var li = document.createElement("li");
     li.setAttribute('id',name);
     li.appendChild(document.createTextNode(name));
+    var li = document.createElement("li");
+    li.setAttribute('id',name);
+    li.appendChild(document.createTextNode(name));
     ul.appendChild(li);
+//     $("#dynamic-list").add("li").attr("id", name);
+//     $('#'+name).text(name);
 }
 
 function startGame() {
