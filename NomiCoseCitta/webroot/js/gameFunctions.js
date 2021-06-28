@@ -162,24 +162,24 @@ function stopRound() {
 function  showEvaluationForm(js){
     //document.getElementById("roundNumber").innerText = "Round " + (js.playedRounds + 1);
     //document.getElementById("letter").innerText = "Play with letter " + js.settings.roundsLetters[js.playedRounds];
-    var span = $('#usersWords')[0];
-    var rowDiv = document.createElement("div");
-    rowDiv.className = "row"
     js.usersWords.forEach(userWords => {
         var relatedUser = userWords["userID"];
+        var li = document.createElement("li");
+
+        var headerDiv = document.createElement("div");
+        headerDiv.className = "collapsible-header relatedUser";
+        headerDiv.innerText = relatedUser;
+        li.append(headerDiv);
+
+        var bodyDiv = document.createElement("div");
+        bodyDiv.className = "collapsible-body";
+
         var form = document.createElement("form");
         form.className ="col s12 votes";
         form.id = relatedUser;
-        for(var key in userWords) {
-            var internalRowDiv = document.createElement("div");
-            internalRowDiv.className = "row"
-            if (key === "userID") {
-                var userChip = document.createElement("div");
-                userChip.className = "chip";
-                userChip.innerHTML = "<i class='material-icons'>face</i> <p class='relatedUser'>"+ relatedUser +"</p>";
 
-                internalRowDiv.append(userChip);
-            } else {
+        for(var key in userWords) {
+            if(key != "userID"){
                 var inputFieldDiv = document.createElement("div");
                 inputFieldDiv.className = "input col s6";
 
@@ -232,13 +232,14 @@ function  showEvaluationForm(js){
                 radioDiv.append(labelOk);
                 radioDiv.append(labelNo);
 
-                internalRowDiv.append(inputFieldDiv);
-                internalRowDiv.append(radioDiv);
+
+                form.append(inputFieldDiv);
+                form.append(radioDiv);
+                bodyDiv.append(form)
+                li.append(bodyDiv);
             }
-            form.append(internalRowDiv);
         }
-        rowDiv.append(form);
-        span.appendChild(rowDiv);
+        $('#usersWords').append(li);
     });
 }
 
@@ -264,52 +265,52 @@ function sendEvaluation() {
 
 }
 
-function  loadScores(){
-    //document.getElementById("roundNumber").innerText = "Round " + (js.playedRounds + 1);
-    //document.getElementById("letter").innerText = "Play with letter " + js.settings.roundsLetters[js.playedRounds];
-
-    let table = document.createElement("table");
-    let thead = document.createElement("thead");
-    let tr = document.createElement("tr");
-    let categories = ["nomi", "cose", "città"];
-
-    //creo l'header
-    userIDHead = document.createElement("th");
-    userIDHead.innerText = "userID"
-    tr.append(userIDHead);
-    categories.forEach(category => {
-        categoryHead = document.createElement("th");
-        categoryHead.innerText = category;
-        tr.append(categoryHead);
-    });
-
-    thead.append(tr);
-    table.append(thead);
-
-
-    let tbody = document.createElement("tbody");
-
-    usersScores.forEach(usersScores =>{
-
-       userScoreRow = document.createElement("tr");
-
-       userIDCell = document.createElement("td");
-       userIDCell.innerText = usersScores.userID;
-
-       userScoreRow.append(userIDCell);
-
-       usersScores.ScoreForCategories.forEach(category => {
-           wordCell = document.createElement("td");
-           wordCell.innerText = category.word + " " +  category.score;
-           userScoreRow.append(wordCell);
-       });
-
-       tbody.append(userScoreRow);
-    });
-
-    $("#tableDiv").append(table);
-}
-
+// function  loadScores(){
+//     //document.getElementById("roundNumber").innerText = "Round " + (js.playedRounds + 1);
+//     //document.getElementById("letter").innerText = "Play with letter " + js.settings.roundsLetters[js.playedRounds];
+//
+//     let table = document.createElement("table");
+//     let thead = document.createElement("thead");
+//     let tr = document.createElement("tr");
+//     let categories = ["nomi", "cose", "città"];
+//
+//     //creo l'header
+//     userIDHead = document.createElement("th");
+//     userIDHead.innerText = "userID"
+//     tr.append(userIDHead);
+//     categories.forEach(category => {
+//         categoryHead = document.createElement("th");
+//         categoryHead.innerText = category;
+//         tr.append(categoryHead);
+//     });
+//
+//     thead.append(tr);
+//     table.append(thead);
+//
+//
+//     let tbody = document.createElement("tbody");
+//
+//     usersScores.forEach(usersScores =>{
+//
+//        userScoreRow = document.createElement("tr");
+//
+//        userIDCell = document.createElement("td");
+//        userIDCell.innerText = usersScores.userID;
+//
+//        userScoreRow.append(userIDCell);
+//
+//        usersScores.ScoreForCategories.forEach(category => {
+//            wordCell = document.createElement("td");
+//            wordCell.innerText = category.word + " " +  category.score;
+//            userScoreRow.append(wordCell);
+//        });
+//
+//        tbody.append(userScoreRow);
+//     });
+//
+//     $("#tableDiv").append(table);
+// }
+//
 
  function  loadScores(js){
      //document.getElementById("roundNumber").innerText = "Round " + (js.playedRounds + 1);
@@ -345,15 +346,23 @@ function  loadScores(){
 
         let userIDCell = document.createElement("td");
         userIDCell.innerText = us.userID;
+        userIDCell.style = "font-weight: bold";
         userScoreRow.append(userIDCell);
 
         us.wordsScores.forEach(ws => {
             let wordCell = document.createElement("td");
-            wordCell.innerText = ws.word + " " +  ws.score;
+            var span = document.createElement("span");
+            span.className = "teal-text text-darken-4";
+            span.style = "font-weight: bold";
+            span.innerText = ws.score + " ";
+            wordCell.innerText = ws.word ;
+            wordCell.append(span);
             userScoreRow.append(wordCell);
         });
 
          let totalCell = document.createElement("td");
+         totalCell.className = "teal-text text-darken-4";
+         totalCell.style = "font-weight: bold";
          totalCell.innerText = us.total;
          userScoreRow.append(totalCell);
 
