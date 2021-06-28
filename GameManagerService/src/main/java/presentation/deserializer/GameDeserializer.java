@@ -54,6 +54,9 @@ public class GameDeserializer extends AbstractJsonDeserializer<Game> {
                 if(jobj.has("gameState") && jobj.get("gameState").isJsonPrimitive()){
                     builder.setState(jobj.get("gameState").getAsString());
                 }
+                if(jobj.has("playedRounds") && jobj.get("playedRounds").isJsonPrimitive()){
+                    builder.setPlayedRounds(jobj.get("playedRounds").getAsInt());
+                }
                 if(jobj.has("settings")){
                     builder.setSettings(Presentation.deserializeAs(
                             jobj.get("settings").toString(), GameSettings.class));

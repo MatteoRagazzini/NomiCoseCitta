@@ -1,6 +1,7 @@
 package model.game;
 
 import model.User;
+import model.round.RoundScores;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,7 @@ public class Game {
     private final List<User> users;
     private final List<User> fixedUsers;
     private final GameSettings settings;
-    private Integer playedRounds;
+    private int playedRounds;
     private GameState state;
     private final GameScores scores;
 
@@ -40,6 +41,11 @@ public class Game {
 
     public Optional<User> getUserByID(String userID){
         return users.stream().filter(u -> u.getNickname().equals(userID)).findFirst();
+    }
+
+    public boolean hasNextRound() {
+        System.out.println("Settings: " + settings);
+        return playedRounds < settings.getNumberOfRounds();
     }
 
     public boolean addNewUser(User user){
@@ -78,6 +84,10 @@ public class Game {
         return playedRounds;
     }
 
+    public void setPlayedRounds(Integer playedRounds){
+        this.playedRounds = playedRounds;
+    }
+
     public boolean isFull(){
         return gameCouldStart();
     }
@@ -95,16 +105,17 @@ public class Game {
 
 
     public boolean isStarted(){
-        return state != GameState.WAITING;
+        return state == GameState.STARTED;
     }
 
     public GameScores getScores() {
         return scores;
     }
 
-    public void addRoundScores(Map<User, Integer> scores){
+    public void addRoundScores(RoundScores scores){
+        this.setState(GameState.SCORE);
         this.playedRounds++;
-        this.scores.updateScore(scores);
+        this.scores.insertRoundScore(scores);
     }
 
     @Override
@@ -114,6 +125,7 @@ public class Game {
                 ", users=" + users +
                 ", settings=" + settings +
                 ", state=" + state +
+                ", playedRounds=" + playedRounds +
                 ", scores=" + scores +
                 '}';
     }

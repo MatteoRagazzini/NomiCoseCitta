@@ -1,7 +1,6 @@
 package model.round;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.rabbitmq.client.DeliverCallback;
 import model.game.Game;
@@ -34,7 +33,7 @@ public class RoundManager {
 
     private Map<MessageType, DeliverCallback> getConsumerMap(){
         Map<MessageType, DeliverCallback> map = new HashMap<>();
-        map.put( MessageType.START, startGame());
+        map.put( MessageType.START, startGameRound());
         map.put( MessageType.DISCONNECT, userDisconnection());
         return map;
     }
@@ -61,6 +60,9 @@ public class RoundManager {
                 var round = activeRounds.get(evaluation.getGameID());
                 round.insertEvaluation(evaluation);
                 if(round.scoresAvailable()){
+                    round.getGame().addRoundScores(round.getRoundScores());
+                    System.out.println(round.getGame());
+                    emitter.emit(MessageType.WORDS, Presentation.serializerOf(Game.class).serialize(round.getGame()));
                     return Presentation.serializerOf(RoundScores.class).serialize(round.getRoundScores());
                 }
             } catch (Exception e) {
@@ -90,7 +92,7 @@ public class RoundManager {
         };
     }
 
-    private DeliverCallback startGame() {
+    private DeliverCallback startGameRound() {
         return (consumerTag, delivery) -> {
             try {
                 var game = Presentation.deserializeAs(new String(delivery.getBody(),

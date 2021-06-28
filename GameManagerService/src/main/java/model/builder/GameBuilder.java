@@ -15,7 +15,7 @@ public class GameBuilder {
     private  List<User> users = new ArrayList<>();
     private  List<User> fixUsr = new ArrayList<>();
     private GameState state = GameState.WAITING;
-    private boolean couldStart;
+    private int playedRounds;
 
     public GameBuilder setGameID(String gameID) {
         this.gameID = gameID;
@@ -29,6 +29,8 @@ public class GameBuilder {
             this.state = GameState.CHECK;
         }else if(state.equals(GameState.FINISHED.name())){
             this.state = GameState.FINISHED;
+        }else if(state.equals(GameState.SCORE.name())){
+        this.state = GameState.SCORE;
         }
 
     }
@@ -47,10 +49,14 @@ public class GameBuilder {
         this.settings = settings;
         return this;
     }
-    
+
     public GameBuilder setIsStarted(Boolean start){
         if(start) state = GameState.STARTED;
         return this;
+    }
+
+    public void setPlayedRounds(int playedRounds) {
+        this.playedRounds = playedRounds;
     }
 
     public Game build(){
@@ -59,6 +65,7 @@ public class GameBuilder {
             users.forEach(game::addNewUser);
             game.setState(state);
             game.setListFixedUsers(fixUsr);
+            game.setPlayedRounds(playedRounds);
             return game;
         }
         throw new IllegalArgumentException("Not enough element to build a game");

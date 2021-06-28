@@ -15,14 +15,21 @@ public class GameSettings {
     private final List<Integer> roundsLetter;
     private final int numberOfUsers;
 
-    public GameSettings(int numberOfRounds, RoundType roundType, List<String> categories, int numberOfUsers) {
+
+    public GameSettings(int numberOfRounds, RoundType roundType, List<String> categories, List<Integer> roundsLetters,  int numberOfUsers) {
         this.numberOfRounds = numberOfRounds;
         this.roundType = roundType;
         this.categories = categories;
         this.numberOfUsers = numberOfUsers;
-        this.roundsLetter = new Random().ints(numberOfRounds,65, 91).boxed().collect(Collectors.toList());
+        this.roundsLetter = roundsLetters;
     }
 
+    public GameSettings(int numberOfRounds, RoundType roundType, List<String> categories, int numberOfUsers) {
+        this(numberOfRounds,roundType,categories,new Random()
+                .ints(numberOfRounds,65, 91)
+                .boxed().collect(Collectors.toList()),
+                numberOfUsers);
+    }
     public char getRoundLetter(int round){
         return (char) roundsLetter.get(round).intValue();
     }

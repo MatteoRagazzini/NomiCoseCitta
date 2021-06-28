@@ -1,23 +1,23 @@
 package model.game;
 
 import model.User;
+import model.round.RoundScores;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GameScores {
-    private final Map<User, Integer> scores;
+    private final List<RoundScores> scores;
 
     public GameScores() {
-        scores = new HashMap<>();
+        scores = new ArrayList<>();
     }
 
-    public Map<User, Integer> getScores() {
-        return scores;
-    }
 
-    public void updateScore(Map<User,Integer> roundScores){
-        throw new UnsupportedOperationException("To do");
+    public void insertRoundScore(RoundScores roundScores){
+       scores.add(roundScores);
     }
 
 }

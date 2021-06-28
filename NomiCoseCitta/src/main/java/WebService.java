@@ -73,7 +73,7 @@ public class WebService extends AbstractVerticle {
                         .putHeader("content-type", "text/plain")
                         .setStatusCode(200)
                         .end(response);
-                if(new JsonObject(response).getString("gameState").equals("STARTED")){
+                if(response != null && new JsonObject(response).getString("gameState").equals("STARTED")){
                     context.vertx().eventBus().publish("game." + context.request().getParam("id") + "/start", response);
                 }else{
                     context.vertx().eventBus().publish("game." + context.request().getParam("id") + "/finish", response);

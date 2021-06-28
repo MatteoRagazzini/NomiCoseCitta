@@ -25,6 +25,9 @@ public class GameSettingsDeserializer extends AbstractJsonDeserializer<GameSetti
             if(jobj.has("categories") && jobj.get("categories").isJsonArray()){
                 builder.setCategories(new Gson().fromJson(jobj.get("categories").getAsJsonArray(), ArrayList.class));
             }
+            if(jobj.has("roundsLetters") && jobj.get("roundsLetters").isJsonArray()){
+                builder.setRoundsLetters(new Gson().fromJson(jobj.get("roundsLetters").getAsJsonArray(), ArrayList.class));
+            }
             if(jobj.has("numUsers") && jobj.get("numUsers").isJsonPrimitive()){
                 builder.setNumberOfUsers(jobj.get("numUsers").getAsInt());
             }
