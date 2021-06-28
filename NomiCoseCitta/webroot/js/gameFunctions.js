@@ -185,76 +185,83 @@ function stopRound() {
 function  loadWords(js){
     //document.getElementById("roundNumber").innerText = "Round " + (js.playedRounds + 1);
     //document.getElementById("letter").innerText = "Play with letter " + js.settings.roundsLetters[js.playedRounds];
-    var span = document.getElementById("usersWords");
+    var span = $('#usersWords')[0];
+    var rowDiv = document.createElement("div");
+    rowDiv.className = "row"
     js.usersWords.forEach(userWords => {
         var relatedUser = userWords["userID"];
-        form = document.createElement("form");
-        form.setAttribute("class", "votes");
-        form.setAttribute("id", relatedUser)
+        var form = document.createElement("form");
+        form.className ="col s12";
+        form.id = relatedUser;
         for(var key in userWords) {
+            var internalRowDiv = document.createElement("div");
+            internalRowDiv.className = "row"
             if (key === "userID") {
-                var br = document.createElement("br");
-                var br4 = document.createElement("br");
+                var userChip = document.createElement("div");
+                userChip.className = "chip";
+                userChip.innerHTML = "<i class='material-icons'>face</i>" + userID;
 
-                var label = document.createElement("label");
-                label.setAttribute("for", userWords[key]);
-                label.innerHTML = "parole di: ";
-
-                var playerName = document.createElement("input");
-                playerName.setAttribute("id", userWords[key]);
-                playerName.setAttribute("type", "text");
-                playerName.setAttribute("name", "userID");
-                playerName.setAttribute("readonly", true);
-                playerName.value = userWords[key];
-
-                form.appendChild(br)
-                form.appendChild(label);
-                form.appendChild(playerName);
-                form.appendChild(br4);
+                internalRowDiv.append(userChip);
             } else {
-                var br1 = document.createElement("br");
-                var br2 = document.createElement("br");
-                var br3 = document.createElement("br");
-                var label = document.createElement("label");
-                label.setAttribute("for", key + " - " + relatedUser);
-                label.innerHTML = key;
+                var inputFieldDiv = document.createElement("div");
+                inputFieldDiv.className = "input col s6";
 
                 var inputElement = document.createElement("input");
-                inputElement.setAttribute("id", key + " - " + relatedUser);
-                inputElement.setAttribute("type", "text");
-                inputElement.setAttribute("name", key);
+                inputElement.id =  key + " - " + relatedUser;
+                inputElement.type = "text";
+                inputElement.name = key;
                 inputElement.value = userWords[key];
-                inputElement.setAttribute("readonly", "true");
+                inputElement.readonly = "true";
+
+                var label = document.createElement("label");
+                label.for =  key + " - " + relatedUser;
+                label.innerText = key;
+
+                inputFieldDiv.append(label);
+                inputFieldDiv.append(inputElement);
+
+                var radioDiv = document.createElement("div");
+                radioDiv.className = "col s6";
+
+                var labelOk = document.createElement("label");
 
                 var radioOk = document.createElement("input");
-                radioOk.setAttribute("type", "radio");
-                radioOk.setAttribute("id", "ok" + relatedUser);
-                radioOk.setAttribute("name", key);
-                radioOk.setAttribute("value", "ok");
-                radioOk.setAttribute("checked", "true");
-                var labelOk = document.createElement("label");
-                labelOk.setAttribute("for", key);
-                labelOk.innerHTML = "OK";
-                var radioNo = document.createElement("input");
-                radioNo.setAttribute("type", "radio");
-                radioNo.setAttribute("id", "no" + relatedUser);
-                radioNo.setAttribute("name", key);
-                radioNo.setAttribute("value", "no");
-                var labelNo = document.createElement("label");
-                labelNo.setAttribute("for", key);
-                labelNo.innerHTML = "NO";
+                radioOk.type = "radio";
+                radioOk.id = "ok" + relatedUser;
+                radioOk.name =  key;
+                radioOk.value = "ok";
+                radioOk.checked ="true";
 
-                form.appendChild(label);
-                form.appendChild(br2);
-                form.appendChild(inputElement);
-                form.appendChild(radioOk);
-                form.appendChild(labelOk);
-                form.append(radioNo);
-                form.append(labelNo);
-                form.appendChild(br3);
+                var spanOk = document.createElement("span");
+                spanOk.innerText = "ok";
+                labelOk.append(radioOk);
+                labelOk.append(spanOk);
+
+
+                var labelNo = document.createElement("label");
+
+                var radioNo = document.createElement("input");
+                radioNo.type = "radio";
+                radioNo.id = "no" + relatedUser;
+                radioNo.name =  key;
+                radioNo.value = "no";
+
+                var spanNo = document.createElement("span");
+                spanNo.innerText = "no";
+
+                labelNo.append(radioNo);
+                labelNo.append(spanNo);
+
+                radioDiv.append(labelOk);
+                radioDiv.append(labelNo);
+
+                internalRowDiv.append(inputFieldDiv);
+                internalRowDiv.append(radioDiv);
             }
+            form.append(internalRowDiv);
         }
-        span.appendChild(form);
+        rowDiv.append(form);
+        span.appendChild(rowDiv);
     });
 }
 
