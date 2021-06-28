@@ -40,12 +40,12 @@ function  registerHandlerForUpdateGame(name, gameID) {
 
             if (jsonResponse != null && !roundStarted) {
                 var js = JSON.parse(jsonResponse.body);
-                document.getElementById("roundNumber").innerText = "Round " + (js.playedRounds + 1);
-                document.getElementById("letter").innerText = "Play with letter " + js.settings.roundsLetters[js.playedRounds];
+                $("#roundNumber").text("Round " + (js.playedRounds + 1));
+                $("#letter").text("Play with letter " + js.settings.roundsLetters[js.playedRounds]);
                 if(js.settings.roundsType === "stop"){
-                    document.getElementById("stopButton").style.display = "inline" ;
+                    $("#stopButton").css("display", "inline") ;
                 }
-                var categoryDiv = document.getElementById("categories");
+
                 js.settings.categories.forEach(category => {
                     var div = document.createElement("div");
                     div.className = "row";
@@ -64,11 +64,12 @@ function  registerHandlerForUpdateGame(name, gameID) {
                     insideDiv.append(inputElement);
                     insideDiv.append(label);
                     div.append(insideDiv);
-                    categoryDiv.append(div);
+                    $("#categories").append(div);
                 });
+
                 roundStarted = true;
-                document.getElementById("waiting").style.display = "none" ;
-                document.getElementById("game").style.display = "inline" ;
+                $("#waiting").hide();
+                $("#game").show();
 
             }
         });
@@ -76,32 +77,30 @@ function  registerHandlerForUpdateGame(name, gameID) {
         eventbus_mio.registerHandler('game.' + gameID +"/stop", function (error, jsonResponse) {
             if (jsonResponse !== "null") {
                 roundStarted = false;
-                sendWord(document.getElementById("gameForm"));
+                sendWord($("#gameForm")[0]);
             }
         });
 
         eventbus_mio.registerHandler('game.' + gameID +"/evaluate", function (error, jsonResponse) {
             if (jsonResponse !== "null" && !evaluationStarted) {
                 evaluationStarted = true;
-                document.getElementById("game").style.display = "none";
-                document.getElementById("waiting").style.display = "none";
-                document.getElementById("evaluation").style.display = "inline";
+                $("#game").hide();
+                $("#waiting").hide();
+                $("#evaluation").show();
                 var js = JSON.parse(jsonResponse.body);
-                loadWords(js);
+                showEvaluationForm(js);
             }
         });
 
         // eventbus_mio.registerHandler('game.' + gameID +"/scores", function (error, jsonResponse) {
         //     if (jsonResponse !== "null") {
-        //         document.getElementById("evaluation").style.display = "none";
+        //         document.getElementById("evaluation").hide();
         //         document.getElementById("scores").style.display = "inline";
         //         var js = JSON.parse(jsonResponse.body);
         //         loadScores(js);
         //     }
         // });
-
-
-
+        
         joinRequest(name,getSocketUri(eventbus_mio.sockJSConn._transport.url), gameID);
     }
 }
@@ -112,8 +111,7 @@ function init(){
     userID = url.searchParams.get("name");
     addItem(userID);
     gameID = url.searchParams.get("gameID");
-    var gameIdParagraph = document.getElementById("gameID").textContent;
-    document.getElementById("gameID").innerHTML = gameIdParagraph + gameID;
+    $("#gameID").html($("#gameID").text() + gameID);
     registerHandlerForUpdateGame(userID, gameID);
 }
 
@@ -122,44 +120,29 @@ function joinRequest(name, address, gameID){
     req.userID = name;
     req.gameID = gameID;
     req.userAddress = address;
-    console.log("In Join address: " + address);
-    var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-    xmlhttp.onreadystatechange = function() {
-    if (this.readyState === 4 && this.status === 200) {
-        if(xmlhttp.responseText === "null") {
+    $.post(host + "/api/game/join/" + gameID, JSON.stringify(req), (data, status) => {
+        console.log(status)
+        if (data === "null") {
             alert("You cannot join this game!");
-            window.location.href = "index.html";
+            $(window).attr('location', "index.html");
         }
-    }
-    };
-    xmlhttp.open("POST", host + "/api/game/join/" + gameID);
-    xmlhttp.setRequestHeader("Content-Type", "application/json");
-    console.log("in join " + JSON.stringify(req));
-    // la waiting room deve aggiornarsi nel momento in cui entrano altri utenti.
-    xmlhttp.send(JSON.stringify(req));
+    } )
 }
 
 function addItem(name){
-    var ul = document.getElementById("dynamic-list");
     var li = document.createElement("li");
     li.setAttribute('id',name);
     li.appendChild(document.createTextNode(name));
     var li = document.createElement("li");
     li.setAttribute('id',name);
     li.appendChild(document.createTextNode(name));
-    ul.appendChild(li);
-//     $("#dynamic-list").add("li").attr("id", name);
-//     $('#'+name).text(name);
+    $("#dynamic-list").append(li);
 }
 
 function startGame() {
     var req = {};
     req.gameID = gameID;
-    var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-    xmlhttp.open("POST", host + "/api/game/start/" + gameID);
-    xmlhttp.setRequestHeader("Content-Type", "application/json");
-    console.log("in start");
-    xmlhttp.send(JSON.stringify(req));
+    $.post(host + "/api/game/start/" + gameID, JSON.stringify(req), () => {})
 }
 
 function sendWord(form){
@@ -168,21 +151,15 @@ function sendWord(form){
     console.log({value});
     value.gameID = gameID;
     value.userID = userID;
-    var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-    xmlhttp.onreadystatechange = function() {
-         if (this.readyState === 4 && this.status === 200) {
-         }
-    };
-    xmlhttp.open("POST", host + "/api/game/words/" + gameID);
-    xmlhttp.setRequestHeader("Content-Type", "application/json");
-    xmlhttp.send(JSON.stringify(value));
+    console.log("with jquery")
+    $.post(host + "/api/game/words/" + gameID, JSON.stringify(value),  () => {})
 }
 
 function stopRound() {
    eventbus_mio.publish('game.' + gameID +"/stop", "STOP");
 }
 
-function  loadWords(js){
+function  showEvaluationForm(js){
     //document.getElementById("roundNumber").innerText = "Round " + (js.playedRounds + 1);
     //document.getElementById("letter").innerText = "Play with letter " + js.settings.roundsLetters[js.playedRounds];
     var span = $('#usersWords')[0];
@@ -267,35 +244,26 @@ function  loadWords(js){
 
 function sendEvaluation() {
     var json = [];
-    var forms = document.getElementsByClassName("votes");
+    var forms = $(".votes");
     for(var i=0;i<forms.length;i++){
         const data = new FormData(forms.item(i));
-        const value = Object.fromEntries(data.entries());
-        json[i] = value;
+        json[i] = Object.fromEntries(data.entries());
     }
     var finalJson = {};
     finalJson.votes = json;
     finalJson.voterID = userID;
     finalJson.gameID = gameID;
     console.log({finalJson});
-    var xmlhttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-    xmlhttp.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) {
-        }
-    };
-    xmlhttp.open("POST", host + "/api/game/votes/" + gameID);
-    xmlhttp.setRequestHeader("Content-Type", "application/json");
-    xmlhttp.send(JSON.stringify(finalJson));
-    // document.getElementById("evaluation").style.display = "none";
-    // document.getElementById("scores").style.display = "inline";
-    // loadScores();
+    $.post(host + "/api/game/votes/" + gameID, JSON.stringify(finalJson), ()=>{});
+    $("#evaluation").hide();
+    $("#scores").show();
+    loadScores();
 
 }
 
 function  loadScores(){
     //document.getElementById("roundNumber").innerText = "Round " + (js.playedRounds + 1);
     //document.getElementById("letter").innerText = "Play with letter " + js.settings.roundsLetters[js.playedRounds];
-    let tableDiv = document.getElementById("tableDiv");
 
     let table = document.createElement("table");
 
@@ -339,5 +307,5 @@ function  loadScores(){
        tbody.append(userScoreRow);
     });
 
-    tableDiv.append(table);
+    $("#tableDiv").append(table);
 }
