@@ -194,7 +194,7 @@ function  loadWords(js){
             if (key === "userID") {
                 var userChip = document.createElement("div");
                 userChip.className = "chip";
-                userChip.innerHTML = "<i class='material-icons'>face</i>" + userID;
+                userChip.innerHTML = "<i class='material-icons'>face</i>" + relatedUser;
 
                 internalRowDiv.append(userChip);
             } else {
