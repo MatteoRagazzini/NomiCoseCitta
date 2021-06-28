@@ -15,8 +15,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
 <body onload="init()">
+<nav>
+    <div class="nav-wrapper teal lighten-2">
+        <a href="#" class="brand-logo">Nomi Cose Città</a>
+    </div>
+</nav>
+<div class="container">
 <div id="waiting" style="display: inline">
-    <h4>Waiting for other players to join!</h4>
+    <h5>Waiting for other players to join!</h5>
 
     <p id="gameID">Game id: </p><br>
 
@@ -25,7 +31,7 @@
     <input class="waves-effect waves-light btn" type="button" id="startButton" disabled="disabled" value="start" onclick="startGame()">
 </div>
 <div id = "game"  style = "display: none">
-    <h4 id="roundNumber"></h4>
+    <h5 id="roundNumber"></h5>
     <h5 id="letter"></h5>
     <div class="row">
         <form class="col s12" id="gameForm">
@@ -36,8 +42,8 @@
     </div>
 </div>
 <div id = "evaluation"  style = "display: none">
-    <h2 id="roundNumber"></h2>
-    <h3> Esprimi il tuo voto circa le parole dei tuoi avversari: </h3>
+    <h5 id="roundNumber"></h5>
+    <h5> Esprimi il tuo voto circa le parole dei tuoi avversari: </h5>
     <form id="evaluationForm">
         <div id="usersWords">
         </div>
@@ -46,12 +52,13 @@
 
 </div>
 <div id = "scores"  style = "display: none">
-    <h2 id="roundNumber"></h2>
-    <h3> Scores: </h3>
+    <h5 id="roundNumber"></h5>
+    <h5> Scores: </h5>
     <div id="tableDiv">
     </div>
     <input type="button" id="nextRoundButton" disabled="disabled" value="next round" onclick="startGame()">
 
+</div>
 </div>
 <script type="text/javascript" src="js/materialize.min.js"></script>
 </body>
