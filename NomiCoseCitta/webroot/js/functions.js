@@ -1,6 +1,7 @@
 var name = "";
 
 function init(){
+ M.AutoInit();
 }
 
 
