@@ -26,7 +26,7 @@ public class Consumer {
 
     private void start() throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
+        factory.setHost(System.getenv("RABBIT_HOST"));
         Connection connection = factory.newConnection();
         Channel channel = connection.createChannel();
         channel.exchangeDeclare(EXCHANGE_NAME, "direct");

@@ -260,9 +260,7 @@ function sendEvaluation() {
     finalJson.gameID = gameID;
     console.log({finalJson});
     $.post(host + "/api/game/votes/" + gameID, JSON.stringify(finalJson), ()=>{});
-    $("#evaluation").hide();
-    $("#scores").show();
-    loadScores();
+    $("#circularLoader").show();
 
 }
 
@@ -325,4 +323,5 @@ function sendEvaluation() {
 
      table.append(tbody);
      tableDiv.append(table);
+
  }
