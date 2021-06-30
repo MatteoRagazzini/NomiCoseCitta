@@ -35,10 +35,8 @@ public class GameManager {
     private DeliverCallback onWordsDelivery() {
         return (consumerTag, message) -> {
             try {
-                System.out.println("AGGIORNO GAME");
                 Game gameUpdated = Presentation.deserializeAs(new String(message.getBody(),
                         "UTF-8"), Game.class);
-                System.out.println(gameUpdated);
                 games.removeIf(g -> g.getId().equals(gameUpdated.getId()));
                 games.add(gameUpdated);
 
@@ -76,12 +74,11 @@ public class GameManager {
                 var game = getGameById(startReq.getGameID());
                 if(game.isPresent() && game.get().gameCouldStart() && !game.get().isStarted()){
                     if(game.get().hasNextRound()) {
-                        System.out.println("INIZIA NUOVO ROUND");
                         game.get().setState(GameState.STARTED);
                         emitter.emit(MessageType.START, Presentation.serializerOf(Game.class).serialize(game.get()));
                         return Presentation.serializerOf(Game.class).serialize(game.get());
                     }else {
-                        return "Total Score";
+                        return Presentation.serializerOf(GameScores.class).serialize(game.get().getScores());
                     }
                 }
             } catch (Exception e) {

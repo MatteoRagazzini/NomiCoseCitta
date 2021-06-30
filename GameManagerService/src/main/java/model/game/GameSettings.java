@@ -27,6 +27,7 @@ public class GameSettings {
     public GameSettings(int numberOfRounds, RoundType roundType, List<String> categories, int numberOfUsers) {
         this(numberOfRounds,roundType,categories,new Random()
                 .ints(numberOfRounds,65, 91)
+                .distinct()
                 .boxed().collect(Collectors.toList()),
                 numberOfUsers);
     }

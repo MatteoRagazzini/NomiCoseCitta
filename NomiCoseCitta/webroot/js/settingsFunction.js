@@ -1,6 +1,6 @@
 var gameID = 0;
 var name = "";
-var host = "http://localhost:8080";
+var host = "http://192.168.43.66:8080";
 
 function init() {
     M.AutoInit();
@@ -35,7 +35,7 @@ $(document).ready(function(){
         }, {
             tag: 'Cose',
         }, {
-            tag: 'Citta',
+            tag: "Citt\u00E0",
         }],
     });
 });

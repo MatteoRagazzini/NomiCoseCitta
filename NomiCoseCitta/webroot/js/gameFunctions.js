@@ -1,5 +1,5 @@
 
-var host = "http://localhost:8080";
+var host = "http://192.168.43.66:8080";
 var gameID = "";
 var userID = "";
 var roundStarted = false;
@@ -45,7 +45,7 @@ function  registerHandlerForUpdateGame(name, gameID) {
                 if(js.settings.roundsType === "stop"){
                     $("#stopButton").css("display", "inline") ;
                 }
-
+                $("#categories").html("");
                 js.settings.categories.forEach(category => {
                     var div = document.createElement("div");
                     div.className = "row";
@@ -69,6 +69,7 @@ function  registerHandlerForUpdateGame(name, gameID) {
 
                 roundStarted = true;
                 $("#waiting").hide();
+                $("#scores").hide();
                 $("#game").show();
 
             }
@@ -84,22 +85,35 @@ function  registerHandlerForUpdateGame(name, gameID) {
         eventbus_mio.registerHandler('game.' + gameID +"/evaluate", function (error, jsonResponse) {
             if (jsonResponse !== "null" && !evaluationStarted) {
                 evaluationStarted = true;
+                console.log("Evaluated started")
                 $("#game").hide();
                 $("#waiting").hide();
                 $("#evaluation").show();
-                var js = JSON.parse(jsonResponse.body);
-                showEvaluationForm(js);
+                showEvaluationForm(JSON.parse(jsonResponse.body));
             }
         });
 
 
          eventbus_mio.registerHandler('game.' + gameID +"/scores", function (error, jsonResponse) {
              if (jsonResponse !== "null") {
+                 evaluationStarted = false;
                  $("#evaluation").hide();
                  $("#scores").show();
                  loadScores(JSON.parse(jsonResponse.body));
              }
          });
+
+         eventbus_mio.registerHandler('game.' + gameID +"/finish", function (error, jsonResponse) {
+                      if (jsonResponse !== "null") {
+                           console.log("In finish");
+                          console.log(JSON.parse(jsonResponse.body));
+                          $("#waiting").hide();
+                          $("#scores").hide();
+                          $("#game").hide();
+                          $("#finalScores").show();
+                          loadFinalScores(JSON.parse(jsonResponse.body));
+                      }
+                  });
 
         joinRequest(name,getSocketUri(eventbus_mio.sockJSConn._transport.url), gameID);
     }
@@ -162,6 +176,7 @@ function stopRound() {
 function  showEvaluationForm(js){
     //document.getElementById("roundNumber").innerText = "Round " + (js.playedRounds + 1);
     //document.getElementById("letter").innerText = "Play with letter " + js.settings.roundsLetters[js.playedRounds];
+    $('#usersWords').html("");
     js.usersWords.forEach(userWords => {
         var relatedUser = userWords["userID"];
         var li = document.createElement("li");
@@ -180,7 +195,7 @@ function  showEvaluationForm(js){
         form.id = relatedUser;
 
         for(var key in userWords) {
-            if(key != "userID"){
+            if(key !== "userID"){
                 var inputFieldDiv = document.createElement("div");
                 inputFieldDiv.className = "input col s6";
 
@@ -260,16 +275,12 @@ function sendEvaluation() {
     finalJson.gameID = gameID;
     console.log({finalJson});
     $.post(host + "/api/game/votes/" + gameID, JSON.stringify(finalJson), ()=>{});
-    $("#evaluation").hide();
-    $("#scores").show();
-    loadScores();
-
 }
 
  function  loadScores(js){
      //document.getElementById("roundNumber").innerText = "Round " + (js.playedRounds + 1);
      //document.getElementById("letter").innerText = "Play with letter " + js.settings.roundsLetters[js.playedRounds];
-     let tableDiv = document.getElementById("tableDiv");
+     $("#tableDiv").html("");
      let table = document.createElement("table");
      let thead = document.createElement("thead");
      let tr = document.createElement("tr");
@@ -324,5 +335,53 @@ function sendEvaluation() {
      });
 
      table.append(tbody);
-     tableDiv.append(table);
+     $("#tableDiv").append(table);
  }
+
+function  loadFinalScores(js){
+    //document.getElementById("roundNumber").innerText = "Round " + (js.playedRounds + 1);
+    //document.getElementById("letter").innerText = "Play with letter " + js.settings.roundsLetters[js.playedRounds];
+    $("#finalTableDiv").html("");
+    let table = document.createElement("table");
+    let thead = document.createElement("thead");
+    let tr = document.createElement("tr");
+
+    let UserTh = document.createElement("th");
+    UserTh.innerText = "User";
+    tr.append(UserTh);
+
+    for(let i = 0; i < js.totalRoundsNumber; i++) {
+        let roundTh = document.createElement("th");
+        roundTh.innerText = "Round " + i;
+        tr.append(roundTh);
+    }
+
+    let totalTh = document.createElement("th");
+    totalTh.innerText = "Total";
+    tr.append(totalTh);
+
+    thead.append(tr);
+    table.append(thead);
+
+    let tbody = document.createElement("tbody");
+
+    js.usersScores.forEach(rs =>{
+        let roundScoreRow = document.createElement("tr");
+        let userCell = document.createElement("td");
+        userCell.innerText = rs.userID;
+        roundScoreRow.append(userCell);
+       rs.roundsScores.forEach(us => {
+           let userRoundCell = document.createElement("td");
+           userRoundCell.innerText = us;
+           userRoundCell.style = "font-weight: bold";
+           roundScoreRow.append(userRoundCell);
+       })
+        let totalUserCell = document.createElement("td");
+        totalUserCell.innerText = rs.total;
+        roundScoreRow.append(totalUserCell);
+       tbody.append(roundScoreRow);
+    });
+    table.append(tbody);
+    $("#finalTableDiv").append(table);
+    $("#winner").text(js.winner);
+}

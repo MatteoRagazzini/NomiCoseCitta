@@ -4,17 +4,18 @@ import model.User;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class RoundWords {
     private final List<User> onlineUsers;
     private final List<User> fixedUsers;
     private final List<UserWords> usersWords;
+    private final Integer roundNumber;
     private int evaluationDelivered;
 
-    public RoundWords(List<User> onlineUsers, List<User> fixedUsers) {
+    public RoundWords(List<User> onlineUsers, List<User> fixedUsers, Integer roundNumber) {
         this.onlineUsers = onlineUsers;
         this.fixedUsers = fixedUsers;
+        this.roundNumber = roundNumber;
         usersWords = new ArrayList<>();
     }
 
@@ -52,6 +53,10 @@ public class RoundWords {
         if(allDelivered() && usersWords.size() < fixedUsers.size())
             completeUsersWords();
         return usersWords;
+    }
+
+    public Integer getRoundNumber() {
+        return roundNumber;
     }
 
     private void completeUsersWords(){

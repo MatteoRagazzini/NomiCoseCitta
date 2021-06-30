@@ -3,11 +3,11 @@ package model.round;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UserScore {
+public class UserRoundScore {
     private final String userID;
     private final Map<String, WordScore> scores;
 
-    public UserScore(String userID) {
+    public UserRoundScore(String userID) {
         this.userID = userID;
         this.scores = new HashMap<>();
     }

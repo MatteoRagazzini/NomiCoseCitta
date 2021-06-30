@@ -14,7 +14,7 @@ public abstract class Round {
     public Round(Game game) {
         this.game = game;
         state = RoundState.PLAY;
-        roundWords = new RoundWords(game.getOnlineUsers(), game.getUsers());
+        roundWords = new RoundWords(game.getOnlineUsers(), game.getUsers(), game.getPlayedRounds()+1);
         onStart();
     }
 

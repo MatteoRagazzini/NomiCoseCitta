@@ -4,6 +4,7 @@ import model.User;
 import model.game.Game;
 import model.game.GameSettings;
 import model.game.GameState;
+import model.round.RoundScores;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ public class GameBuilder {
     private  List<User> users = new ArrayList<>();
     private  List<User> fixUsr = new ArrayList<>();
     private GameState state = GameState.WAITING;
+    private List<RoundScores> scores = new ArrayList<>();
     private int playedRounds;
 
     public GameBuilder setGameID(String gameID) {
@@ -50,6 +52,10 @@ public class GameBuilder {
         return this;
     }
 
+    public void addRoundScores(RoundScores roundScores) {
+        this.scores.add(roundScores);
+    }
+
     public GameBuilder setIsStarted(Boolean start){
         if(start) state = GameState.STARTED;
         return this;
@@ -66,6 +72,7 @@ public class GameBuilder {
             game.setState(state);
             game.setListFixedUsers(fixUsr);
             game.setPlayedRounds(playedRounds);
+            scores.forEach(r -> game.getScores().insertRoundScore(r));
             return game;
         }
         throw new IllegalArgumentException("Not enough element to build a game");

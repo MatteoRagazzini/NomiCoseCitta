@@ -73,10 +73,14 @@ public class WebService extends AbstractVerticle {
                         .putHeader("content-type", "text/plain")
                         .setStatusCode(200)
                         .end(response);
-                if(response != null && new JsonObject(response).getString("gameState").equals("STARTED")){
-                    context.vertx().eventBus().publish("game." + context.request().getParam("id") + "/start", response);
-                }else{
-                    context.vertx().eventBus().publish("game." + context.request().getParam("id") + "/finish", response);
+                if(response != null) {
+                    JsonObject jsonObject = new JsonObject(response);
+                    if (jsonObject.containsKey("gameState")) {
+                        context.vertx().eventBus().publish("game." + context.request().getParam("id") + "/start", response);
+                    } else {
+                        System.out.println("Mando su finish");
+                        context.vertx().eventBus().publish("game." + context.request().getParam("id") + "/finish", response);
+                    }
                 }
             });
         });
@@ -110,7 +114,7 @@ public class WebService extends AbstractVerticle {
         router.post("/game/words/:id").handler(context -> {
             //System.out.println("PAROLE: " + context.getBodyAsJson().encode());
             emitter.call(MessageType.WORDS, context.getBodyAsJson().encode(), response -> {
-                Logger.log(MessageType.WORDS, response);
+//                Logger.log(MessageType.WORDS, response);
                 context.response()
                         .putHeader("content-type", "text/plain")
                         .setStatusCode(200)

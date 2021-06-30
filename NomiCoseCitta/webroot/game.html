@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Waiting Room </title>
+    <title>Nomi Cose Citt&agrave! </title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://unpkg.io/sockjs-client@1.5.0/dist/sockjs.min.js"></script>
     <script src='https://unpkg.io/@vertx/eventbus-bridge-client.js@1.0.0-1/vertx-eventbus.js'></script>
@@ -17,49 +17,56 @@
 <body onload="init()">
 <nav>
     <div class="nav-wrapper teal lighten-2">
-        <a href="#" class="brand-logo">Nomi Cose Città</a>
+        <a href="#" class="brand-logo">Nomi Cose Citt&agrave</a>
     </div>
 </nav>
 <div class="container">
-<div id="waiting" style="display: inline">
-    <h5>Waiting for other players to join!</h5>
+    <div id="waiting" style="display: inline">
+        <h5>Waiting for other players to join!</h5>
 
-    <p id="gameID">Game id: </p><br>
+        <p id="gameID">Game id: </p><br>
 
-    <ul id="dynamic-list"></ul>
+        <ul id="dynamic-list"></ul>
 
-    <input class="waves-effect waves-light btn" type="button" id="startButton" disabled="disabled" value="start" onclick="startGame()">
-</div>
-<div id = "game"  style = "display: none">
-    <h5 id="roundNumber"></h5>
-    <h5 id="letter"></h5>
-    <div class="row">
-        <form class="col s12" id="gameForm">
-            <div id="categories">
-            </div>
-            <button type="button" class="waves-effect waves-light btn" id="stopButton"  style = "display: none" onclick="stopRound() ">Stop</button>
+        <input class="waves-effect waves-light btn" type="button" id="startButton" disabled="disabled" value="start" onclick="startGame()">
+    </div>
+    <div id = "game"  style = "display: none">
+        <h5 id="roundNumber"></h5>
+        <h5 id="letter"></h5>
+        <div class="row">
+            <form class="col s12" id="gameForm">
+                <div id="categories">
+                </div>
+                <button type="button" class="waves-effect waves-light btn" id="stopButton"  style = "display: none" onclick="stopRound() ">Stop</button>
+            </form>
+        </div>
+    </div>
+    <div id = "evaluation"  style = "display: none">
+        <h5> Esprimi il tuo voto circa le parole dei tuoi avversari: </h5>
+        <form id="evaluationForm">
+            <ul class="collapsible" id="usersWords">
+
+            </ul>
+            <input type="button"  class="waves-effect waves-light btn" id="evaluationButton" value="SEND YOU EVALUATION" onclick="sendEvaluation()">
         </form>
+
     </div>
-</div>
-<div id = "evaluation"  style = "display: none">
-    <h5 id="roundNumber"></h5>
-    <h5> Esprimi il tuo voto circa le parole dei tuoi avversari: </h5>
-    <form id="evaluationForm">
-        <ul class="collapsible" id="usersWords">
+    <div id = "scores"  style = "display: none">
+    <!--    <h5 id="roundNumber"></h5>-->
+        <h5> Scores: </h5>
+        <div id="tableDiv"></div>
+        <input type="button" class="waves-effect waves-light btn" id="nextRoundButton" value="continue" onclick="startGame()">
 
-        </ul>
-        <input type="button"  class="waves-effect waves-light btn" id="evaluationButton" value="SEND YOU EVALUATION" onclick="sendEvaluation()">
-    </form>
-
-</div>
-<div id = "scores"  style = "display: none">
-    <h5 id="roundNumber"></h5>
-    <h5> Scores: </h5>
-    <div id="tableDiv">
     </div>
-    <input type="button" class="waves-effect waves-light btn" id="nextRoundButton" value="continue" onclick="startGame()">
+    <div id = "finalScores"  style = "display: none">
+        <!--    <h5 id="roundNumber"></h5>-->
+        <h5> Final Scores: </h5>
+        <div id="finalTableDiv"></div>
 
-</div>
+        <h4> Winner:  <span id="winner" class="teal-text text-darken-4"></span>  </h4>
+        <a href="index.html" class="waves-effect waves-light btn" > Home </a>
+
+    </div>
 </div>
 <script type="text/javascript" src="js/materialize.min.js"></script>
 </body>
