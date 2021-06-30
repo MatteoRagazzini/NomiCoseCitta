@@ -19,7 +19,7 @@ public class Emitter {
 
     public void emit(MessageType messageType, String message){
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
+        factory.setHost(System.getenv("RABBIT_HOST"));
         try (Connection connection = factory.newConnection();
              Channel channel = connection.createChannel()) {
             channel.exchangeDeclare(EXCHANGE_NAME, "direct");

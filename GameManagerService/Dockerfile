@@ -1,0 +1,19 @@
+FROM gradle:7.1.0-jdk16
+
+ENV WORKINGDIR=/home/gradle/src
+
+WORKDIR ${WORKINGDIR}
+
+RUN mkdir -p ${WORKINGDIR} && chmod 666 ${WORKINGDIR}
+
+COPY --chown=gradle:gradle . ${WORKINGDIR}
+
+RUN apt-get update && apt-get install -y netcat
+
+RUN chmod +x /home/gradle/src/waitingForRabbit.sh
+
+RUN gradle build
+
+ENTRYPOINT [ "/home/gradle/src/waitingForRabbit.sh" ]
+
+#CMD gradle run

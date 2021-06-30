@@ -275,6 +275,7 @@ function sendEvaluation() {
     finalJson.gameID = gameID;
     console.log({finalJson});
     $.post(host + "/api/game/votes/" + gameID, JSON.stringify(finalJson), ()=>{});
+    $("#circularLoader").show();
 }
 
  function  loadScores(js){
@@ -335,6 +336,7 @@ function sendEvaluation() {
      });
 
      table.append(tbody);
+
      $("#tableDiv").append(table);
  }
 
