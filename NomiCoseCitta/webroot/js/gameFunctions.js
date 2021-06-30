@@ -98,6 +98,7 @@ function  registerHandlerForUpdateGame(name, gameID) {
              if (jsonResponse !== "null") {
                  evaluationStarted = false;
                  $("#evaluation").hide();
+                 $("#circularLoader").hide();
                  $("#scores").show();
                  loadScores(JSON.parse(jsonResponse.body));
              }
@@ -109,6 +110,7 @@ function  registerHandlerForUpdateGame(name, gameID) {
                           console.log(JSON.parse(jsonResponse.body));
                           $("#waiting").hide();
                           $("#scores").hide();
+                          $("#circularLoader").hide();
                           $("#game").hide();
                           $("#finalScores").show();
                           loadFinalScores(JSON.parse(jsonResponse.body));
