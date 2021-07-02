@@ -123,6 +123,7 @@ public class Game {
     public String toString() {
         return "Game{" +
                 "id='" + id + '\'' +
+                ", fixedUsers=" + fixedUsers +
                 ", users=" + users +
                 ", settings=" + settings +
                 ", state=" + state +

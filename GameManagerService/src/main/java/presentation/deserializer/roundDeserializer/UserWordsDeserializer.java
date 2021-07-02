@@ -9,8 +9,7 @@ import presentation.deserializer.AbstractJsonDeserializer;
 public class UserWordsDeserializer extends AbstractJsonDeserializer<UserWords> {
     @Override
     protected UserWords deserializeJson(JsonElement jsonElement) {
-        GameSettingsBuilder builder = new GameSettingsBuilder();
-        if(jsonElement instanceof JsonObject){
+        if(jsonElement.isJsonObject()){
             var jobj = (JsonObject) jsonElement;
             if(jobj.has("userID") && jobj.get("userID").isJsonPrimitive()
             && jobj.has("gameID") && jobj.get("gameID").isJsonPrimitive() ){
