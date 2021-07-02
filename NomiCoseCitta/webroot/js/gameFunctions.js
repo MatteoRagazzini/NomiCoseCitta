@@ -279,6 +279,7 @@ function sendEvaluation() {
     finalJson.gameID = gameID;
     console.log({finalJson});
     $.post(host + "/api/game/votes/" + gameID, JSON.stringify(finalJson), ()=>{});
+    $("#evaluation").hide();
     $("#circularLoader").show();
 }
 
