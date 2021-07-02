@@ -106,7 +106,7 @@ public class Game {
     }
 
     public boolean roundIsStarted(){
-        return state != GameState.WAITING;
+        return state != GameState.WAITING && state != GameState.FINISHED;
     }
 
     public GameScores getScores() {

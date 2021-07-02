@@ -78,6 +78,7 @@ public class GameManager {
                         emitter.emit(MessageType.START, Presentation.serializerOf(Game.class).serialize(game.get()));
                         return Presentation.serializerOf(Game.class).serialize(game.get());
                     }else {
+                        game.get().setState(GameState.FINISHED);
                         return Presentation.serializerOf(GameScores.class).serialize(game.get().getScores());
                     }
                 }
