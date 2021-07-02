@@ -31,6 +31,10 @@ public class GameScores {
        });
     }
 
+    public boolean areAvailable(){
+        return !scores.isEmpty();
+    }
+
     public List<RoundScores> getScores() {
         return scores;
     }
@@ -48,8 +52,12 @@ public class GameScores {
         });
         return totals;
     }
+
     public String getWinner(){
-        return getTotals().entrySet().stream().max(Comparator.comparingInt(Map.Entry::getValue)).get().getKey();
+        return getTotals().entrySet().stream()
+                .max(Comparator.comparingInt(Map.Entry::getValue))
+                .map(Map.Entry::getKey)
+                .orElse("");
     }
 
     @Override

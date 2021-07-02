@@ -106,6 +106,15 @@ public class WebService extends AbstractVerticle {
                                context.vertx().eventBus().publish("game." + context.request().getParam("id") + "/evaluate", res);
                            }
                         });
+                    } else if(gameState.equals("SCORE")) {
+                        JsonObject json = new JsonObject().put("gameID", context.request().getParam("id"));
+                        emitter.call(MessageType.SCORES, json.encode(), res -> {
+                            if(!res.equals("null")) {
+                                context.vertx().eventBus().publish("game." + context.request().getParam("id") + "/scores", res);
+                            }
+                        });
+                    } else if(gameState.equals("FINISHED")) {
+                        context.vertx().eventBus().publish("game." + context.request().getParam("id") + "/finish", new JsonObject(response).getString("gameScores"));
                     }
                 }
             });

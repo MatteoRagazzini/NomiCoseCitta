@@ -55,6 +55,7 @@ public class Game {
             }
             return users.add(user);
         }
+//        System.out.println("IL GIOCO È PIENO");
         return false;
     }
 
@@ -88,16 +89,12 @@ public class Game {
         this.playedRounds = playedRounds;
     }
 
-    public boolean isFull(){
-        return gameCouldStart();
-    }
-
     public GameState getState() {
         return state;
     }
 
     public void setState(GameState state) {
-        if(state==GameState.STARTED){
+        if(state==GameState.STARTED && fixedUsers.isEmpty()){
             fixedUsers.addAll(users);
         }
         this.state = state;
@@ -106,6 +103,10 @@ public class Game {
 
     public boolean isStarted(){
         return state == GameState.STARTED;
+    }
+
+    public boolean roundIsStarted(){
+        return state != GameState.WAITING;
     }
 
     public GameScores getScores() {

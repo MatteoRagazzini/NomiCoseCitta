@@ -1,5 +1,5 @@
 
-var host = "http://192.168.43.66:8080";
+var host = "http://localhost:8080";
 var gameID = "";
 var userID = "";
 var roundStarted = false;
@@ -99,6 +99,8 @@ function  registerHandlerForUpdateGame(name, gameID) {
                  evaluationStarted = false;
                  $("#evaluation").hide();
                  $("#circularLoader").hide();
+                 $("#game").hide();
+                 $("#waiting").hide();
                  $("#scores").show();
                  loadScores(JSON.parse(jsonResponse.body));
              }
@@ -354,7 +356,7 @@ function  loadFinalScores(js){
     UserTh.innerText = "User";
     tr.append(UserTh);
 
-    for(let i = 0; i < js.totalRoundsNumber; i++) {
+    for(let i = 1; i < js.totalRoundsNumber+1; i++) {
         let roundTh = document.createElement("th");
         roundTh.innerText = "Round " + i;
         tr.append(roundTh);

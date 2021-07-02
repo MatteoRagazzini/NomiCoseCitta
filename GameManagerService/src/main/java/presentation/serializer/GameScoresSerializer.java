@@ -1,4 +1,4 @@
-package presentation.serializer.roundSerializer;
+package presentation.serializer;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -15,7 +15,7 @@ public class GameScoresSerializer extends AbstractJsonSerializer<GameScores> {
     protected JsonElement toJsonElement(GameScores object) {
         var jobj = new JsonObject();
         var jarr = new JsonArray();
-//        var tots = new JsonArray();
+       var jround = new JsonArray();
         jobj.addProperty("totalRoundsNumber", object.getScores().size());
         object.getUsersGameScores().forEach((u,gs) -> {
             var j = new JsonObject();
@@ -26,16 +26,10 @@ public class GameScoresSerializer extends AbstractJsonSerializer<GameScores> {
             j.addProperty("total", gs.getTotal());
             jarr.add(j);
         });
-//        object.forEach(rs -> jarr.add(Presentation.serializerOf(RoundScores.class).getJsonElement(rs)));
+        object.forEach(rs -> jround.add(Presentation.serializerOf(RoundScores.class).getJsonElement(rs)));
+        jobj.add("roundScores", jround);
         jobj.add("usersScores", jarr);
-//        object.getTotals().forEach((u,t)-> {
-//            var j = new JsonObject();
-//            j.addProperty("userID", u);
-//            j.addProperty("total", t);
-//            tots.add(j);
-//        });
         jobj.addProperty("winner", object.getWinner());
-//        jobj.add("totals", tots);
         return jobj;
     }
 }

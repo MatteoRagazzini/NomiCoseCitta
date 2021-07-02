@@ -43,7 +43,15 @@ public class RoundManager {
         map.put(MessageType.WORDS, updateRoundWords());
         map.put(MessageType.VOTES, onVotesDelivery());
         map.put(MessageType.CHECK, sendRoundWords());
+        map.put(MessageType.SCORES, sendRoundScores());
         return map;
+    }
+
+    private Function<String, String> sendRoundScores() {
+        return msg -> {
+            var gameID = new Gson().fromJson(msg, JsonObject.class).get("gameID").getAsString();
+            return Presentation.serializerOf(RoundScores.class).serialize(activeRounds.get(gameID).getRoundScores());
+        };
     }
 
     private Function<String, String> sendRoundWords() {
@@ -61,7 +69,7 @@ public class RoundManager {
                 round.insertEvaluation(evaluation);
                 if(round.scoresAvailable()){
                     round.getGame().addRoundScores(round.getRoundScores());
-                    System.out.println(round.getGame());
+                    System.out.println("INVIO AGGIORNAMENTO GAME CON SCORE!");
                     emitter.emit(MessageType.WORDS, Presentation.serializerOf(Game.class).serialize(round.getGame()));
                     return Presentation.serializerOf(RoundScores.class).serialize(round.getRoundScores());
                 }
@@ -97,7 +105,6 @@ public class RoundManager {
             try {
                 var game = Presentation.deserializeAs(new String(delivery.getBody(),
                         "UTF-8"), Game.class);
-                System.out.println("GAME INIZIATO: "+ game);
                 activeRounds.put(game.getId(), createRound(game));
             } catch (Exception e) {
                 e.printStackTrace();

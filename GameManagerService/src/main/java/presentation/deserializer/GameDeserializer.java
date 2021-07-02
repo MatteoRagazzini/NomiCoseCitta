@@ -55,8 +55,9 @@ public class GameDeserializer extends AbstractJsonDeserializer<Game> {
                 if(jobj.has("gameState") && jobj.get("gameState").isJsonPrimitive()){
                     builder.setState(jobj.get("gameState").getAsString());
                 }
-                if(jobj.has("gameScores") && jobj.get("gameScores").isJsonArray()){
-                    jobj.get("gameScores").getAsJsonArray().forEach(je -> {
+                if(jobj.has("gameScores") && jobj.get("gameScores").isJsonObject()){
+                    var gameScores = jobj.getAsJsonObject("gameScores");
+                    gameScores.get("roundScores").getAsJsonArray().forEach(je -> {
                         try {
                             builder.addRoundScores(Presentation.deserializeAs(je.toString(), RoundScores.class));
                         } catch (Exception e) {

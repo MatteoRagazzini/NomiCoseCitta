@@ -2,8 +2,8 @@ package model.game;
 
 import com.rabbitmq.client.DeliverCallback;
 import model.request.DisconnectRequest;
-import model.request.UserInLobbyRequest;
 import model.request.StartRequest;
+import model.request.UserInLobbyRequest;
 import presentation.Presentation;
 
 import rabbit.Consumer;
@@ -37,6 +37,7 @@ public class GameManager {
             try {
                 Game gameUpdated = Presentation.deserializeAs(new String(message.getBody(),
                         "UTF-8"), Game.class);
+                System.out.println("RICEVUTO AGGIORNAMNETO GAME : " + gameUpdated);
                 games.removeIf(g -> g.getId().equals(gameUpdated.getId()));
                 games.add(gameUpdated);
 
@@ -62,7 +63,6 @@ public class GameManager {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            System.out.println("Aggiunto un gioco " + getLastGame());
             return getLastGame().getId();
         };
     }
@@ -93,6 +93,7 @@ public class GameManager {
             try {
                 var request = Presentation.deserializeAs(message, UserInLobbyRequest.class);
                 var game = getGameById(request.getGameID());
+//                System.out.println("RICHIESTA JOIN, game esiste?  " + (game.isPresent() ? game : "NO"));
                 if(game.isPresent() && game.get().addNewUser(request.getUser())){
                     sendGameUpdateToRoundManager(game.get());
                     return Presentation.serializerOf(Game.class).serialize(game.get());
@@ -111,6 +112,7 @@ public class GameManager {
                 var req = Presentation.deserializeAs(message, DisconnectRequest.class);
                 var game = games.stream().filter(g -> g.removeUser(req.getUserAddress())).findFirst();
                 if(game.isPresent()){
+                    System.out.println("USER DISCONNESSO");
                     sendGameUpdateToRoundManager(game.get());
                     return Presentation.serializerOf(Game.class).serialize(game.get());
                 }
@@ -122,7 +124,7 @@ public class GameManager {
     }
 
     private void sendGameUpdateToRoundManager(Game game){
-        if(game.isStarted()) {
+        if(game.roundIsStarted()) {
             emitter.emit(MessageType.DISCONNECT, Presentation.serializerOf(Game.class).serialize(game));
         }
     }

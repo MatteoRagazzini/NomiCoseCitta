@@ -1,6 +1,6 @@
 var gameID = 0;
 var name = "";
-var host = "http://192.168.43.66:8080";
+var host = "http://localhost:8080";
 
 function init() {
     M.AutoInit();

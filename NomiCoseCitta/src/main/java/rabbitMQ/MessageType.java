@@ -7,6 +7,7 @@ public enum MessageType {
     STOP("stop", "stop_response"),
     WORDS("words", "words_response"),
     VOTES("votes", "votes_response"),
+    SCORES("scores", "scores_response"),
     DISCONNECT("disconnect","disconnect_response"),
     CHECK("check","check_response");
 
