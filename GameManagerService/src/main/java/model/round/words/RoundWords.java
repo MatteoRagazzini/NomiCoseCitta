@@ -9,6 +9,7 @@ public class RoundWords {
     private final List<User> onlineUsers;
     private final List<User> fixedUsers;
     private final List<UserWords> usersWords;
+    private final List<String> voted;
     private final Integer roundNumber;
     private int evaluationDelivered;
 
@@ -17,6 +18,7 @@ public class RoundWords {
         this.fixedUsers = fixedUsers;
         this.roundNumber = roundNumber;
         usersWords = new ArrayList<>();
+        voted = new ArrayList<>();
     }
 
     public void insertUserWords(UserWords words){
@@ -36,12 +38,15 @@ public class RoundWords {
     }
 
     public void insertEvaluation(Evaluation evaluation){
-        evaluation.getVotes()
-                .forEach(v -> usersWords.stream()
-                        .filter(uw -> uw.getUserID().equals(v.getUserID()))
-                        .findFirst()
-                        .ifPresent(uw -> uw.updateWordsVotes(v.getVotes())));
-        evaluationDelivered++;
+        if(!voted.contains(evaluation.getVoterID())){
+            evaluation.getVotes()
+                    .forEach(v -> usersWords.stream()
+                            .filter(uw -> uw.getUserID().equals(v.getUserID()))
+                            .findFirst()
+                            .ifPresent(uw -> uw.updateWordsVotes(v.getVotes())));
+            voted.add(evaluation.getVoterID());
+            evaluationDelivered++;
+        }
     }
 
     public void updateUserOnline(List<User> usersOnline){
