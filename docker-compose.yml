@@ -11,15 +11,56 @@ services:
      # - rabbitmq-data:/var/lib/rabbitmq/
     ports:
         - 15672:15672
-    networks:
-        - app-network
+   # networks:
+    #    - app-network
     healthcheck:
         test: ["CMD", "curl", "-f", "http://localhost:15672"]
         interval: 30s
         timeout: 10s
         retries: 5
-   
-    
+
+  mongo-game:
+    container_name: mongo-game
+    image: mongo
+    #environment:
+     # - MONGO_INITDB_ROOT_USERNAME=mongoadmin 
+      #- MONGO_INITDB_ROOT_PASSWORD=secret 
+   # networks:
+    #  - app-network
+
+  mongo-round:
+    container_name: mongo-round
+    image: mongo
+    #environment:
+     # - MONGO_INITDB_ROOT_USERNAME=mongoadmin 
+      #- MONGO_INITDB_ROOT_PASSWORD=secret 
+    #networks:
+     # - app-network
+
+
+  mongo-express-game: 
+    container_name: mongo-express-game
+    image: mongo-express
+    ports:
+      - 8081:8081
+    environment:
+   #   - MONGO_INITDB_ROOT_USERNAME=mongoadmin 
+    #  - MONGO_INITDB_ROOT_PASSWORD=secret 
+       - ME_CONFIG_MONGODB_SERVER=mongo-game
+   # networks:
+    #  - app-network
+
+  mongo-express-round: 
+    container_name: mongo-express-round
+    image: mongo-express
+    ports:
+      - 8082:8081
+    environment:
+   #   - MONGO_INITDB_ROOT_USERNAME=mongoadmin 
+    #  - MONGO_INITDB_ROOT_PASSWORD=secret 
+       - ME_CONFIG_MONGODB_SERVER=mongo-round
+    #networks:
+     # - app-network
 
   web-service:
     container_name: web-service
@@ -32,8 +73,8 @@ services:
      - RABBIT_HOST=rabbitmq
     depends_on:
       - rabbitmq
-    networks:
-      - app-network
+  #  networks:
+   #   - app-network
 
 
   game-manager:
@@ -43,10 +84,12 @@ services:
       dockerfile: Dockerfile 
     environment:
       - RABBIT_HOST=rabbitmq
+      - MONGODB=mongodb://mongo-game
     depends_on:
       - rabbitmq
-    networks:
-      - app-network
+      - mongo
+  #  networks:
+   #   - app-network
 
   round-manager:
     container_name: round-manager
@@ -55,11 +98,13 @@ services:
       dockerfile: Dockerfile
     environment:
       - RABBIT_HOST=rabbitmq
+      - MONGODB=mongodb://mongo-round
     depends_on:
       - rabbitmq
-    networks:
-      - app-network
+      - mongo
+ #   networks:
+ #     - app-network
 
 networks:
-    app-network:
-      driver: bridge
+  default:
+    driver: bridge

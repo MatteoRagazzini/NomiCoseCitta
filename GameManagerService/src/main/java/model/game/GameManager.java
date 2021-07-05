@@ -34,7 +34,7 @@ public class GameManager {
     public GameManager() {
         games = new ArrayList<>();
         emitter = new Emitter("game");
-        MongoClient client = MongoClients.create("mongodb://localhost:27017");
+        MongoClient client = MongoClients.create(System.getenv("MONGODB"));
         db = client.getDatabase("NomiCoseCitta");
         gamesCollection = db.getCollection("Games");
         gamesCollection.find().forEach(doc -> {
