@@ -33,4 +33,6 @@ test {
 }
 
 //mainClassName = 'ServicesLauncher'
-mainClassName = classToExecute
+if(rootProject.hasProperty("classToExecute")){
+    mainClassName = rootProject.property("classToExecute")
+}
