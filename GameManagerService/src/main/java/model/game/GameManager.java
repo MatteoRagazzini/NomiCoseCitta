@@ -1,26 +1,14 @@
 package model.game;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.mongodb.DBObject;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
 import com.rabbitmq.client.DeliverCallback;
+import model.db.DBManager;
 import model.request.DisconnectRequest;
 import model.request.StartRequest;
 import model.request.UserInLobbyRequest;
-import org.bson.Document;
 import presentation.Presentation;
 
-import rabbit.Consumer;
-import rabbit.Emitter;
-import rabbit.MessageType;
-import rabbit.RPCServer;
+import rabbit.*;
 
-import javax.swing.*;
 import java.util.*;
 import java.util.function.Function;
 
@@ -28,44 +16,27 @@ public class GameManager {
 
     private final List<Game> games;
     private final Emitter emitter;
-    private final MongoDatabase db;
-    private final MongoCollection<Document> gamesCollection;
+    private final DBManager<Game> gameDb;
 
     public GameManager() {
         games = new ArrayList<>();
         emitter = new Emitter("game");
-        MongoClient client = MongoClients.create(System.getenv("MONGODB"));
-        db = client.getDatabase("NCCGames");
-        gamesCollection = db.getCollection("Games");
-        gamesCollection.find().forEach(doc -> {
-            try {
-                games.add(Presentation.deserializeAs(doc.toJson(), Game.class));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-
+        gameDb = new DBManager<>("NCCGames", "Games", Game.class);
+        games.addAll(gameDb.getAllElement());
         GameIDSupplier.getInstance().setGameCreated(games.stream()
                 .map(g -> Integer.parseInt(g.getId()))
                 .max(Comparator.comparingInt(i -> i))
                 .orElse(0));
-
-        new Consumer("round",getGameUpdateCallback());
+        new SimpleConsumer("round",MessageType.UPDATE, updateGame());
         new RPCServer(getCallbackMap());
     }
 
-    private Map<MessageType, DeliverCallback> getGameUpdateCallback() {
-        Map<MessageType, DeliverCallback> map = new HashMap<>();
-        map.put(MessageType.WORDS, onWordsDelivery());
-        return map;
-    }
-
-    private DeliverCallback onWordsDelivery() {
+    private DeliverCallback updateGame() {
         return (consumerTag, message) -> {
             try {
                 Game gameUpdated = Presentation.deserializeAs(new String(message.getBody(),
                         "UTF-8"), Game.class);
-                updateDb(gameUpdated);
+                gameDb.update(gameUpdated.getId(), gameUpdated);
                 games.removeIf(g -> g.getId().equals(gameUpdated.getId()));
                 games.add(gameUpdated);
 
@@ -80,7 +51,7 @@ public class GameManager {
         map.put(MessageType.JOIN, joinGame());
         map.put(MessageType.DISCONNECT, disconnectGame());
         map.put(MessageType.CREATE, createGame());
-        map.put(MessageType.START, startGame());
+        map.put(MessageType.START, startNextGamePhase());
         return map;
     }
 
@@ -88,7 +59,7 @@ public class GameManager {
         return (message) -> {
             try {
                 games.add(Presentation.deserializeAs(message, Game.class));
-                gamesCollection.insertOne(convertGameToDocument(getLastGame()));
+                gameDb.insert(getLastGame());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -96,7 +67,7 @@ public class GameManager {
         };
     }
 
-    private Function<String, String> startGame() {
+    private Function<String, String> startNextGamePhase() {
         return message -> {
             try {
                 var startReq = Presentation.deserializeAs(message, StartRequest.class);
@@ -105,11 +76,11 @@ public class GameManager {
                     if(game.get().hasNextRound()) {
                         game.get().setState(GameState.STARTED);
                         emitter.emit(MessageType.START, Presentation.serializerOf(Game.class).serialize(game.get()));
-                        updateDb(game.get());
+                        gameDb.update(game.get().getId(), game.get());
                         return Presentation.serializerOf(Game.class).serialize(game.get());
                     }else {
                         game.get().setState(GameState.FINISHED);
-                        updateDb(game.get());
+                        gameDb.update(game.get().getId(), game.get());
                         emitter.emit(MessageType.FINISH, game.get().getId());
                         return Presentation.serializerOf(GameScores.class).serialize(game.get().getScores());
                     }
@@ -127,10 +98,16 @@ public class GameManager {
             try {
                 var request = Presentation.deserializeAs(message, UserInLobbyRequest.class);
                 var game = getGameById(request.getGameID());
-                if(game.isPresent() && game.get().addNewUser(request.getUser())){
-                    updateDb(game.get());
-                    sendGameUpdateToRoundManager(game.get());
-                    return Presentation.serializerOf(Game.class).serialize(game.get());
+                if(game.isPresent()){
+                    if(!game.get().userAlreadyPresent(request.getUser())) {
+                        if (game.get().addNewUser(request.getUser())) {
+                            gameDb.update(game.get().getId(), game.get());
+                            sendGameUpdateToRoundManager(game.get());
+                            return Presentation.serializerOf(Game.class).serialize(game.get());
+                        }
+                    } else {
+                        return "XXX";
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -147,11 +124,10 @@ public class GameManager {
                 var game = games.stream().filter(g -> g.removeUser(req.getUserAddress())).findFirst();
                 if(game.isPresent()){
                     sendGameUpdateToRoundManager(game.get());
-
                     if(game.get().isFinished() && game.get().getOnlineUsers().isEmpty()){
-                        removeFromDb(game.get().getId());
+                        gameDb.remove(game.get().getId());
                     }else{
-                        updateDb(game.get());
+                        gameDb.update(game.get().getId(), game.get());
                     }
                     return Presentation.serializerOf(Game.class).serialize(game.get());
                 }
@@ -177,18 +153,5 @@ public class GameManager {
         return games.stream()
                 .filter(g -> g.getId().equals(id))
                 .findFirst();
-    }
-
-    private void updateDb(Game game){
-        gamesCollection.replaceOne(Filters.eq("gameID", game.getId()),convertGameToDocument(game));
-    }
-
-    private void removeFromDb(String gameID){
-        gamesCollection.deleteOne(Filters.eq("gameID", gameID));
-    }
-
-
-    private Document convertGameToDocument(Game game){
-        return Document.parse(Presentation.serializerOf(Game.class).serialize(game));
     }
 }

@@ -48,6 +48,10 @@ public class Game {
         return playedRounds < settings.getNumberOfRounds();
     }
 
+    public boolean userAlreadyPresent(User user){
+        return users.stream().anyMatch(u -> u.getNickname().equals(user.getNickname()));
+    }
+
     public boolean addNewUser(User user){
         if(users.size() < settings.getNumberOfUsers()){
             if(state != GameState.WAITING ){
