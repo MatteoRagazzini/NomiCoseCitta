@@ -10,10 +10,10 @@ COPY --chown=gradle:gradle . ${WORKINGDIR}
 
 RUN apt-get update && apt-get install -y netcat
 
-RUN chmod +x /home/gradle/src/waitingForRabbit.sh
+RUN chmod +x /home/gradle/src/waitingForRabbitAndMongodb.sh
 
 RUN gradle build
 
-ENTRYPOINT [ "/home/gradle/src/waitingForRabbit.sh" ]
+ENTRYPOINT [ "/home/gradle/src/waitingForRabbitAndMongodb.sh" ]
 
 #CMD gradle run

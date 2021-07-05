@@ -5,4 +5,9 @@ until nc -z "${RABBITMQ_HOST:-rabbitmq}" "${RABBITMQ_PORT:-5672}"; do
   sleep 5
 done
 
+until nc -z "${MONGO:-mongo-round}" "${MONGODB_PORT:-27017}"; do
+  echo "$(date) - waiting for mongo..."
+  sleep 5
+done
+
 gradle run
