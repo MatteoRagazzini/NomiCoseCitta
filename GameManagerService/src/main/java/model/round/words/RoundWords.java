@@ -65,11 +65,13 @@ public class RoundWords {
     }
 
     private void completeUsersWords(){
-        fixedUsers.stream().filter(user -> !onlineUsers.contains(user)).forEach(u -> {
-            var model = usersWords.get(0);
-            var fixed = new UserWords(u.getNickname(), model.getGameID());
-            model.getWords().forEach((category, w) -> fixed.insertWord(category, ""));
-            usersWords.add(fixed);
-        });
+        if(!usersWords.isEmpty()) {
+            fixedUsers.stream().filter(user -> !onlineUsers.contains(user)).forEach(u -> {
+                var model = usersWords.get(0);
+                var fixed = new UserWords(u.getNickname(), model.getGameID());
+                model.getWords().forEach((category, w) -> fixed.insertWord(category, ""));
+                usersWords.add(fixed);
+            });
+        }
     }
 }

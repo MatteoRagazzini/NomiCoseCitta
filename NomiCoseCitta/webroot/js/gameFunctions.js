@@ -199,7 +199,7 @@ function  showEvaluationForm(js){
         form.id = relatedUser;
 
         for(var key in userWords) {
-            if(key !== "userID"){
+            if(key !== "userID" && key !== "gameID"){
                 var inputFieldDiv = document.createElement("div");
                 inputFieldDiv.className = "input col s6";
 
