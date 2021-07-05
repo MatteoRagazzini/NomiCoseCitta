@@ -18,8 +18,27 @@ services:
         interval: 30s
         timeout: 10s
         retries: 5
-   
-    
+
+  mongo:
+    container_name: mongo
+    image: mongo
+    #environment:
+     # - MONGO_INITDB_ROOT_USERNAME=mongoadmin 
+      #- MONGO_INITDB_ROOT_PASSWORD=secret 
+    networks:
+      - app-network
+
+
+  mongo-express: 
+    container_name: mongo-express
+    image: mongo-express
+    ports:
+      - 8081:8081
+  #  environment:
+   #   - MONGO_INITDB_ROOT_USERNAME=mongoadmin 
+    #  - MONGO_INITDB_ROOT_PASSWORD=secret 
+    networks:
+      - app-network
 
   web-service:
     container_name: web-service
@@ -30,6 +49,7 @@ services:
       - "8080:8080"
     environment:
      - RABBIT_HOST=rabbitmq
+     - MONGODB=mongoDb
     depends_on:
       - rabbitmq
     networks:
@@ -43,6 +63,7 @@ services:
       dockerfile: Dockerfile 
     environment:
       - RABBIT_HOST=rabbitmq
+      - MONGODB=mongoDb
     depends_on:
       - rabbitmq
     networks:
@@ -55,6 +76,7 @@ services:
       dockerfile: Dockerfile
     environment:
       - RABBIT_HOST=rabbitmq
+      - MONGODB=mongoDb
     depends_on:
       - rabbitmq
     networks:
