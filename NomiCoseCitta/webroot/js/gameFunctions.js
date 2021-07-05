@@ -141,7 +141,10 @@ function joinRequest(name, address, gameID){
     $.post(host + "/api/game/join/" + gameID, JSON.stringify(req), (data, status) => {
         console.log(status)
         if (data === "null") {
-            alert("You cannot join this game!");
+            alert("You cannot join this game! Create a new game o choose another game to join in");
+            $(window).attr('location', "index.html");
+        } else if(data === "XXX") {
+            alert(name + " is already in use in this game, please change it and try again!");
             $(window).attr('location', "index.html");
         }
     } )

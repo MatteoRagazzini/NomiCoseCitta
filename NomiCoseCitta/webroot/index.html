@@ -25,14 +25,16 @@
     <form class="col s12" id="initialForm">
         <div class="row">
             <div class="input-field col s12">
-                <label for="userID">User ID</label>
-                <input type="text" id="userID" name="userID" class="validate">
+                <label for="userID">Insert a nickname</label>
+                <input type="text" id="userID"  name="userID" class="validate" required="">
+                <span class="helper-text" data-error="Nickname not valid" data-success=""></span>
             </div>
         </div>
         <div class="row">
             <div class="input-field col s12">
-                <label for="gameID">Game id</label><br>
-                <input type="text" id="gameID" name="gameID"><br>
+                <label for="gameID">Insert the ID of the game you want to join</label><br>
+                <input type="text" id="gameID" name="gameID" class="validate"><br>
+                <span class="helper-text" data-error="Game ID not valid" data-success=""></span>
             </div>
         </div>
     <button class="waves-effect waves-light btn" type="button"  onclick="newGame();"> Create Game </button>
