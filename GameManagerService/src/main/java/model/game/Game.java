@@ -105,6 +105,10 @@ public class Game {
         return state == GameState.STARTED;
     }
 
+    public boolean isFinished() {
+        return state == GameState.FINISHED;
+    }
+
     public boolean roundIsStarted(){
         return state != GameState.WAITING && state != GameState.FINISHED;
     }

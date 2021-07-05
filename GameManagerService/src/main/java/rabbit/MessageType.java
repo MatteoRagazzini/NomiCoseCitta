@@ -9,6 +9,7 @@ public enum MessageType {
     VOTES("votes", "votes_response"),
     SCORES("scores", "scores_response"),
     CHECK("check", "check_response"),
+    FINISH("finish", "finish_response"),
     DISCONNECT("disconnect", "disconnect_response");
 
     private final String type;

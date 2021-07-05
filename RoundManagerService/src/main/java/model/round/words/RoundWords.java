@@ -4,18 +4,21 @@ import model.User;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class RoundWords {
     private final List<User> onlineUsers;
     private final List<User> fixedUsers;
     private final List<UserWords> usersWords;
+    private final List<String> voted;
+    private final Integer roundNumber;
     private int evaluationDelivered;
 
-    public RoundWords(List<User> onlineUsers, List<User> fixedUsers) {
+    public RoundWords(List<User> onlineUsers, List<User> fixedUsers, Integer roundNumber) {
         this.onlineUsers = onlineUsers;
         this.fixedUsers = fixedUsers;
+        this.roundNumber = roundNumber;
         usersWords = new ArrayList<>();
+        voted = new ArrayList<>();
     }
 
     public void insertUserWords(UserWords words){
@@ -35,12 +38,15 @@ public class RoundWords {
     }
 
     public void insertEvaluation(Evaluation evaluation){
-        evaluation.getVotes()
-                .forEach(v -> usersWords.stream()
-                        .filter(uw -> uw.getUserID().equals(v.getUserID()))
-                        .findFirst()
-                        .ifPresent(uw -> uw.updateWordsVotes(v.getVotes())));
-        evaluationDelivered++;
+        if(!voted.contains(evaluation.getVoterID())){
+            evaluation.getVotes()
+                    .forEach(v -> usersWords.stream()
+                            .filter(uw -> uw.getUserID().equals(v.getUserID()))
+                            .findFirst()
+                            .ifPresent(uw -> uw.updateWordsVotes(v.getVotes())));
+            voted.add(evaluation.getVoterID());
+            evaluationDelivered++;
+        }
     }
 
     public void updateUserOnline(List<User> usersOnline){
@@ -54,12 +60,18 @@ public class RoundWords {
         return usersWords;
     }
 
+    public Integer getRoundNumber() {
+        return roundNumber;
+    }
+
     private void completeUsersWords(){
-        fixedUsers.stream().filter(user -> !onlineUsers.contains(user)).forEach(u -> {
-            var model = usersWords.get(0);
-            var fixed = new UserWords(u.getNickname(), model.getGameID());
-            model.getWords().forEach((category, w) -> fixed.insertWord(category, ""));
-            usersWords.add(fixed);
-        });
+        if(!usersWords.isEmpty()) {
+            fixedUsers.stream().filter(user -> !onlineUsers.contains(user)).forEach(u -> {
+                var model = usersWords.get(0);
+                var fixed = new UserWords(u.getNickname(), model.getGameID());
+                model.getWords().forEach((category, w) -> fixed.insertWord(category, ""));
+                usersWords.add(fixed);
+            });
+        }
     }
 }

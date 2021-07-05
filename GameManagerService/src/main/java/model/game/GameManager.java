@@ -35,7 +35,7 @@ public class GameManager {
         games = new ArrayList<>();
         emitter = new Emitter("game");
         MongoClient client = MongoClients.create(System.getenv("MONGODB"));
-        db = client.getDatabase("NomiCoseCitta");
+        db = client.getDatabase("NCCGames");
         gamesCollection = db.getCollection("Games");
         gamesCollection.find().forEach(doc -> {
             try {
@@ -110,6 +110,7 @@ public class GameManager {
                     }else {
                         game.get().setState(GameState.FINISHED);
                         updateDb(game.get());
+                        emitter.emit(MessageType.FINISH, game.get().getId());
                         return Presentation.serializerOf(GameScores.class).serialize(game.get().getScores());
                     }
 
@@ -126,7 +127,6 @@ public class GameManager {
             try {
                 var request = Presentation.deserializeAs(message, UserInLobbyRequest.class);
                 var game = getGameById(request.getGameID());
-//                System.out.println("RICHIESTA JOIN, game esiste?  " + (game.isPresent() ? game : "NO"));
                 if(game.isPresent() && game.get().addNewUser(request.getUser())){
                     updateDb(game.get());
                     sendGameUpdateToRoundManager(game.get());
@@ -146,9 +146,13 @@ public class GameManager {
                 var req = Presentation.deserializeAs(message, DisconnectRequest.class);
                 var game = games.stream().filter(g -> g.removeUser(req.getUserAddress())).findFirst();
                 if(game.isPresent()){
-                    System.out.println("USER DISCONNESSO");
                     sendGameUpdateToRoundManager(game.get());
-                    updateDb(game.get());
+
+                    if(game.get().isFinished() && game.get().getOnlineUsers().isEmpty()){
+                        removeFromDb(game.get().getId());
+                    }else{
+                        updateDb(game.get());
+                    }
                     return Presentation.serializerOf(Game.class).serialize(game.get());
                 }
             } catch (Exception e) {
@@ -178,6 +182,11 @@ public class GameManager {
     private void updateDb(Game game){
         gamesCollection.replaceOne(Filters.eq("gameID", game.getId()),convertGameToDocument(game));
     }
+
+    private void removeFromDb(String gameID){
+        gamesCollection.deleteOne(Filters.eq("gameID", gameID));
+    }
+
 
     private Document convertGameToDocument(Game game){
         return Document.parse(Presentation.serializerOf(Game.class).serialize(game));

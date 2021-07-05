@@ -3,28 +3,22 @@ package presentation;
 
 import model.User;
 import model.game.Game;
+import model.game.GameScores;
 import model.game.GameSettings;
 import model.request.DisconnectRequest;
 import model.request.UserInLobbyRequest;
 import model.request.StartRequest;
+import model.round.Round;
 import model.round.RoundScores;
-import model.round.UserScore;
+import model.round.UserRoundScore;
 import model.round.words.Evaluation;
 import model.round.words.RoundWords;
 import model.round.words.UserWords;
 import model.round.words.Vote;
 import presentation.deserializer.*;
-import presentation.deserializer.roundDeserializer.EvaluationDeserializer;
-import presentation.deserializer.roundDeserializer.UserWordsDeserializer;
-import presentation.deserializer.roundDeserializer.VoteDeserializer;
-import presentation.serializer.GameSettingsSerializer;
-import presentation.serializer.GameSerializer;
-import presentation.serializer.Serializer;
-import presentation.serializer.UserSerializer;
-import presentation.serializer.roundSerializer.RoundScoresSerializer;
-import presentation.serializer.roundSerializer.RoundWordsSerializer;
-import presentation.serializer.roundSerializer.UserScoreSerializer;
-import presentation.serializer.roundSerializer.UserWordsSerializer;
+import presentation.deserializer.roundDeserializer.*;
+import presentation.serializer.*;
+import presentation.serializer.roundSerializer.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -47,14 +41,20 @@ public class Presentation {
         deserializers.put(UserWords.class, new UserWordsDeserializer());
         deserializers.put(Evaluation.class, new EvaluationDeserializer());
         deserializers.put(Vote.class, new VoteDeserializer());
+        deserializers.put(RoundScores.class, new RoundScoresDeserializer());
+        deserializers.put(UserRoundScore.class, new UserScoreDeserializer());
+        deserializers.put(Round.class, new RoundDeserializer());
+
 
         serializers.put(Game.class, new GameSerializer());
         serializers.put(User.class, new UserSerializer());
         serializers.put(GameSettings.class, new GameSettingsSerializer());
         serializers.put(RoundWords.class, new RoundWordsSerializer());
         serializers.put(UserWords.class, new UserWordsSerializer());
-        serializers.put(UserScore.class, new UserScoreSerializer());
+        serializers.put(UserRoundScore.class, new UserScoreSerializer());
         serializers.put(RoundScores.class, new RoundScoresSerializer());
+        serializers.put(GameScores.class, new GameScoresSerializer());
+        serializers.put(Round.class, new RoundSerializer());
     }
 
     public static <T> Serializer<T> serializerOf(Class<T> klass) {

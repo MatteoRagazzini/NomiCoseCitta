@@ -3,12 +3,12 @@ package presentation.serializer.roundSerializer;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import model.round.UserScore;
+import model.round.UserRoundScore;
 import presentation.serializer.AbstractJsonSerializer;
 
-public class UserScoreSerializer extends AbstractJsonSerializer<UserScore> {
+public class UserScoreSerializer extends AbstractJsonSerializer<UserRoundScore> {
     @Override
-    protected JsonElement toJsonElement(UserScore object) {
+    protected JsonElement toJsonElement(UserRoundScore object) {
         JsonObject jobj = new JsonObject();
         JsonArray jarr = new JsonArray();
         jobj.addProperty("userID", object.getUserID());

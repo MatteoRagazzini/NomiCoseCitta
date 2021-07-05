@@ -11,7 +11,7 @@ import java.util.TimerTask;
 
 public class RoundTimer extends Round {
 
-    private final static long ROUND_DURATION = 60000;
+    private final static long ROUND_DURATION = 20000;
     private final Emitter stopEmitter;
     private final JsonObject stopMessage;
 

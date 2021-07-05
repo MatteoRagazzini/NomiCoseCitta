@@ -1,23 +1,69 @@
 package model.game;
 
-import model.User;
+import model.round.RoundScores;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Consumer;
 
 public class GameScores {
-    private final Map<User, Integer> scores;
+    private final List<RoundScores> scores;
+    private final Map<String, UserGameScore> scoreMap;
 
     public GameScores() {
-        scores = new HashMap<>();
+        scores = new ArrayList<>();
+        scoreMap = new HashMap<>();
     }
 
-    public Map<User, Integer> getScores() {
+    public void forEach(Consumer<? super RoundScores> action){
+        scores.forEach(action);
+    }
+
+    public void insertRoundScore(RoundScores roundScores){
+       scores.add(roundScores);
+       roundScores.getUserScores().forEach(userRoundScore -> {
+           if(scoreMap.containsKey(userRoundScore.getUserID())){
+               scoreMap.get(userRoundScore.getUserID()).addRoundTotal(userRoundScore.getTotalScore());
+           }else{
+               UserGameScore us = new UserGameScore();
+               us.addRoundTotal(userRoundScore.getTotalScore());
+               scoreMap.put(userRoundScore.getUserID(), us);
+           }
+       });
+    }
+
+    public boolean areAvailable(){
+        return !scores.isEmpty();
+    }
+
+    public List<RoundScores> getScores() {
         return scores;
     }
 
-    public void updateScore(Map<User,Integer> roundScores){
-        throw new UnsupportedOperationException("To do");
+    public Map<String, UserGameScore> getUsersGameScores(){
+        return this.scoreMap;
     }
 
+    public Map<String, Integer> getTotals(){
+        Map<String, Integer> totals = new HashMap<>();
+        scores.forEach(rs ->{
+            rs.getUserScores().forEach(userScore -> {
+                totals.merge(userScore.getUserID(), userScore.getTotalScore(), Integer::sum);
+            });
+        });
+        return totals;
+    }
+
+    public String getWinner(){
+        return getTotals().entrySet().stream()
+                .max(Comparator.comparingInt(Map.Entry::getValue))
+                .map(Map.Entry::getKey)
+                .orElse("");
+    }
+
+    @Override
+    public String toString() {
+        return "GameScores{" +
+                "scores=" + scores +
+                '}';
+    }
 }

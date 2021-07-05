@@ -33,8 +33,8 @@ public class RoundManager {
 
     public RoundManager() {
         activeRounds = new HashMap<>();
-        MongoClient client = MongoClients.create("mongodb://localhost:27017");
-        db = client.getDatabase("NCCRonuds");
+        MongoClient client = MongoClients.create(System.getenv("MONGODB"));
+        db = client.getDatabase("NCCRounds");
         roundsCollection = db.getCollection("Rounds");
         roundsCollection.find().forEach(doc -> {
             try {
@@ -53,9 +53,11 @@ public class RoundManager {
     private Map<MessageType, DeliverCallback> getConsumerMap(){
         Map<MessageType, DeliverCallback> map = new HashMap<>();
         map.put( MessageType.START, startGameRound());
+        map.put( MessageType.FINISH, gameFinished());
         map.put( MessageType.DISCONNECT, userDisconnection());
         return map;
     }
+
 
     private Map<MessageType, Function<String, String>> getCallbackMap() {
         Map<MessageType, Function<String,String>> map = new HashMap<>();
@@ -89,7 +91,6 @@ public class RoundManager {
                 updateDb(round.getGame().getId(), round);
                 if(round.scoresAvailable()){
                     round.getGame().addRoundScores(round.getRoundScores());
-                    System.out.println("INVIO AGGIORNAMENTO GAME CON SCORE!");
                     emitter.emit(MessageType.WORDS, Presentation.serializerOf(Game.class).serialize(round.getGame()));
                     return Presentation.serializerOf(RoundScores.class).serialize(round.getRoundScores());
                 }
@@ -139,14 +140,27 @@ public class RoundManager {
         };
     }
 
+    private DeliverCallback gameFinished() {
+        return (consumerTag, delivery) -> {
+            try {
+                var gameID = new String(delivery.getBody(), "UTF-8");
+                activeRounds.remove(gameID);
+                removeFromDb(gameID);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        };
+    }
+
     private DeliverCallback userDisconnection() {
         return (consumerTag, delivery) -> {
             try {
                 var game = Presentation.deserializeAs(new String(delivery.getBody(),
                         "UTF-8"), Game.class);
-                System.out.println("USER DISCONNESSO");
-                activeRounds.get(game.getId()).updateGame(game);
-                updateDb(game.getId(), activeRounds.get(game.getId()));
+                if(activeRounds.containsKey(game.getId())) {
+                    activeRounds.get(game.getId()).updateGame(game);
+                    updateDb(game.getId(), activeRounds.get(game.getId()));
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -165,6 +179,10 @@ public class RoundManager {
 
     private void updateDb(String gameID, Round round){
         roundsCollection.replaceOne(Filters.eq("gameID", gameID),convertRoundToDocument(round));
+    }
+
+    private void removeFromDb(String gameID){
+        roundsCollection.deleteOne(Filters.eq("gameID", gameID));
     }
 
     private Document convertRoundToDocument(Round round){

@@ -10,8 +10,9 @@ public class UserWordsSerializer extends AbstractJsonSerializer<UserWords> {
     @Override
     protected JsonElement toJsonElement(UserWords object) {
         var jobj = new JsonObject();
-        jobj.add("userID", new JsonPrimitive(object.getUserID()));
-        object.getWords().forEach((cat, word) -> jobj.add(cat, new JsonPrimitive(word)));
+        jobj.addProperty("userID", object.getUserID());
+        jobj.addProperty("gameID", object.getGameID());
+        object.getWords().forEach(jobj::addProperty);
         return jobj;
     }
 }

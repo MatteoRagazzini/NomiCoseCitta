@@ -4,6 +4,7 @@ import model.User;
 import model.game.Game;
 import model.game.GameSettings;
 import model.game.GameState;
+import model.round.RoundScores;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,8 @@ public class GameBuilder {
     private  List<User> users = new ArrayList<>();
     private  List<User> fixUsr = new ArrayList<>();
     private GameState state = GameState.WAITING;
-    private boolean couldStart;
+    private List<RoundScores> scores = new ArrayList<>();
+    private int playedRounds;
 
     public GameBuilder setGameID(String gameID) {
         this.gameID = gameID;
@@ -29,6 +31,8 @@ public class GameBuilder {
             this.state = GameState.CHECK;
         }else if(state.equals(GameState.FINISHED.name())){
             this.state = GameState.FINISHED;
+        }else if(state.equals(GameState.SCORE.name())){
+        this.state = GameState.SCORE;
         }
 
     }
@@ -47,10 +51,18 @@ public class GameBuilder {
         this.settings = settings;
         return this;
     }
-    
+
+    public void addRoundScores(RoundScores roundScores) {
+        this.scores.add(roundScores);
+    }
+
     public GameBuilder setIsStarted(Boolean start){
         if(start) state = GameState.STARTED;
         return this;
+    }
+
+    public void setPlayedRounds(int playedRounds) {
+        this.playedRounds = playedRounds;
     }
 
     public Game build(){
@@ -59,6 +71,8 @@ public class GameBuilder {
             users.forEach(game::addNewUser);
             game.setState(state);
             game.setListFixedUsers(fixUsr);
+            game.setPlayedRounds(playedRounds);
+            scores.forEach(r -> game.getScores().insertRoundScore(r));
             return game;
         }
         throw new IllegalArgumentException("Not enough element to build a game");

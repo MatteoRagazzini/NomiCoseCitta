@@ -15,11 +15,11 @@ public class ScoreCalculator {
     public static RoundScores calculateScores(RoundWords rw){
         return new RoundScores(rw.getUsersWords().stream()
                 .map(u -> calculateUserScore(rw, u))
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList()), rw.getRoundNumber());
     }
 
-    private static UserScore calculateUserScore(RoundWords rw, UserWords userWords){
-        var userScore = new UserScore(userWords.getUserID());
+    private static UserRoundScore calculateUserScore(RoundWords rw, UserWords userWords){
+        var userScore = new UserRoundScore(userWords.getUserID());
         userWords.getWords().forEach((category, word) -> {
             Integer wordScore =
                     isValidWord(category, userWords, rw.getNumberOfOnlineUser()/2) ?

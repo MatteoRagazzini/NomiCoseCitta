@@ -6,11 +6,16 @@ public class GameIDSupplier {
     private Integer gameCreated = 0;
 
     private GameIDSupplier() {}
+
     public static GameIDSupplier getInstance() {
         if (instance == null) {
             instance = new GameIDSupplier();
         }
         return instance;
+    }
+
+    public void setGameCreated(int gameCreated){
+        this.gameCreated = gameCreated;
     }
 
     public String getNewGameID(){

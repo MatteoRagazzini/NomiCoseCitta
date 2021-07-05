@@ -18,6 +18,7 @@ public class RPCClient implements AutoCloseable {
     public RPCClient() throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(System.getenv("RABBIT_HOST"));
+
         connection = factory.newConnection();
         channel = connection.createChannel();
     }

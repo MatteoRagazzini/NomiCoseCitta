@@ -1,6 +1,7 @@
 package model.game;
 
 import model.User;
+import model.round.RoundScores;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,7 @@ public class Game {
     private final List<User> users;
     private final List<User> fixedUsers;
     private final GameSettings settings;
-    private Integer playedRounds;
+    private int playedRounds;
     private GameState state;
     private final GameScores scores;
 
@@ -42,6 +43,11 @@ public class Game {
         return users.stream().filter(u -> u.getNickname().equals(userID)).findFirst();
     }
 
+    public boolean hasNextRound() {
+        System.out.println("Settings: " + settings);
+        return playedRounds < settings.getNumberOfRounds();
+    }
+
     public boolean addNewUser(User user){
         if(users.size() < settings.getNumberOfUsers()){
             if(state != GameState.WAITING ){
@@ -49,6 +55,7 @@ public class Game {
             }
             return users.add(user);
         }
+//        System.out.println("IL GIOCO È PIENO");
         return false;
     }
 
@@ -78,8 +85,8 @@ public class Game {
         return playedRounds;
     }
 
-    public boolean isFull(){
-        return gameCouldStart();
+    public void setPlayedRounds(Integer playedRounds){
+        this.playedRounds = playedRounds;
     }
 
     public GameState getState() {
@@ -87,7 +94,7 @@ public class Game {
     }
 
     public void setState(GameState state) {
-        if(state==GameState.STARTED){
+        if(state==GameState.STARTED && fixedUsers.isEmpty()){
             fixedUsers.addAll(users);
         }
         this.state = state;
@@ -95,25 +102,36 @@ public class Game {
 
 
     public boolean isStarted(){
-        return state != GameState.WAITING;
+        return state == GameState.STARTED;
+    }
+
+    public boolean isFinished() {
+        return state == GameState.FINISHED;
+    }
+
+    public boolean roundIsStarted(){
+        return state != GameState.WAITING && state != GameState.FINISHED;
     }
 
     public GameScores getScores() {
         return scores;
     }
 
-    public void addRoundScores(Map<User, Integer> scores){
+    public void addRoundScores(RoundScores scores){
+        this.setState(GameState.SCORE);
         this.playedRounds++;
-        this.scores.updateScore(scores);
+        this.scores.insertRoundScore(scores);
     }
 
     @Override
     public String toString() {
         return "Game{" +
                 "id='" + id + '\'' +
+                ", fixedUsers=" + fixedUsers +
                 ", users=" + users +
                 ", settings=" + settings +
                 ", state=" + state +
+                ", playedRounds=" + playedRounds +
                 ", scores=" + scores +
                 '}';
     }

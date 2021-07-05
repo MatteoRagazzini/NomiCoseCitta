@@ -4,27 +4,35 @@ import java.util.List;
 import java.util.Set;
 
 public class RoundScores {
-    private final List<UserScore> userScores;
+    private final List<UserRoundScore> userRoundScores;
+    private final Integer roundNumber;
 
-    public RoundScores(List<UserScore> userScores) {
-        this.userScores = userScores;
+    public RoundScores(List<UserRoundScore> userRoundScores, Integer roundNumber) {
+        this.userRoundScores = userRoundScores;
+        this.roundNumber = roundNumber;
     }
 
     public Set<String> getCategories(){
-        if(userScores.isEmpty()){
+        if(userRoundScores.isEmpty()){
             return Set.of();
         }
-        return userScores.get(0).getScores().keySet();
+        return userRoundScores.get(0).getScores().keySet();
     }
 
-    public List<UserScore> getUserScores() {
-        return userScores;
+    public Integer getRoundNumber() {
+        return roundNumber;
+    }
+
+    public List<UserRoundScore> getUserScores() {
+//        return userScores.stream().sorted((u1, u2) -> u1.getTotalScore() - u2.getTotalScore()).collect(Collectors.toList());
+         return userRoundScores;
     }
 
     @Override
     public String toString() {
         return "RoundScores{" +
-                "userScores=" + userScores +
+                "roundNumber=" + roundNumber +
+                "userScores=" + userRoundScores +
                 '}';
     }
 }
