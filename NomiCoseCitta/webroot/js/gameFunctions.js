@@ -1,5 +1,5 @@
 
-var host = "http://localhost:8080";
+var host = "http://79.17.230.141:8080";
 var gameID = "";
 var userID = "";
 var roundStarted = false;

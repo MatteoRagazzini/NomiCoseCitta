@@ -14,6 +14,6 @@ RUN chmod +x /home/gradle/src/waitingForRabbitAndMongodb.sh
 
 RUN gradle build
 
-ENTRYPOINT [ "/home/gradle/src/waitingForRabbitAndMongodb.sh" ]
+ENTRYPOINT [ "/home/gradle/src/waitingForRabbitAndMongodb.sh", "GameManagerLauncher"]
 
 #CMD gradle run

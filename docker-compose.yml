@@ -69,8 +69,8 @@ services:
   round-manager:
     container_name: round-manager
     build:
-      context: ./RoundManagerService
-      dockerfile: Dockerfile
+      context: ./GameManagerService
+      dockerfile: Dockerfile-round
     environment:
       - RABBIT_HOST=rabbitmq
       - MONGODB=mongodb://mongo-round

@@ -10,4 +10,4 @@ until nc -z "${MONGO:-mongo-game}" "${MONGODB_PORT:-27017}"; do
   sleep 5
 done
 
-gradle run
+gradle run -PclassToExecute=$1
