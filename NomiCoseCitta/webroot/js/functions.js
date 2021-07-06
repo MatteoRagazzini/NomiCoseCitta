@@ -27,7 +27,8 @@ function newGame(){
 }
 
 function join(){
-    if(checkUserIDInput() && checkGameIDInput()){
+    $('#gameIDrow').show()
+    if(checkGameIDInput()){
         var name = $('#userID').val();
         var gameID = $('#gameID').val();
         var form = $('#initialForm')[0];
