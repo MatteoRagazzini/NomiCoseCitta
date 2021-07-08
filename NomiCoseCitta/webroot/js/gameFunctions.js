@@ -1,5 +1,7 @@
 
-var host = "http://79.17.230.141:8080";
+var ip = "79.17.230.141";
+var local = "localhost"
+var host = "http://"+local+":8080";
 var gameID = "";
 var userID = "";
 var roundStarted = false;
@@ -161,9 +163,12 @@ function addItem(name){
 }
 
 function startGame() {
+    console.log("Start")
     var req = {};
     req.gameID = gameID;
-    $.post(host + "/api/game/start/" + gameID, JSON.stringify(req), () => {})
+    $.post(host + "/api/game/start/" + gameID, JSON.stringify(req), (data) => {
+        console.log("post ricevuta")
+    })
 }
 
 function sendWord(form){

@@ -4,31 +4,22 @@ function init(){
  M.AutoInit();
 }
 
-function checkUserIDInput(){
-    if($('#userID').val() === ""){
-        $('#userID').addClass("invalid");
-        return false;
-    }
-    return true;
-}
-
-function checkGameIDInput(){
-    if($('#gameID').val() === ""){
-        $('#gameID').addClass("invalid");
+function checkInput(elem){
+    if($(elem).val() === ""){
+        $(elem).addClass("invalid");
         return false;
     }
     return true;
 }
 
 function newGame(){
-    if(checkUserIDInput()) {
+    if(checkInput('#userID')) {
         window.location.href = "settings.html?name=" + $('#userID').val();
     }
 }
 
 function join(){
-    $('#gameIDrow').show()
-    if(checkGameIDInput()){
+    if($('#gameIDrow').is(":visible") && checkInput('#gameID')){
         var name = $('#userID').val();
         var gameID = $('#gameID').val();
         var form = $('#initialForm')[0];
@@ -37,4 +28,5 @@ function join(){
         console.log({value});
         window.location.href = "game.html?name=" + name + "&gameID=" + gameID;
     }
+    $('#gameIDrow').show()
 }
