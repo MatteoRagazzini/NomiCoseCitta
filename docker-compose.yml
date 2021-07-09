@@ -8,7 +8,7 @@ services:
     volumes:
       - ./rabbitmq/rabbitmq.confg:/etc/rabbitmq/rabbitmq.config:ro
     ports:
-        - 15672:15672
+      - 15672:15672
     restart: always
 
   mongo-game:
@@ -36,7 +36,7 @@ services:
     ports:
       - 8082:8081
     environment:
-       - ME_CONFIG_MONGODB_SERVER=mongo-round
+      - ME_CONFIG_MONGODB_SERVER=mongo-round
     restart: always
 
   web-service:
@@ -45,7 +45,7 @@ services:
       context: ./NomiCoseCitta
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - 8080:8080
     environment:
      - RABBIT_HOST=rabbitmq
     depends_on:
@@ -63,7 +63,7 @@ services:
       - MONGODB=mongodb://mongo-game
     depends_on:
       - rabbitmq
-      - mongo
+      - mongo-game
     restart: always
 
   round-manager:
@@ -76,5 +76,5 @@ services:
       - MONGODB=mongodb://mongo-round
     depends_on:
       - rabbitmq
-      - mongo
+      - mongo-round
     restart: always

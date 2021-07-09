@@ -16,9 +16,11 @@ vertx{
 
 dependencies {
     implementation 'io.vertx:vertx-web:4.0.3'
+    testImplementation 'io.vertx:vertx-junit5:1.2.0'
+    testImplementation 'io.vertx:vertx-web-client:4.1.1'
     implementation 'com.rabbitmq:amqp-client:5.11.0'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
 
 test {
