@@ -28,7 +28,7 @@ public class GameManager {
                 .max(Comparator.comparingInt(i -> i))
                 .orElse(0));
         new SimpleConsumer("round",MessageType.UPDATE, updateGame());
-        new RPCServer(getCallbackMap());
+        new Thread(() -> new RPCServer(getCallbackMap())).start();
     }
 
     private DeliverCallback updateGame() {
@@ -149,7 +149,7 @@ public class GameManager {
         return games.get(games.size() - 1);
     }
 
-    private Optional<Game> getGameById(String id){
+    public Optional<Game> getGameById(String id){
         return games.stream()
                 .filter(g -> g.getId().equals(id))
                 .findFirst();

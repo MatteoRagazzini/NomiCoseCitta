@@ -33,6 +33,8 @@ public class GameBuilder {
             this.state = GameState.FINISHED;
         }else if(state.equals(GameState.SCORE.name())){
         this.state = GameState.SCORE;
+        }else if(state.equals(GameState.WAITING.name())){
+            this.state = GameState.WAITING;
         }
 
     }
