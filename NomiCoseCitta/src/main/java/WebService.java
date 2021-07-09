@@ -148,7 +148,6 @@ public class WebService extends AbstractVerticle {
                     });
                 });
 
-
        return router;
     }
 
