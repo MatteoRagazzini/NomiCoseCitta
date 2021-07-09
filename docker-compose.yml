@@ -7,38 +7,38 @@ services:
     image: rabbitmq:3-management
     volumes:
       - ./rabbitmq/rabbitmq.confg:/etc/rabbitmq/rabbitmq.config:ro
-     # - rabbitmq-logs:/var/log/rabbitmq/
-     # - rabbitmq-data:/var/lib/rabbitmq/
     ports:
-        - 15672:15672
-    networks:
-        - app-network
-    healthcheck:
-        test: ["CMD", "curl", "-f", "http://localhost:15672"]
-        interval: 30s
-        timeout: 10s
-        retries: 5
+      - 15672:15672
+    restart: always
 
-  mongo:
-    container_name: mongo
+  mongo-game:
+    container_name: mongo-game
     image: mongo
-    #environment:
-     # - MONGO_INITDB_ROOT_USERNAME=mongoadmin 
-      #- MONGO_INITDB_ROOT_PASSWORD=secret 
-    networks:
-      - app-network
+    restart: always
 
+  mongo-round:
+    container_name: mongo-round
+    image: mongo
+    restart: always
 
-  mongo-express: 
-    container_name: mongo-express
+  mongo-express-game: 
+    container_name: mongo-express-game
     image: mongo-express
     ports:
       - 8081:8081
-  #  environment:
-   #   - MONGO_INITDB_ROOT_USERNAME=mongoadmin 
-    #  - MONGO_INITDB_ROOT_PASSWORD=secret 
-    networks:
-      - app-network
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongo-game
+    restart: always
+
+  mongo-express-round: 
+    container_name: mongo-express-round
+    image: mongo-express
+    ports:
+      - 8082:8081
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongo-round
+    restart: always
+
 
   web-service:
     container_name: web-service
@@ -46,14 +46,12 @@ services:
       context: ./NomiCoseCitta
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - 8080:8080
     environment:
      - RABBIT_HOST=rabbitmq
-     - MONGODB=mongoDb
     depends_on:
       - rabbitmq
-    networks:
-      - app-network
+    restart: always
 
 
   game-manager:
@@ -63,11 +61,11 @@ services:
       dockerfile: Dockerfile 
     environment:
       - RABBIT_HOST=rabbitmq
-      - MONGODB=mongoDb
+      - MONGODB=mongodb://mongo-game
     depends_on:
       - rabbitmq
-    networks:
-      - app-network
+      - mongo-game
+    restart: always
 
   round-manager:
     container_name: round-manager
@@ -76,12 +74,8 @@ services:
       dockerfile: Dockerfile
     environment:
       - RABBIT_HOST=rabbitmq
-      - MONGODB=mongoDb
+      - MONGODB=mongodb://mongo-round
     depends_on:
       - rabbitmq
-    networks:
-      - app-network
-
-networks:
-    app-network:
-      driver: bridge
+      - mongo-round
+    restart: always
