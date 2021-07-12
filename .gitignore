@@ -2,18 +2,24 @@
 *.class
 
 .idea/
-userService/.idea/
-webService/.idea/
+Game-Round-Manager/.idea/
+WebService/.idea/
 
 # Ignore Gradle project-specific cache directory
 .gradle
-userService/.gradle
-webService/.gradle
+Game-Round-Manager/.gradle
+WebService/.gradle
 
 # Ignore Gradle build output directory
 build
-userService/build
-webService/build
+Game-Round-Manager/build
+WebService/build
+
+# Ignore .DS_Store files
+Game-Round-Manager/.DS_Store
+WebService/.DS_Store
+rabbitmq/.DS_Store
+.DS_Store
 
 *.txt
 
