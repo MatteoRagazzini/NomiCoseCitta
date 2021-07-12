@@ -46,6 +46,5 @@ public abstract class Round {
     }
 
     abstract void onStart();
-    abstract void onStop();
 
 }

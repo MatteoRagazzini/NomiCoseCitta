@@ -8,8 +8,10 @@ import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import presentation.Presentation;
 
+import javax.print.Doc;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class DBManager<T> {
 
@@ -42,6 +44,15 @@ public class DBManager<T> {
         collection.deleteOne(Filters.eq(ID_FIELD, id));
     }
 
+    public void removeAll(List<String> ids) {
+        ids.forEach(this::remove);
+    }
+
+    public Optional<T> getElemById(String id) throws Exception {
+        Document d = collection.find(Filters.eq(ID_FIELD, id)).first();
+        return d == null ? Optional.empty() : Optional.of(convertDocumentTo(d));
+    }
+
     public List<T> getAllElement(){
         List<T> elements = new ArrayList<>();
         collection.find().forEach(doc -> {
@@ -56,6 +67,10 @@ public class DBManager<T> {
 
     private Document convertToDocument(T elem){
         return Document.parse(Presentation.serializerOf(klass).serialize(elem));
+    }
+
+    private T convertDocumentTo(Document d) throws Exception {
+        return Presentation.deserializeAs(d.toJson(), klass);
     }
 
 

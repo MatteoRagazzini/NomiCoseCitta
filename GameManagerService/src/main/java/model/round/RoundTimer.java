@@ -38,9 +38,4 @@ public class RoundTimer extends Round {
         timerExecutor.schedule(onStopTask(),ROUND_DURATION);
         System.out.println("STARTED round timer");
     }
-
-    @Override
-    void onStop() {
-
-    }
 }

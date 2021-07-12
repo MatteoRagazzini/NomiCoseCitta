@@ -31,7 +31,7 @@ public class RoundManager {
         roundsDb.getAllElement().forEach(r -> activeRounds.put(r.getGame().getId(), r));
         emitter = new Emitter("round");
         new Consumer("game", getConsumerMap());
-        new RPCServer(getCallbackMap());
+        new Thread(() -> new RPCServer(getCallbackMap())).start();
 
     }
 
@@ -96,6 +96,7 @@ public class RoundManager {
                 roundsDb.update(round.getGame().getId(), round);
                 if(round.getRoundWords().allDelivered()){
                     round.getGame().setState(GameState.CHECK);
+                    roundsDb.update(round.getGame().getId(), round);
                     emitter.emit(MessageType.UPDATE, Presentation.serializerOf(Game.class).serialize(round.getGame()));
                     return Presentation.serializerOf(RoundWords.class).serialize(round.getRoundWords());
                 }

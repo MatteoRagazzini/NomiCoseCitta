@@ -1,3 +1,4 @@
+import model.db.DBManager;
 import model.game.Game;
 import model.game.GameManager;
 import model.game.GameState;
@@ -7,6 +8,8 @@ import rabbit.MessageType;
 import rabbit.RPCClient;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,25 +17,35 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * To run this tests RabbitMq has to be up
  */
+
 @Disabled
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class GameManagerTest {
 
     private ExecutorService ex;
     private RPCClient client;
+    private List<String> gameToDelete;
 
-    GameManagerTest() throws IOException, TimeoutException {
+    @BeforeAll
+    private void createClientAndGameManager() throws IOException, TimeoutException {
         new GameManager();
         client = new RPCClient();
+        gameToDelete = new ArrayList<>();
+    }
+
+    @AfterAll
+    private void deleteGameFromDB(){
+        DBManager<Game> db = new DBManager<>("NCCGames", "Games", Game.class);
+        db.removeAll(gameToDelete);
     }
 
     @BeforeEach
-    public void setUp() throws IOException, TimeoutException {
+    public void setUp() {
         ex = Executors.newSingleThreadExecutor(); // single thread!
     }
 
     @AfterEach
-    public void tearDown() throws IOException {
-        client.close();
+    public void tearDown() {
         ex.shutdownNow();
     }
 
@@ -47,6 +60,7 @@ public class GameManagerTest {
         final CompletableFuture<String> promisedResult = callAsync(client, MessageType.CREATE, getCreateGameJson());
         String id = promisedResult.get(); // this is where the result is awaited
         assertNotEquals("null", id);
+        gameToDelete.add(id);
         return id;
     }
 
@@ -54,6 +68,7 @@ public class GameManagerTest {
         CompletableFuture<String> promisedResult = callAsync(client, MessageType.CREATE, getCreateGameJson());
         String id = promisedResult.get(); // this is where the result is awaited
         assertNotEquals("null", id);
+        gameToDelete.add(id);
         CompletableFuture<String> joinResult = callAsync(client, MessageType.JOIN, getJoinGameJson(id, "Pippo"));
         try {
             Game g = Presentation.deserializeAs(joinResult.get(), Game.class);
@@ -74,6 +89,7 @@ public class GameManagerTest {
         CompletableFuture<String> promisedResult = callAsync(client, MessageType.CREATE, getCreateGameJson());
         String id = promisedResult.get();
         assertNotEquals("null", id);
+        gameToDelete.add(id);
         CompletableFuture<String> firstJoinResult = callAsync(client, MessageType.JOIN, getJoinGameJson(id, "Pippo"));
         assertNotEquals("null", firstJoinResult.get());
         CompletableFuture<String> secondJoinResult = callAsync(client, MessageType.JOIN, getJoinGameJson(id, "Alice"));
@@ -96,6 +112,7 @@ public class GameManagerTest {
         CompletableFuture<String> promisedResult = callAsync(client, MessageType.CREATE, getCreateGameJson());
         String id = promisedResult.get();
         assertNotEquals("null", id);
+        gameToDelete.add(id);
         CompletableFuture<String> firstJoinResult = callAsync(client, MessageType.JOIN, getJoinGameJson(id, "Pippo"));
         assertNotEquals("null", firstJoinResult.get());
         CompletableFuture<String> secondJoinResult = callAsync(client, MessageType.JOIN, getJoinGameJson(id, "Alice"));
@@ -116,40 +133,42 @@ public class GameManagerTest {
         CompletableFuture<String> promisedResult = callAsync(client, MessageType.CREATE, getCreateGameJson());
         String id = promisedResult.get();
         assertNotEquals("null", id);
+        gameToDelete.add(id);
         CompletableFuture<String> firstJoinResult = callAsync(client, MessageType.JOIN, getJoinGameJson(id, "Pippo"));
         assertNotEquals("null", firstJoinResult.get());
         CompletableFuture<String> gameStarted = callAsync(client, MessageType.START, getStartGameJson(id));
         assertEquals("null", gameStarted.get());
     }
 
-//    @Test void testDisconnection() throws ExecutionException, InterruptedException {
-//        CompletableFuture<String> promisedResult = callAsync(client, MessageType.CREATE, getCreateGameJson());
-//        String id = promisedResult.get();
-//        assertNotEquals("null", id);
-//        CompletableFuture<String> firstJoinResult = callAsync(client, MessageType.JOIN, getJoinGameJson(id, "Pippo"));
-//        assertNotEquals("null", firstJoinResult.get());
-//        CompletableFuture<String> secondJoinResult = callAsync(client, MessageType.JOIN, getJoinGameJson(id, "Alice"));
-//        assertNotEquals("null", secondJoinResult.get());
-//        try {
-//            Game g = Presentation.deserializeAs(secondJoinResult.get(), Game.class);
-//            assertEquals(id, g.getId());
-//            assertEquals(2, g.getOnlineUsers().size());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            fail();
-//        }
-//        CompletableFuture<String> disconnectionResult = callAsync(client, MessageType.DISCONNECT, getDisconnectJson("Pippo"));
-//        assertNotEquals("null", disconnectionResult.get());
-//        try {
-//            Game g = Presentation.deserializeAs(disconnectionResult.get(), Game.class);
-//            assertEquals(id, g.getId());
-//            assertEquals(1, g.getOnlineUsers().size());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            fail();
-//        }
-//
-//    }
+    @Test void testDisconnection() throws ExecutionException, InterruptedException {
+        CompletableFuture<String> promisedResult = callAsync(client, MessageType.CREATE, getCreateGameJson());
+        String id = promisedResult.get();
+        assertNotEquals("null", id);
+        gameToDelete.add(id);
+        CompletableFuture<String> firstJoinResult = callAsync(client, MessageType.JOIN, getJoinGameJson(id, "Bob"));
+        assertNotEquals("null", firstJoinResult.get());
+        CompletableFuture<String> secondJoinResult = callAsync(client, MessageType.JOIN, getJoinGameJson(id, "Alice"));
+        assertNotEquals("null", secondJoinResult.get());
+        try {
+            Game g = Presentation.deserializeAs(secondJoinResult.get(), Game.class);
+            assertEquals(id, g.getId());
+            assertEquals(2, g.getOnlineUsers().size());
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+        CompletableFuture<String> disconnectionResult = callAsync(client, MessageType.DISCONNECT, getDisconnectJson("Bob"));
+        assertNotEquals("null", disconnectionResult.get());
+        try {
+            Game g = Presentation.deserializeAs(disconnectionResult.get(), Game.class);
+            assertEquals(id, g.getId());
+            assertEquals(1, g.getOnlineUsers().size());
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+
+    }
 
     private String getCreateGameJson() {
         return "{\"numRounds\": 3," +
@@ -164,11 +183,15 @@ public class GameManagerTest {
     private String getJoinGameJson(String id, String userID){
         return "{\"gameID\": "+id+"," +
                 "\"userID\": "+userID+"," +
-                "\"userAddress\": testAddress}";
+                "\"userAddress\": testAddress"+userID+"}";
     }
 
     private String getStartGameJson(String id){
         return "{\"gameID\": "+id+"}";
+    }
+
+    private String getDisconnectJson(String userID) {
+        return "{\"userAddress\": testAddress"+userID+"}";
     }
 
 
