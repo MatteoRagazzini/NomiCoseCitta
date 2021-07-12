@@ -38,7 +38,7 @@ public class GameManagerTest {
     }
 
     @BeforeEach
-    public void setUp() {
+    public void setUpAndCreateGame() throws ExecutionException, InterruptedException {
         ex = Executors.newSingleThreadExecutor(); // single thread!
     }
 
@@ -63,10 +63,7 @@ public class GameManagerTest {
     }
 
     @Test void testSingleJoinGame() throws  ExecutionException, InterruptedException {
-        CompletableFuture<String> promisedResult = callAsync(client, MessageType.CREATE, getCreateGameJson());
-        String id = promisedResult.get(); // this is where the result is awaited
-        assertNotEquals("null", id);
-        gameToDelete.add(id);
+        String id = testCreateGame();
         CompletableFuture<String> joinResult = callAsync(client, MessageType.JOIN, getJoinGameJson(id, "Pippo"));
         try {
             Game g = Presentation.deserializeAs(joinResult.get(), Game.class);
@@ -84,10 +81,7 @@ public class GameManagerTest {
     }
 
     @Test void testJoinGame() throws  ExecutionException, InterruptedException {
-        CompletableFuture<String> promisedResult = callAsync(client, MessageType.CREATE, getCreateGameJson());
-        String id = promisedResult.get();
-        assertNotEquals("null", id);
-        gameToDelete.add(id);
+        String id = testCreateGame();
         CompletableFuture<String> firstJoinResult = callAsync(client, MessageType.JOIN, getJoinGameJson(id, "Pippo"));
         assertNotEquals("null", firstJoinResult.get());
         CompletableFuture<String> secondJoinResult = callAsync(client, MessageType.JOIN, getJoinGameJson(id, "Alice"));
@@ -107,10 +101,7 @@ public class GameManagerTest {
     }
 
     @Test void testStartGame() throws ExecutionException, InterruptedException {
-        CompletableFuture<String> promisedResult = callAsync(client, MessageType.CREATE, getCreateGameJson());
-        String id = promisedResult.get();
-        assertNotEquals("null", id);
-        gameToDelete.add(id);
+        String id = testCreateGame();
         CompletableFuture<String> firstJoinResult = callAsync(client, MessageType.JOIN, getJoinGameJson(id, "Pippo"));
         assertNotEquals("null", firstJoinResult.get());
         CompletableFuture<String> secondJoinResult = callAsync(client, MessageType.JOIN, getJoinGameJson(id, "Alice"));
@@ -128,10 +119,7 @@ public class GameManagerTest {
     }
 
     @Test void testUnsuccessfulStartGame() throws ExecutionException, InterruptedException {
-        CompletableFuture<String> promisedResult = callAsync(client, MessageType.CREATE, getCreateGameJson());
-        String id = promisedResult.get();
-        assertNotEquals("null", id);
-        gameToDelete.add(id);
+        String id = testCreateGame();
         CompletableFuture<String> firstJoinResult = callAsync(client, MessageType.JOIN, getJoinGameJson(id, "Pippo"));
         assertNotEquals("null", firstJoinResult.get());
         CompletableFuture<String> gameStarted = callAsync(client, MessageType.START, getStartGameJson(id));
@@ -139,10 +127,7 @@ public class GameManagerTest {
     }
 
     @Test void testDisconnection() throws ExecutionException, InterruptedException {
-        CompletableFuture<String> promisedResult = callAsync(client, MessageType.CREATE, getCreateGameJson());
-        String id = promisedResult.get();
-        assertNotEquals("null", id);
-        gameToDelete.add(id);
+        String id = testCreateGame();
         CompletableFuture<String> firstJoinResult = callAsync(client, MessageType.JOIN, getJoinGameJson(id, "Bob"));
         assertNotEquals("null", firstJoinResult.get());
         CompletableFuture<String> secondJoinResult = callAsync(client, MessageType.JOIN, getJoinGameJson(id, "Alice"));
