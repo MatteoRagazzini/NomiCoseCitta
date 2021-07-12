@@ -5,8 +5,8 @@ services:
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:alpine
-    volumes:
-      - ./rabbitmq/rabbitmq.confg:/etc/rabbitmq/rabbitmq.config:ro
+    #volumes:
+    #  - ./rabbitmq/rabbitmq.confg:/etc/rabbitmq/rabbitmq.config:ro
     restart: always
 
   mongo-game:
@@ -22,7 +22,7 @@ services:
   web-service:
     container_name: web-service
     build:
-      context: ./NomiCoseCitta
+      context: ./WebService
       dockerfile: Dockerfile
     ports:
       - 8080:8080
@@ -36,7 +36,7 @@ services:
   game-manager:
     container_name: game-manager
     build:
-      context: ./GameManagerService
+      context: ./Game-Round-Manager
       dockerfile: Dockerfile 
     environment:
       - RABBIT_HOST=rabbitmq
@@ -49,7 +49,7 @@ services:
   round-manager:
     container_name: round-manager
     build:
-      context: ./GameManagerService
+      context: ./Game-Round-Manager
       dockerfile: Dockerfile-round
     environment:
       - RABBIT_HOST=rabbitmq

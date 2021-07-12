@@ -1,7 +1,7 @@
 
 var ip = "79.17.230.141";
 var local = "localhost"
-var host = "http://"+local+":8080";
+var host = "http://"+ip+":8080";
 var gameID = "";
 var userID = "";
 var roundStarted = false;
