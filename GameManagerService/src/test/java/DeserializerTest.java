@@ -6,6 +6,7 @@ import model.round.Round;
 import model.round.RoundStop;
 import model.round.RoundType;
 import model.round.words.UserWords;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import presentation.Presentation;
 
@@ -15,6 +16,7 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
+@Disabled
 public class DeserializerTest {
 
 

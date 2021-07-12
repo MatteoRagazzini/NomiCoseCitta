@@ -7,36 +7,19 @@ services:
     image: rabbitmq:3-management
     volumes:
       - ./rabbitmq/rabbitmq.confg:/etc/rabbitmq/rabbitmq.config:ro
-     # - rabbitmq-logs:/var/log/rabbitmq/
-     # - rabbitmq-data:/var/lib/rabbitmq/
     ports:
-        - 15672:15672
-   # networks:
-    #    - app-network
-   # healthcheck:
-    #    test: ["CMD", "curl", "-f", "http://localhost:15672"]
-     #   interval: 30s
-     #   timeout: 10s
-     #   retries: 5
+      - 15672:15672
+    restart: always
 
   mongo-game:
     container_name: mongo-game
     image: mongo
-    #environment:
-     # - MONGO_INITDB_ROOT_USERNAME=mongoadmin 
-      #- MONGO_INITDB_ROOT_PASSWORD=secret 
-   # networks:
-    #  - app-network
+    restart: always
 
   mongo-round:
     container_name: mongo-round
     image: mongo
-    #environment:
-     # - MONGO_INITDB_ROOT_USERNAME=mongoadmin 
-      #- MONGO_INITDB_ROOT_PASSWORD=secret 
-    #networks:
-     # - app-network
-
+    restart: always
 
   mongo-express-game: 
     container_name: mongo-express-game
@@ -44,11 +27,8 @@ services:
     ports:
       - 8081:8081
     environment:
-   #   - MONGO_INITDB_ROOT_USERNAME=mongoadmin 
-    #  - MONGO_INITDB_ROOT_PASSWORD=secret 
        - ME_CONFIG_MONGODB_SERVER=mongo-game
-   # networks:
-    #  - app-network
+    restart: always
 
   mongo-express-round: 
     container_name: mongo-express-round
@@ -56,11 +36,8 @@ services:
     ports:
       - 8082:8081
     environment:
-   #   - MONGO_INITDB_ROOT_USERNAME=mongoadmin 
-    #  - MONGO_INITDB_ROOT_PASSWORD=secret 
-       - ME_CONFIG_MONGODB_SERVER=mongo-round
-    #networks:
-     # - app-network
+      - ME_CONFIG_MONGODB_SERVER=mongo-round
+    restart: always
 
   web-service:
     container_name: web-service
@@ -68,13 +45,12 @@ services:
       context: ./NomiCoseCitta
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - 8080:8080
     environment:
      - RABBIT_HOST=rabbitmq
     depends_on:
       - rabbitmq
-  #  networks:
-   #   - app-network
+    restart: always
 
 
   game-manager:
@@ -87,24 +63,18 @@ services:
       - MONGODB=mongodb://mongo-game
     depends_on:
       - rabbitmq
-      - mongo
-  #  networks:
-   #   - app-network
+      - mongo-game
+    restart: always
 
   round-manager:
     container_name: round-manager
     build:
-      context: ./RoundManagerService
-      dockerfile: Dockerfile
+      context: ./GameManagerService
+      dockerfile: Dockerfile-round
     environment:
       - RABBIT_HOST=rabbitmq
       - MONGODB=mongodb://mongo-round
     depends_on:
       - rabbitmq
-      - mongo
- #   networks:
- #     - app-network
-
-#networks:
- # default:
-  #  driver: overlay
+      - mongo-round
+    restart: always

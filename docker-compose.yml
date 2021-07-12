@@ -4,11 +4,9 @@ version: '3'
 services:
   rabbitmq:
     container_name: rabbitmq
-    image: rabbitmq:3-management
+    image: rabbitmq:alpine
     volumes:
       - ./rabbitmq/rabbitmq.confg:/etc/rabbitmq/rabbitmq.config:ro
-    ports:
-      - 15672:15672
     restart: always
 
   mongo-game:
@@ -19,24 +17,6 @@ services:
   mongo-round:
     container_name: mongo-round
     image: mongo
-    restart: always
-
-  mongo-express-game: 
-    container_name: mongo-express-game
-    image: mongo-express
-    ports:
-      - 8081:8081
-    environment:
-       - ME_CONFIG_MONGODB_SERVER=mongo-game
-    restart: always
-
-  mongo-express-round: 
-    container_name: mongo-express-round
-    image: mongo-express
-    ports:
-      - 8082:8081
-    environment:
-      - ME_CONFIG_MONGODB_SERVER=mongo-round
     restart: always
 
   web-service:

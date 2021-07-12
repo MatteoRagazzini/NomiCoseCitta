@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * To run this tests RabbitMq has to be up
  */
+@Disabled
 public class GameManagerTest {
 
     private ExecutorService ex;

@@ -15,6 +15,7 @@ import java.util.function.Function;
  * In particular the test use a dumb RPCServer only to verify if the communication
  * between client-webserver-rpcClient-rabbitmq-rpcServer works with all the possible request
  */
+@Disabled
 @ExtendWith(VertxExtension.class)
 public class WebServiceTest{
 
