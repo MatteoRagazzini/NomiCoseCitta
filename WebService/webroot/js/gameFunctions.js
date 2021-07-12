@@ -87,6 +87,16 @@ function init(){
     registerHandlerForUpdateGame(userID, gameID);
 }
 
+function addItem(name){
+    var li = document.createElement("li");
+    li.setAttribute('id',name);
+    li.appendChild(document.createTextNode(name));
+    var li = document.createElement("li");
+    li.setAttribute('id',name);
+    li.appendChild(document.createTextNode(name));
+    $("#dynamic-list").append(li);
+}
+
 function joinRequest(name, address, gameID){
     var req = {};
     req.userID = name;
