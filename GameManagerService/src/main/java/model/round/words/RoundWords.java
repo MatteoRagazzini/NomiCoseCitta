@@ -22,7 +22,9 @@ public class RoundWords {
     }
 
     public void insertUserWords(UserWords words){
-        usersWords.add(words);
+        if(usersWords.stream().map(UserWords::getUserID).noneMatch(id -> id.equals(words.getUserID()))) {
+            usersWords.add(words);
+        }
     }
 
     public Integer getNumberOfOnlineUser(){

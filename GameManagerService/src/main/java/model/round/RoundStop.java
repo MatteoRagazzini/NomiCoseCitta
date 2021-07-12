@@ -13,8 +13,4 @@ public class RoundStop extends Round{
         System.out.println("Round stop for game: "+getGame().getId()+" started");
     }
 
-    @Override
-    void onStop() {
-
-    }
 }
