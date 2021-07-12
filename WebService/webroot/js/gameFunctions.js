@@ -1,5 +1,5 @@
 
-var ip = "79.17.230.141";
+var ip = "95.232.110.117";
 var local = "localhost"
 var host = "http://"+ip+":8080";
 var gameID = "";
