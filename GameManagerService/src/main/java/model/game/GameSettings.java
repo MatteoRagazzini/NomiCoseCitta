@@ -32,9 +32,7 @@ public class GameSettings {
                 .boxed().collect(Collectors.toList()),
                 numberOfUsers);
     }
-    public char getRoundLetter(int round){
-        return (char) roundsLetter.get(round).intValue();
-    }
+
 
     public List<Character> getRoundsLetter() {
         return roundsLetter.stream().map(i -> (char)i.intValue()).collect(Collectors.toList());

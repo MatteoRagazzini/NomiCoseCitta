@@ -24,7 +24,6 @@ public class RoundScores {
     }
 
     public List<UserRoundScore> getUserScores() {
-//        return userScores.stream().sorted((u1, u2) -> u1.getTotalScore() - u2.getTotalScore()).collect(Collectors.toList());
          return userRoundScores;
     }
 

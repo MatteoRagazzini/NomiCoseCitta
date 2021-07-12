@@ -6,7 +6,7 @@ import model.game.Game;
 import model.game.GameScores;
 import model.game.GameSettings;
 import model.request.DisconnectRequest;
-import model.request.UserInLobbyRequest;
+import model.request.JoinRequest;
 import model.request.StartRequest;
 import model.round.Round;
 import model.round.RoundScores;
@@ -35,7 +35,7 @@ public class Presentation {
         deserializers.put(Game.class, new GameDeserializer());
         deserializers.put(GameSettings.class, new GameSettingsDeserializer());
         deserializers.put(User.class, new UserDeserializer());
-        deserializers.put(UserInLobbyRequest.class, new UserInLobbyRequestDeserializer());
+        deserializers.put(JoinRequest.class, new UserInLobbyRequestDeserializer());
         deserializers.put(DisconnectRequest.class, new UserDisconnectionDeserializer());
         deserializers.put(StartRequest.class, new StartRequestDeserializer());
         deserializers.put(UserWords.class, new UserWordsDeserializer());

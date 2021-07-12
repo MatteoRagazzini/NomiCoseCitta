@@ -52,7 +52,7 @@ public class RPCServer {
             } catch (RuntimeException e) {
                 System.out.println(" [.] " + e.toString());
             } finally {
-                System.out.println("RPC server responding " + response + " in queue " + delivery.getProperties().getReplyTo());
+//                System.out.println("RPC server responding " + response + " in queue " + delivery.getProperties().getReplyTo());
                 channel.basicPublish("", delivery.getProperties().getReplyTo(), replyProps, response.getBytes("UTF-8"));
                 channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
                 // RabbitMq consumer worker thread notifies the RPC server owner thread

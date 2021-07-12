@@ -31,9 +31,6 @@ public class GameScores {
        });
     }
 
-    public boolean areAvailable(){
-        return !scores.isEmpty();
-    }
 
     public List<RoundScores> getScores() {
         return scores;
@@ -45,11 +42,8 @@ public class GameScores {
 
     public Map<String, Integer> getTotals(){
         Map<String, Integer> totals = new HashMap<>();
-        scores.forEach(rs ->{
-            rs.getUserScores().forEach(userScore -> {
-                totals.merge(userScore.getUserID(), userScore.getTotalScore(), Integer::sum);
-            });
-        });
+        scores.forEach(rs -> rs.getUserScores()
+                .forEach(userScore -> totals.merge(userScore.getUserID(), userScore.getTotalScore(), Integer::sum)));
         return totals;
     }
 

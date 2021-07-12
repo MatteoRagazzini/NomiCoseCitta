@@ -4,7 +4,7 @@ import com.rabbitmq.client.DeliverCallback;
 import model.db.DBManager;
 import model.request.DisconnectRequest;
 import model.request.StartRequest;
-import model.request.UserInLobbyRequest;
+import model.request.JoinRequest;
 import presentation.Presentation;
 
 import rabbit.*;
@@ -96,7 +96,7 @@ public class GameManager {
     private Function<String, String> joinGame() {
         return message -> {
             try {
-                var request = Presentation.deserializeAs(message, UserInLobbyRequest.class);
+                var request = Presentation.deserializeAs(message, JoinRequest.class);
                 var game = getGameById(request.getGameID());
                 if(game.isPresent()){
                     if(!game.get().userAlreadyPresent(request.getUser())) {

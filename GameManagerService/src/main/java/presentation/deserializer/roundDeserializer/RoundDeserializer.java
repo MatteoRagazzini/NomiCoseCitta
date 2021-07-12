@@ -9,7 +9,6 @@ import model.round.RoundType;
 import model.round.words.UserWords;
 import presentation.Presentation;
 import presentation.deserializer.AbstractJsonDeserializer;
-import presentation.serializer.AbstractJsonSerializer;
 
 public class RoundDeserializer extends AbstractJsonDeserializer<Round> {
     @Override

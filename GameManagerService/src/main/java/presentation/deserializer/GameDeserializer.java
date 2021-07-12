@@ -24,7 +24,7 @@ public class GameDeserializer extends AbstractJsonDeserializer<Game> {
             try {
                 if(jobj.has("users") && jobj.get("users").isJsonArray()){
                     List<User> usersList = new ArrayList<>();
-                    jobj.get("users").getAsJsonArray().forEach(u -> {
+                    jobj.getAsJsonArray("users").forEach(u -> {
                         try {
                             usersList.add(Presentation.deserializeAs(u.toString(), User.class));
                         } catch (Exception e) {
@@ -35,7 +35,7 @@ public class GameDeserializer extends AbstractJsonDeserializer<Game> {
                 }
                 if(jobj.has("fixedUsers") && jobj.get("fixedUsers").isJsonArray()){
                     List<User> usersList = new ArrayList<>();
-                    jobj.get("fixedUsers").getAsJsonArray().forEach(u -> {
+                    jobj.getAsJsonArray("fixedUsers").forEach(u -> {
                         try {
                             usersList.add(Presentation.deserializeAs(u.toString(), User.class));
                         } catch (Exception e) {
@@ -57,7 +57,7 @@ public class GameDeserializer extends AbstractJsonDeserializer<Game> {
                 }
                 if(jobj.has("gameScores") && jobj.get("gameScores").isJsonObject()){
                     var gameScores = jobj.getAsJsonObject("gameScores");
-                    gameScores.get("roundScores").getAsJsonArray().forEach(je -> {
+                    gameScores.getAsJsonArray("roundScores").forEach(je -> {
                         try {
                             builder.addRoundScores(Presentation.deserializeAs(je.toString(), RoundScores.class));
                         } catch (Exception e) {

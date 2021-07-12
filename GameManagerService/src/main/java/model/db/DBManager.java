@@ -8,7 +8,6 @@ import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import presentation.Presentation;
 
-import javax.print.Doc;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

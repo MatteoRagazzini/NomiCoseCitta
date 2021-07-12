@@ -39,12 +39,7 @@ public class Game {
         return fixedUsers;
     }
 
-    public Optional<User> getUserByID(String userID){
-        return users.stream().filter(u -> u.getNickname().equals(userID)).findFirst();
-    }
-
     public boolean hasNextRound() {
-        System.out.println("Settings: " + settings);
         return playedRounds < settings.getNumberOfRounds();
     }
 
@@ -59,7 +54,6 @@ public class Game {
             }
             return users.add(user);
         }
-//        System.out.println("IL GIOCO È PIENO");
         return false;
     }
 
