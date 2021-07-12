@@ -18,62 +18,17 @@ function  registerHandlerForUpdateGame(name, gameID) {
     eventbus_mio.onopen = function () {
         eventbus_mio.registerHandler('game.' + gameID, function (error, jsonResponse) {
             if (jsonResponse !== "null") {
-                console.log(jsonResponse.body);
-                var js = JSON.parse(jsonResponse.body);
-                var ul = $("#dynamic-list");
-                ul.html("");
-                js.users.forEach(user => {
-                    var li = document.createElement("li");
-                    li.setAttribute('id', user.nickname);
-                    var div = document.createElement("div");
-                    div.className = "chip";
-                    div.innerHTML = "<i class='material-icons'>face</i>" + user.nickname;
-
-                    li.appendChild(div);
-                    ul.append(li);
-                });
-                if (js.couldStart === true) {
-                    $('#startButton').removeAttr("disabled");
-                }
+                showUsersInWaiting(JSON.parse(jsonResponse.body));
             }
         });
 
         eventbus_mio.registerHandler('game.' + gameID + '/start', function (error, jsonResponse) {
-
             if (jsonResponse != null && !roundStarted) {
-                var js = JSON.parse(jsonResponse.body);
-                $("#roundNumber").text("Round " + (js.playedRounds + 1));
-                $("#letter").text("Play with letter " + js.settings.roundsLetters[js.playedRounds]);
-                if(js.settings.roundsType === "stop"){
-                    $("#stopButton").css("display", "inline") ;
-                }
-                $("#categories").html("");
-                js.settings.categories.forEach(category => {
-                    var div = document.createElement("div");
-                    div.className = "row";
-                    var insideDiv = document.createElement("div");
-                    insideDiv.className = "input-field col s12";
-
-                    var label = document.createElement("label");
-                    label.htmlFor = category;
-                    label.innerText = category;
-
-                    var inputElement = document.createElement("input");
-                    inputElement.type = "text";
-                    inputElement.id= category;
-                    inputElement.name = category;
-
-                    insideDiv.append(inputElement);
-                    insideDiv.append(label);
-                    div.append(insideDiv);
-                    $("#categories").append(div);
-                });
-
+                showRound(JSON.parse(jsonResponse.body));
                 roundStarted = true;
                 $("#waiting").hide();
                 $("#scores").hide();
                 $("#game").show();
-
             }
         });
 
@@ -87,7 +42,6 @@ function  registerHandlerForUpdateGame(name, gameID) {
         eventbus_mio.registerHandler('game.' + gameID +"/evaluate", function (error, jsonResponse) {
             if (jsonResponse !== "null" && !evaluationStarted) {
                 evaluationStarted = true;
-                console.log("Evaluated started")
                 $("#game").hide();
                 $("#waiting").hide();
                 $("#evaluation").show();
@@ -109,17 +63,15 @@ function  registerHandlerForUpdateGame(name, gameID) {
          });
 
          eventbus_mio.registerHandler('game.' + gameID +"/finish", function (error, jsonResponse) {
-                      if (jsonResponse !== "null") {
-                           console.log("In finish");
-                          console.log(JSON.parse(jsonResponse.body));
-                          $("#waiting").hide();
-                          $("#scores").hide();
-                          $("#circularLoader").hide();
-                          $("#game").hide();
-                          $("#finalScores").show();
-                          loadFinalScores(JSON.parse(jsonResponse.body));
-                      }
-                  });
+              if (jsonResponse !== "null") {
+                  $("#waiting").hide();
+                  $("#scores").hide();
+                  $("#circularLoader").hide();
+                  $("#game").hide();
+                  $("#finalScores").show();
+                  loadFinalScores(JSON.parse(jsonResponse.body));
+              }
+         });
 
         joinRequest(name,getSocketUri(eventbus_mio.sockJSConn._transport.url), gameID);
     }
@@ -141,7 +93,6 @@ function joinRequest(name, address, gameID){
     req.gameID = gameID;
     req.userAddress = address;
     $.post(host + "/api/game/join/" + gameID, JSON.stringify(req), (data, status) => {
-        console.log(status)
         if (data === "null") {
             alert("You cannot join this game! Create a new game o choose another game to join in");
             $(window).attr('location', "index.html");
@@ -153,21 +104,16 @@ function joinRequest(name, address, gameID){
 }
 
 function startGame() {
-    console.log("Start")
     var req = {};
     req.gameID = gameID;
-    $.post(host + "/api/game/start/" + gameID, JSON.stringify(req), (data) => {
-        console.log("post ricevuta")
-    })
+    $.post(host + "/api/game/start/" + gameID, JSON.stringify(req), (data) => {})
 }
 
 function sendWord(form){
     const data = new FormData(form);
     const value = Object.fromEntries(data.entries());
-    console.log({value});
     value.gameID = gameID;
     value.userID = userID;
-    console.log("with jquery")
     $.post(host + "/api/game/words/" + gameID, JSON.stringify(value),  () => {})
 }
 
@@ -175,9 +121,54 @@ function stopRound() {
    eventbus_mio.publish('game.' + gameID +"/stop", "STOP");
 }
 
+function showRound(js){
+
+     $("#roundNumber").text("Round " + (js.playedRounds + 1));
+     $("#letter").text("Play with letter " + js.settings.roundsLetters[js.playedRounds]);
+     if(js.settings.roundsType === "stop"){
+         $("#stopButton").css("display", "inline") ;
+     }
+     $("#categories").html("");
+     js.settings.categories.forEach(category => {
+         var div = document.createElement("div");
+         div.className = "row";
+         var insideDiv = document.createElement("div");
+         insideDiv.className = "input-field col s12";
+
+         var label = document.createElement("label");
+         label.htmlFor = category;
+         label.innerText = category;
+
+         var inputElement = document.createElement("input");
+         inputElement.type = "text";
+         inputElement.id= category;
+         inputElement.name = category;
+
+         insideDiv.append(inputElement);
+         insideDiv.append(label);
+         div.append(insideDiv);
+         $("#categories").append(div);
+     });
+}
+
+function showUsersInWaiting(js){
+    $("#dynamic-list").html("");
+    js.users.forEach(user => {
+        var li = document.createElement("li");
+        li.setAttribute('id', user.nickname);
+        var div = document.createElement("div");
+        div.className = "chip";
+        div.innerHTML = "<i class='material-icons'>face</i>" + user.nickname;
+
+        li.appendChild(div);
+        $("#dynamic-list").append(li);
+    });
+    if (js.couldStart === true) {
+        $('#startButton').removeAttr("disabled");
+    }
+}
+
 function  showEvaluationForm(js){
-    //document.getElementById("roundNumber").innerText = "Round " + (js.playedRounds + 1);
-    //document.getElementById("letter").innerText = "Play with letter " + js.settings.roundsLetters[js.playedRounds];
     $('#usersWords').html("");
     js.usersWords.forEach(userWords => {
         var relatedUser = userWords["userID"];
@@ -265,7 +256,6 @@ function sendEvaluation() {
     var json = [];
     var forms = document.getElementsByClassName("votes");
     var relatedUsers = document.getElementsByClassName("relatedUser");
-    console.log(relatedUsers)
     for(var i=0;i<forms.length;i++){
         const data = new FormData(forms.item(i));
         json[i] = Object.fromEntries(data.entries());
@@ -275,13 +265,12 @@ function sendEvaluation() {
     finalJson.votes = json;
     finalJson.voterID = userID;
     finalJson.gameID = gameID;
-    console.log({finalJson});
     $.post(host + "/api/game/votes/" + gameID, JSON.stringify(finalJson), ()=>{});
     $("#evaluation").hide();
     $("#circularLoader").show();
 }
 
- function  loadScores(js){
+function  loadScores(js){
      //document.getElementById("roundNumber").innerText = "Round " + (js.playedRounds + 1);
      //document.getElementById("letter").innerText = "Play with letter " + js.settings.roundsLetters[js.playedRounds];
      $("#tableDiv").html("");
