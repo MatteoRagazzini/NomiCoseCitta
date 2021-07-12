@@ -99,7 +99,7 @@ public class WebService extends AbstractVerticle {
         }));
 
         router.post("/game/votes/:id").handler(getHandler(MessageType.VOTES, (context, response) -> {
-            if(response.equals("null")){
+            if(!response.equals("null")){
                 context.vertx().eventBus().publish("game." + context.request().getParam("id") + "/scores", response);
             }
         }));
