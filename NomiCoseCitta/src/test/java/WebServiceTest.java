@@ -1,10 +1,12 @@
 import io.vertx.core.Vertx;
+import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import rabbitMQ.MessageType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,12 +17,13 @@ import java.util.function.Function;
  * In particular the test use a dumb RPCServer only to verify if the communication
  * between client-webserver-rpcClient-rabbitmq-rpcServer works with all the possible request
  */
-@Disabled
+
 @ExtendWith(VertxExtension.class)
 public class WebServiceTest{
 
-    Thread rpcServer;
-    WebClient client;
+    private Thread rpcServer;
+    private WebClient client;
+    private EventBus eventBus;
 
     public WebServiceTest() {
         this.rpcServer = new Thread(()-> new RPCServer(getCallbackMap()));
@@ -30,6 +33,8 @@ public class WebServiceTest{
     @DisplayName("Deploy a verticle")
     void prepare(Vertx vertx, VertxTestContext testContext) {
         vertx.deployVerticle(new WebService(), testContext.succeedingThenComplete());
+
+        this.eventBus = vertx.eventBus();
         client = WebClient.create(vertx);
         rpcServer.start();
     }
@@ -72,7 +77,7 @@ public class WebServiceTest{
 
     private void testPostRequest(VertxTestContext testContext, String uri){
         client
-                .post(8080, "localhost", "/api/game/start/1")
+                .post(8080, "localhost", uri)
                 .sendJsonObject(new JsonObject())
                 .onSuccess(res -> {
                     Assertions.assertEquals("ok", res.body().toString());
