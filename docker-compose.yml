@@ -5,8 +5,6 @@ services:
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:alpine
-    #volumes:
-    #  - ./rabbitmq/rabbitmq.confg:/etc/rabbitmq/rabbitmq.config:ro
     restart: always
 
   mongo-game:
