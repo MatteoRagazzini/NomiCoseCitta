@@ -17,6 +17,8 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * To run this tests RabbitMq has to be up
  */
+
+@Disabled
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class GameManagerTest {
 
