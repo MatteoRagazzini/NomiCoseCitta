@@ -1,5 +1,6 @@
 import com.rabbitmq.client.*;
 import org.junit.jupiter.api.Test;
+import rabbitMQ.MessageType;
 
 import java.io.IOException;
 import java.util.HashMap;
