@@ -2,7 +2,7 @@ var gameID = 0;
 var name = "";
 var ip = "95.232.110.117";
 var local = "localhost"
-var host = "http://"+ip+":8080";
+var host = "http://"+local+":8080";
 
 function init() {
     M.AutoInit();
