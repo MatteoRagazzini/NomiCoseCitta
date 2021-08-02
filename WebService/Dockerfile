@@ -13,5 +13,3 @@ RUN apt-get update && apt-get install -y netcat
 RUN chmod +x /home/gradle/src/waitingForRabbit.sh
 
 ENTRYPOINT [ "/home/gradle/src/waitingForRabbit.sh" ]
-
-#CMD gradle vertxRun
