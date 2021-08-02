@@ -18,6 +18,7 @@ WebService/build
 # Ignore .DS_Store files
 Game-Round-Manager/.DS_Store
 WebService/.DS_Store
+WebService/webroot/.DS_Store
 rabbitmq/.DS_Store
 .DS_Store
 

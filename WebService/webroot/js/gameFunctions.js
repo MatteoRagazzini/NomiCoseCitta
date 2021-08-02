@@ -281,14 +281,11 @@ function sendEvaluation() {
 }
 
 function  loadScores(js){
-     //document.getElementById("roundNumber").innerText = "Round " + (js.playedRounds + 1);
-     //document.getElementById("letter").innerText = "Play with letter " + js.settings.roundsLetters[js.playedRounds];
      $("#tableDiv").html("");
      let table = document.createElement("table");
      let thead = document.createElement("thead");
      let tr = document.createElement("tr");
-     
-     //creo l'header
+
      let userIDHead = document.createElement("th");
      userIDHead.innerText = "User"
      tr.append(userIDHead);
@@ -343,8 +340,6 @@ function  loadScores(js){
  }
 
 function  loadFinalScores(js){
-    //document.getElementById("roundNumber").innerText = "Round " + (js.playedRounds + 1);
-    //document.getElementById("letter").innerText = "Play with letter " + js.settings.roundsLetters[js.playedRounds];
     $("#finalTableDiv").html("");
     let table = document.createElement("table");
     let thead = document.createElement("thead");
